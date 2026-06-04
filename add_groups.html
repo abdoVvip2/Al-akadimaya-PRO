@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة الأفواج - كناشي Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #f8fafc; --white: #ffffff; --blue: #2563eb;
+            --red: #ef4444; --green: #22c55e; --orange: #f59e0b;
+            --slate: #64748b; --dark: #0f172a; --radius: 18px;
+        }
+
+        * { font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg); margin: 0; padding: 15px;
+            color: var(--dark); line-height: 1.5;
+        }
+
+        .num, b, span, input, select, .stat-card b, .badge, .info-item,
+        .schedule-tag, [data-num] {
+            font-variant-numeric: lining-nums; unicode-bidi: embed;
+        }
+
+        .app-wrapper { max-width: 520px; margin: 0 auto; padding-bottom: 110px; }
+
+        /* ── Header ── */
+        .page-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px; padding: 18px 20px;
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+            border-right: 5px solid var(--blue);
+        }
+        .page-header h2 { margin: 0; font-size: 1.25rem; font-weight: 900; }
+
+        /* ── Stats ── */
+        .dash-header {
+            background: var(--white); padding: 18px 20px;
+            border-radius: var(--radius); box-shadow: 0 4px 166px rgba(0,0,0,0.06);
+            margin-bottom: 20px; border-top: 4px solid var(--blue);
+        }
+        .dash-header h4 { margin: 0 0 12px 0; color: var(--slate); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-card {
+            background: linear-gradient(135deg, #f1f5f9, #e8f0fe);
+            padding: 14px 10px; border-radius: 14px; text-align: center;
+            border: 1px solid #e2e8f0; transition: transform 0.15s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-card small { display: block; color: var(--slate); font-size: 0.8rem; margin-bottom: 6px; font-weight: 600; }
+        .stat-card b {
+            color: var(--blue); font-size: 1.6rem; font-weight: 900;
+            display: block;
+        }
+
+        /* ── Group Cards ── */
+        .group-card {
+            background: var(--white); padding: 20px;
+            border-radius: var(--radius); margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07); border: 1px solid #e8edf5;
+            transition: box-shadow 0.2s, transform 0.2s; position: relative;
+            overflow: hidden;
+        }
+        .group-card::before {
+            content: ''; position: absolute;
+            top: 0; right: 0; width: 4px; height: 100%;
+            background: var(--blue); border-radius: 0 var(--radius) var(--radius) 0;
+        }
+        .group-card:hover { box-shadow: 0 6px 20px rgba(37,99,235,0.12); transform: translateY(-1px); }
+
+        .group-title { font-size: 1.15rem; font-weight: 800; margin: 0 0 4px 0; color: var(--dark); }
+        .group-teacher { font-size: 0.85rem; color: var(--slate); font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+        .sessions-badge {
+            background: var(--blue); color: white;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 0.78rem; font-weight: 700; white-space: nowrap;
+        }
+
+        .group-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem; color: var(--slate); margin-bottom: 14px; }
+        .info-item {
+            display: flex; align-items: center; gap: 8px;
+            background: #f8fafc; padding: 9px 12px; border-radius: 10px;
+            font-weight: 600; border: 1px solid #eef2f7;
+        }
+
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 14px; }
+        .btn-icon {
+            border: none; padding: 12px; border-radius: 12px;
+            cursor: pointer; transition: 0.18s;
+            font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-icon:hover { filter: brightness(0.93); }
+        .btn-icon:active { transform: scale(0.88); }
+        .btn-view { background: #ecfdf5; color: var(--green); }
+        .btn-link { background: #eff6ff; color: var(--blue); }
+        .btn-edit { background: #fff7ed; color: var(--orange); }
+        .btn-del  { background: #fef2f2; color: var(--red); }
+
+        /* ── Modals ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,23,42,0.75); backdrop-filter: blur(6px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--white); padding: 26px;
+            width: 92%; max-width: 420px; max-height: 88vh; overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25); border-radius: 24px;
+            animation: modalIn 0.22s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-content h3 { margin-top: 0; font-weight: 800; font-size: 1.15rem; }
+
+        .inp {
+            width: 100%; padding: 12px 14px; margin-bottom: 10px;
+            border: 2px solid #e2e8f0; border-radius: 12px;
+            font-size: 0.97rem; outline: none; font-family: 'Cairo', inherit;
+            transition: border-color 0.15s;
+        }
+        .inp:focus { border-color: var(--blue); }
+
+        .btn-main {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: var(--blue); color: white; font-weight: 800; cursor: pointer;
+            font-size: 1.05rem; margin-top: 8px; font-family: 'Cairo', inherit;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .btn-main:hover { background: #1d4ed8; }
+        .btn-main:active { transform: scale(0.98); }
+
+        .btn-cancel {
+            width: 100%; background: none; border: none; margin-top: 10px;
+            color: var(--slate); cursor: pointer; font-family: 'Cairo', inherit;
+            font-size: 0.97em; padding: 8px; border-radius: 10px;
+        }
+        .btn-cancel:hover { background: #f1f5f9; }
+
+        /* ── Student rows ── */
+        .student-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 11px 8px; border-bottom: 1px solid #f1f5f9;
+        }
+        .student-row:last-child { border: none; }
+        .student-row:hover { background: #fafbff; }
+
+        .badge {
+            font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; font-weight: 700;
+            cursor: pointer; border: none; font-family: 'Cairo', inherit;
+        }
+        .bg-blue { background: #dbeafe; color: var(--blue); }
+        .bg-red  { background: #fee2e2; color: var(--red); }
+
+        /* ── FAB ── */
+        .fab {
+            position: fixed; bottom: 24px; left: 24px; width: 58px; height: 58px;
+            background: var(--blue); color: white; border-radius: 18px; border: none;
+            font-size: 28px; box-shadow: 0 8px 24px rgba(37,99,235,0.45); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.15s;
+        }
+        .fab:active { transform: scale(0.92); }
+
+        /* ── Schedule ── */
+        .schedule-section { margin-bottom: 12px; }
+        .schedule-section label { display: block; margin-bottom: 7px; font-size: 0.88rem; color: var(--slate); font-weight: 700; }
+        .schedule-rows { display: flex; flex-direction: column; gap: 10px; }
+        
+        .schedule-row { display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 7px; align-items: center; }
+        .schedule-row.has-endtime { grid-template-columns: 1.2fr 1fr 1fr auto; }
+
+        .schedule-row select, .schedule-row input[type="time"] {
+            padding: 10px 8px; border: 2px solid #e2e8f0; border-radius: 10px;
+            font-size: 0.9rem; outline: none; font-family: 'Cairo', inherit;
+        }
+
+        .btn-remove-row {
+            background: #fef2f2; color: var(--red); border: none;
+            border-radius: 8px; width: 34px; height: 34px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .btn-add-row {
+            background: #eff6ff; color: var(--blue); border: none; border-radius: 10px;
+            padding: 9px 14px; font-size: 0.88rem; cursor: pointer; font-family: 'Cairo', inherit;
+            font-weight: 700; margin-top: 4px; width: 100%;
+        }
+
+        .schedule-time-header { display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 7px; padding-bottom: 2px; }
+        .schedule-time-header.has-endtime { grid-template-columns: 1.2fr 1fr 1fr auto; }
+        .schedule-time-header span { font-size: 0.75rem; color: var(--slate); font-weight: 700; text-align: center; }
+
+        .show-endtime-toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; }
+        .show-endtime-toggle input { width: 15px; height: 15px; accent-color: var(--green); }
+
+        .schedule-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .schedule-tag {
+            background: #eff6ff; color: var(--blue); padding: 5px 11px; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 700; border: 1px solid #dbeafe;
+        }
+        .schedule-tag .end-sep { color: var(--slate); margin: 0 3px; }
+        .schedule-tag .end-t { color: var(--green); }
+
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--slate); }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.5; }
+        
+        .section-label { font-size: 0.78rem; font-weight: 700; color: var(--slate); margin-bottom: 10px; display: block; }
+        .loading { text-align: center; padding: 40px; color: var(--slate); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <div class="page-header">
+        <span style="font-size:1.5rem;">📚</span>
+        <h2>إدارة الأفواج والربط</h2>
+    </div>
+
+    <div class="dash-header">
+        <h4>📊 إحصائيات النظام</h4>
+        <div class="stat-grid">
+            <div class="stat-card">
+                <small>إجمالي الأفواج</small>
+                <b id="total-groups-count">0</b>
+            </div>
+            <div class="stat-card">
+                <small>تلاميذ مرتبطين</small>
+                <b id="total-linked-students">0</b>
+            </div>
+        </div>
+    </div>
+
+    <div id="groups-list"><div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الأفواج...</div></div>
+</div>
+
+<button class="fab" onclick="window.openGroupModal()">+</button>
+
+<!-- مودال إضافة / تعديل فوج -->
+<div id="group-modal" class="modal-overlay" onclick="window.closeAllModals()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 id="modal-title">إضافة فوج جديد</h3>
+        <input type="hidden" id="edit-id">
+
+        <span class="section-label">معلومات الفوج</span>
+        <input type="text"   id="g-name"  class="inp" placeholder="اسم الفوج (مثال: السنة 4 متوسط)">
+        
+        <label style="display:block; margin-bottom:5px; font-size:0.88rem; color:var(--slate); font-weight:700;">الأستاذ المسؤول:</label>
+        <select id="g-teacher" class="inp">
+            <option value="">-- اختر أستاذ الفوج --</option>
+        </select>
+
+        <input type="number" id="g-price" class="inp" placeholder="سعر الاشتراك الإجمالي (دج)">
+
+        <label style="display:block; margin-bottom:5px; font-size:0.88rem; color:var(--slate); font-weight:700;">نظام الاشتراك:</label>
+        <select id="g-sessions" class="inp">
+            <option value="4">4 حصص</option>
+            <option value="8">8 حصص</option>
+        </select>
+
+        <div class="schedule-section">
+            <label>📅 الأيام والأوقات:</label>
+            <label class="show-endtime-toggle">
+                <input type="checkbox" id="toggle-endtime" onchange="window.toggleEndTimeColumns()">
+                <span>إضافة وقت انتهاء الحصة (اختياري)</span>
+            </label>
+
+            <div class="schedule-time-header" id="time-header">
+                <span>اليوم</span>
+                <span>بداية</span>
+                <span id="endtime-header-col" style="display:none;">نهاية</span>
+                <span></span>
+            </div>
+
+            <div class="schedule-rows" id="schedule-rows"></div>
+            <button class="btn-add-row" onclick="window.addScheduleRow()">+ إضافة يوم آخر</button>
+        </div>
+
+        <button class="btn-main" id="saveGroupBtn" onclick="window.saveGroup()">💾 حفظ الفوج</button>
+        <button class="btn-cancel" onclick="window.closeAllModals()">إلغاء</button>
+    </div>
+</div>
+
+<!-- مودال ربط التلاميذ -->
+<div id="link-student-modal" class="modal-overlay" onclick="window.closeAllModals()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3>➕ إضافة تلميذ للفوج</h3>
+        <input type="hidden" id="target-group-name">
+        <input type="text" id="search-student" class="inp" placeholder="🔍 ابحث عن اسم..." oninput="window.renderAvailableStudents()">
+        <div id="available-students" style="margin-top:12px; max-height:300px; overflow-y:auto;"></div>
+        <button class="btn-cancel" onclick="window.closeAllModals()">إغلاق</button>
+    </div>
+</div>
+
+<!-- مودال عرض الأعضاء -->
+<div id="view-members-modal" class="modal-overlay" onclick="window.closeAllModals()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 id="view-group-title">قائمة التلاميذ</h3>
+        <div id="members-area" style="max-height:400px; overflow-y:auto;"></div>
+        <button class="btn-cancel" onclick="window.closeAllModals()">إغلاق</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+        authDomain: "molakasati.firebaseapp.com",
+        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+        projectId: "molakasati",
+        storageBucket: "molakasati.firebasestorage.app",
+        messagingSenderId: "981780224226",
+        appId: "1:981780224226:web:6565de586fffa9f33326bb",
+        measurementId: "G-H52ZV49J1C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let localGroupsArray = [];
+    let localStudentsArray = [];
+    let localTeachersArray = [];
+    let showEndTime = false;
+    const DAYS = ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
+
+    window.closeAllModals = function() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    };
+
+    window.toggleEndTimeColumns = function() {
+        showEndTime = document.getElementById('toggle-endtime').checked;
+        document.getElementById('endtime-header-col').style.display = showEndTime ? '' : 'none';
+        document.getElementById('time-header').className = 'schedule-time-header' + (showEndTime ? ' has-endtime' : '');
+
+        document.querySelectorAll('#schedule-rows .schedule-row').forEach(row => {
+            const endInput = row.querySelector('.end-time');
+            if (endInput) endInput.style.display = showEndTime ? '' : 'none';
+            row.className = 'schedule-row' + (showEndTime ? ' has-endtime' : '');
+        });
+    };
+
+    window.addScheduleRow = function(day = "", time = "", endTime = "") {
+        const container = document.getElementById('schedule-rows');
+        const div = document.createElement('div');
+        div.className = 'schedule-row' + (showEndTime ? ' has-endtime' : '');
+
+        let dayOptions = `<option value="">اليوم</option>` + DAYS.map(d => `<option ${d === day ? 'selected' : ''}>${d}</option>`).join('');
+
+        div.innerHTML = `
+            <select>${dayOptions}</select>
+            <input type="time" value="${time}">
+            <input type="time" class="end-time" value="${endTime}" style="display:${showEndTime ? '' : 'none'}">
+            <button class="btn-remove-row" onclick="window.removeScheduleRow(this)">✕</button>
+        `;
+        container.appendChild(div);
+    };
+
+    window.removeScheduleRow = function(btn) {
+        const container = document.getElementById('schedule-rows');
+        if (container.children.length <= 1) { alert("يجب الإبقاء على يوم واحد على الأقل!"); return; }
+        btn.closest('.schedule-row').remove();
+    };
+
+    async function loadAllData() {
+        try {
+            // جلب الأفواج
+            const groupsSnap = await getDocs(collection(db, "groups"));
+            localGroupsArray = [];
+            groupsSnap.forEach(doc => localGroupsArray.push({ id: doc.id, ...doc.data() }));
+
+            // جلب التلاميذ
+            const studentsSnap = await getDocs(collection(db, "students"));
+            localStudentsArray = [];
+            studentsSnap.forEach(doc => localStudentsArray.push({ id: doc.id, ...doc.data() }));
+
+            // جلب الأساتذة لربطهم بالأفواج
+            const teachersSnap = await getDocs(collection(db, "teachers"));
+            localTeachersArray = [];
+            teachersSnap.forEach(doc => localTeachersArray.push({ id: doc.id, ...doc.data() }));
+
+            // تحديث القائمة المنسدلة للأساتذة في المودال
+            const teacherSelect = document.getElementById('g-teacher');
+            teacherSelect.innerHTML = `<option value="">-- اختر أستاذ الفوج --</option>` + 
+                localTeachersArray.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+
+            window.renderMain();
+        } catch (error) {
+            console.error(error);
+            document.getElementById("groups-list").innerHTML = `<div class="loading" style="color:var(--red);">فشل جلب البيانات الحية من الخادم.</div>`;
+        }
+    }
+
+    window.renderMain = function() {
+        const container = document.getElementById('groups-list');
+        let linkedCount = 0;
+
+        if (!localGroupsArray.length) {
+            container.innerHTML = `<div class="empty-state"><div class="icon">📂</div><p>لا توجد أفواج بعد.<br>اضغط + لإضافة فوج جديد</p></div>`;
+            document.getElementById('total-groups-count').innerText = "0";
+            document.getElementById('total-linked-students').innerText = "0";
+            return;
+        }
+
+        container.innerHTML = localGroupsArray.map(g => {
+            const members = localStudentsArray.filter(s => s.group === g.name);
+            linkedCount += members.length;
+
+            const schedule = g.schedule || [];
+            const scheduleHTML = `<div class="schedule-tags">` + schedule.map(s => {
+                return `<span class="schedule-tag">📅 ${s.day} 🕐 ${s.time}${s.endTime ? `<span class="end-sep">→</span><span class="end-t">${s.endTime}</span>` : ''}</span>`;
+            }).join('') + `</div>`;
+
+            return `
+            <div class="group-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <h3 class="group-title">📖 ${g.name}</h3>
+                    <span class="sessions-badge">${g.sessionsCount || 4} حصص</span>
+                </div>
+                <div class="group-teacher">
+                    <i class="fas fa-user-tie"></i> الأستاذ: <span>${g.teacherName || 'غير محدد'}</span>
+                </div>
+                ${scheduleHTML}
+                <div class="group-info-grid">
+                    <div class="info-item">💰 <span>${Number(g.price || 0).toLocaleString()}</span> دج</div>
+                    <div class="info-item">👥 <span>${members.length}</span> تلاميذ</div>
+                </div>
+                <div class="action-grid">
+                    <button class="btn-icon btn-view" onclick="window.renderMembers('${g.name}')" title="عرض التلاميذ"><i class="fas fa-list"></i></button>
+                    <button class="btn-icon btn-link" onclick="window.openLinkModal('${g.name}')" title="ربط تلميذ"><i class="fas fa-plus"></i></button>
+                    <button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-del"  onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>`;
+        }).join("");
+
+        document.getElementById('total-groups-count').innerText = localGroupsArray.length;
+        document.getElementById('total-linked-students').innerText = linkedCount;
+    };
+
+    window.openGroupModal = function(id = null) {
+        showEndTime = false;
+        document.getElementById('toggle-endtime').checked = false;
+        document.getElementById('endtime-header-col').style.display = 'none';
+        document.getElementById('time-header').className = 'schedule-time-header';
+        document.getElementById('group-modal').style.display = 'flex';
+        document.getElementById('schedule-rows').innerHTML = '';
+
+        if (id) {
+            const g = localGroupsArray.find(x => x.id === id);
+            document.getElementById('modal-title').innerText = "تعديل الفوج";
+            document.getElementById('edit-id').value = g.id;
+            document.getElementById('g-name').value = g.name;
+            document.getElementById('g-teacher').value = g.teacherName || "";
+            document.getElementById('g-price').value = g.price;
+            document.getElementById('g-sessions').value = g.sessionsCount || 4;
+
+            const sched = g.schedule || [];
+            if (sched.some(s => s.endTime)) {
+                showEndTime = true;
+                document.getElementById('toggle-endtime').checked = true;
+                document.getElementById('endtime-header-col').style.display = '';
+                document.getElementById('time-header').className = 'schedule-time-header has-endtime';
+            }
+            sched.forEach(s => window.addScheduleRow(s.day, s.time, s.endTime || ""));
+        } else {
+            document.getElementById('modal-title').innerText = "إضافة فوج جديد";
+            document.getElementById('edit-id').value = "";
+            document.getElementById('g-name').value = "";
+            document.getElementById('g-teacher').value = "";
+            document.getElementById('g-price').value = "";
+            document.getElementById('g-sessions').value = "4";
+            window.addScheduleRow();
+        }
+    };
+
+    window.saveGroup = function() {
+        const name = document.getElementById('g-name').value.trim();
+        const teacherName = document.getElementById('g-teacher').value;
+        const price = document.getElementById('g-price').value;
+        const sessionsCount = Number(document.getElementById('g-sessions').value);
+        const editId = document.getElementById('edit-id').value;
+        const saveGroupBtn = document.getElementById('saveGroupBtn');
+
+        const schedule = [];
+        document.querySelectorAll('#schedule-rows .schedule-row').forEach(row => {
+            const day = row.querySelector('select').value;
+            const time = row.querySelector('input[type="time"]:not(.end-time)').value;
+            const endVal = row.querySelector('.end-time').value;
+            if (day && time) schedule.push({ day, time, endTime: showEndTime ? endVal : "" });
+        });
+
+        if (!name || !price) { alert("الرجاء إدخال اسم الفوج والسعر!"); return; }
+        if (!teacherName) { alert("الرجاء اختيار الأستاذ المسؤول عن الفوج!"); return; }
+        if (schedule.length === 0) { alert("الرجاء إضافة يوم ووقت واحد على الأقل!"); return; }
+
+        saveGroupBtn.disabled = true;
+        
+        if (editId) {
+            const oldG = localGroupsArray.find(g => g.id === editId);
+            updateDoc(doc(db, "groups", editId), { name, teacherName, price, sessionsCount, schedule }).then(async () => {
+                if (oldG && oldG.name !== name) {
+                    for (let s of localStudentsArray) {
+                        if (s.group === oldG.name) {
+                            await updateDoc(doc(db, "students", s.id), { group: name });
+                        }
+                    }
+                }
+                window.closeAllModals(); loadAllData();
+            }).finally(() => saveGroupBtn.disabled = false);
+        } else {
+            if (localGroupsArray.some(g => g.name === name)) { alert("اسم الفوج موجود مسبقاً!"); saveGroupBtn.disabled = false; return; }
+            addDoc(collection(db, "groups"), { name, teacherName, price, sessionsCount, schedule }).then(() => {
+                window.closeAllModals(); loadAllData();
+            }).finally(() => saveGroupBtn.disabled = false);
+        }
+    };
+
+    window.deleteGroup = function(id) {
+        const target = localGroupsArray.find(g => g.id === id);
+        if (!confirm(`هل أنت متأكد من حذف "${target.name}"؟`)) return;
+
+        deleteDoc(doc(db, "groups", id)).then(async () => {
+            for (let s of localStudentsArray) {
+                if (s.group === target.name) {
+                    await updateDoc(doc(db, "students", s.id), { group: "غير محدد" });
+                }
+            }
+            loadAllData();
+        });
+    };
+
+    window.openLinkModal = function(groupName) {
+        document.getElementById('target-group-name').value = groupName;
+        document.getElementById('search-student').value = "";
+        document.getElementById('link-student-modal').style.display = 'flex';
+        window.renderAvailableStudents();
+    };
+
+    window.renderAvailableStudents = function() {
+        const groupName = document.getElementById('target-group-name').value;
+        const term = document.getElementById('search-student').value.toLowerCase().trim();
+        const container = document.getElementById('available-students');
+
+        let filtered = localStudentsArray;
+        if (term) filtered = localStudentsArray.filter(s => s.name && s.name.toLowerCase().includes(term));
+
+        container.innerHTML = filtered.length ? filtered.map(s => {
+            const inGroup = s.group === groupName;
+            return `<div class="student-row">
+                <span style="font-weight:600;">${s.name} ${inGroup ? '<span style="color:var(--green);font-size:0.8em;">✓ مضاف</span>' : ''}</span>
+                <button class="badge ${inGroup ? 'bg-red' : 'bg-blue'}" onclick="window.linkToGroup('${s.id}', '${inGroup ? 'غير محدد' : groupName}')">
+                    ${inGroup ? 'إلغاء' : 'إضافة'}
+                </button>
+            </div>`;
+        }).join("") : "<p style='text-align:center;color:var(--slate);padding:24px;'>لا يوجد تلاميذ متطابقين</p>";
+    };
+
+    window.linkToGroup = function(stId, groupName) {
+        updateDoc(doc(db, "students", stId), { group: groupName }).then(() => {
+            const student = localStudentsArray.find(x => x.id === stId);
+            if (student) student.group = groupName;
+            window.renderAvailableStudents();
+            window.renderMain();
+        });
+    };
+
+    window.renderMembers = function(groupName) {
+        const members = localStudentsArray.filter(s => s.group === groupName);
+        document.getElementById('view-group-title').innerText = `👥 تلاميذ ${groupName}`;
+        document.getElementById('members-area').innerHTML = members.length ? members.map(s => `
+            <div class="student-row">
+                <b style="font-weight:700;">${s.name}</b>
+                <button class="btn-icon btn-del" onclick="window.removeFromGroup('${s.id}','${groupName}')" style="padding:8px;"><i class="fas fa-user-minus"></i></button>
+            </div>`).join("") : "<p style='text-align:center;padding:24px;color:var(--slate);'>لا يوجد تلاميذ في هذا الفوج حالياً.</p>";
+        document.getElementById('view-members-modal').style.display = 'flex';
+    };
+
+    window.removeFromGroup = function(stId, groupName) {
+        if (!confirm("إزالة التلميذ من هذا الفوج؟")) return;
+        updateDoc(doc(db, "students", stId), { group: "غير محدد" }).then(() => {
+            const student = localStudentsArray.find(x => x.id === stId);
+            if (student) student.group = "غير محدد";
+            window.renderMembers(groupName);
+            window.renderMain();
+        });
+    };
+
+    loadAllData();
+</script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة رواتب الأساتذة والأرشيف - كناشي Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #f8fafc; --white: #ffffff; --blue: #2563eb;
+            --red: #ef4444; --green: #22c55e; --orange: #f59e0b;
+            --slate: #64748b; --dark: #0f172a; --radius: 18px;
+        }
+
+        * { box-sizing: border-box; margin:0; padding:0; }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg); padding: 15px;
+            color: var(--dark); line-height: 1.5;
+        }
+
+        .app-wrapper { max-width: 520px; margin: 0 auto; padding-bottom: 40px; }
+
+        /* ===== PAYDAY BANNER ===== */
+        .payday-banner {
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .payday-banner.active {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border: 2px solid #86efac;
+            color: #15803d;
+        }
+        .payday-banner.locked {
+            background: linear-gradient(135deg, #fef9c3, #fef3c7);
+            border: 2px solid #fde68a;
+            color: #92400e;
+        }
+        .payday-banner .icon { font-size: 1.5rem; flex-shrink: 0; }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px; padding: 18px 20px;
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+            border-right: 5px solid var(--orange);
+        }
+        .page-header h2 { margin: 0; font-size: 1.2rem; font-weight: 900; }
+
+        .analysis-section {
+            background: var(--white); padding: 20px; border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f7;
+            margin-bottom: 20px;
+        }
+        .analysis-section h3 {
+            margin: 0 0 16px 0; font-size: 1rem; font-weight: 800;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* ===== TEACHER CARD ===== */
+        .teacher-pay-card {
+            border-radius: 14px; background: #f8fafc;
+            margin-bottom: 12px; border: 1px solid #edf2f7;
+            overflow: hidden;
+        }
+        .card-top {
+            padding: 14px 16px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .teacher-name-row { font-weight: 900; font-size: 1rem; }
+        .accrued-row {
+            font-size: 0.83rem; color: var(--slate); margin-top: 5px;
+            display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .accrued-chip {
+            background: #eff6ff;
+            color: var(--blue);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.78rem;
+        }
+        .accrued-chip.red { background: #fef2f2; color: var(--red); }
+        .accrued-chip.green { background: #f0fdf4; color: #15803d; }
+
+        .btn-pay {
+            background: var(--green); color: white; border: none;
+            padding: 9px 16px; border-radius: 10px;
+            font-weight: 700; font-family: 'Cairo', inherit;
+            cursor: pointer; font-size: 0.85rem;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .btn-pay:hover { background: #16a34a; }
+
+        .sessions-breakdown {
+            background: #f0fdf4;
+            border-top: 1px dashed #bbf7d0;
+            padding: 10px 16px;
+        }
+        .sessions-breakdown p {
+            font-size: 0.78rem;
+            color: #15803d;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .session-chip-list {
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .session-chip {
+            background: white;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 3px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #15803d;
+        }
+
+        /* ===== ARCHIVE ===== */
+        .archive-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; border-radius: 12px; background: #fffbf5;
+            margin-bottom: 8px; border: 1px solid #fef3c7; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .archive-item:hover { background: #fef9c3; }
+        .archive-meta { font-size: 0.8rem; color: var(--slate); display: block; margin-top: 2px; }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,23,42,0.75); backdrop-filter: blur(6px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--white); padding: 26px; width: 92%; max-width: 420px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25); border-radius: 24px;
+        }
+        .inp {
+            width: 100%; padding: 12px 14px; margin-bottom: 12px;
+            border: 2px solid #e2e8f0; border-radius: 12px;
+            font-family: 'Cairo', sans-serif; font-size: 1rem;
+        }
+        .inp:focus { outline: none; border-color: var(--blue); }
+
+        /* ===== RECEIPT ===== */
+        .receipt-container {
+            background: #ffffff; border: 2px dashed #cbd5e1; padding: 20px;
+            border-radius: 12px; position: relative; user-select: none;
+        }
+        .receipt-header {
+            text-align: center; border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 10px; margin-bottom: 14px;
+        }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .receipt-total {
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 8px; margin-top: 10px; font-weight: 900;
+        }
+        .receipt-watermark {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 2rem; font-weight: 900;
+            color: rgba(34,197,94,0.12); white-space: nowrap; pointer-events: none;
+        }
+
+        .btn-main {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: var(--blue); color: white; font-weight: 800;
+            cursor: pointer; margin-top: 15px;
+            font-family: 'Cairo', sans-serif;
+        }
+        .btn-cancel {
+            width: 100%; background: none; border: none; margin-top: 10px;
+            color: var(--slate); padding: 8px; cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+        .loading { text-align: center; padding: 30px; color: var(--slate); font-weight: 600; }
+
+        /* zero-sessions notice */
+        .no-sessions-notice {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            color: var(--slate);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px dashed #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+    <div class="page-header">
+        <span style="font-size:1.5rem;">💸</span>
+        <h2>مستحقات وأرشيف رواتب الأساتذة</h2>
+    </div>
+
+    <!-- Payday Banner -->
+    <div id="payday-banner" class="payday-banner locked">
+        <span class="icon">🔒</span>
+        <div id="payday-msg">جاري تحديد وضع الصرف...</div>
+    </div>
+
+    <!-- Pending Salaries -->
+    <div class="analysis-section">
+        <h3>
+            <i class="fas fa-hourglass-half" style="color: var(--orange);"></i>
+            مستحقات معلقة (محسوبة من الحصص الفعلية)
+        </h3>
+        <div id="pending-salaries-list">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري مراجعة سجل الحصص...</div>
+        </div>
+    </div>
+
+    <!-- Archive -->
+    <div class="analysis-section">
+        <h3>
+            <i class="fas fa-archive" style="color: var(--blue);"></i>
+            أرشيف الدفعات والوصولات الرقمية
+        </h3>
+        <div id="payment-archive-list">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري تحميل الأرشيف...</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- PAY MODAL -->
+<div id="pay-modal" class="modal-overlay" onclick="window.closePayModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 style="margin-top:0; font-weight:800; color: var(--green);">تأكيد صرف راتب</h3>
+        <input type="hidden" id="pay-teacher-name">
+        <p style="margin-bottom:12px;">الأستاذ: <strong id="modal-teacher-display">...</strong></p>
+        <p style="font-size:0.82rem; color:var(--slate); margin-bottom:8px;">المبلغ المقترح بناءً على الحصص المسجّلة:</p>
+        <input type="number" id="pay-amount-input" class="inp" placeholder="المبلغ (دج)">
+        <button class="btn-main" style="background: var(--green);" id="confirmPayBtn" onclick="window.executePayment()">
+            ✅ تأكيد وتسجيل في الأرشيف
+        </button>
+        <button class="btn-cancel" onclick="window.closePayModal()">إلغاء</button>
+    </div>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div id="receipt-modal" class="modal-overlay" onclick="window.closeReceiptModal()">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:380px;">
+        <div class="receipt-container" id="receipt-view">
+            <div class="receipt-watermark">كناشي PRO - مَدفُوع</div>
+            <div class="receipt-header">
+                <h4 style="margin:0;">مركز الدعم والتعليم الخصوصي</h4>
+                <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--slate);">وصل صرف مستحقات ماليّة</p>
+            </div>
+            <div class="receipt-row"><span>الرقم التسلسلي:</span><strong id="rcpt-id">#00000</strong></div>
+            <div class="receipt-row"><span>اسم الأستاذ:</span><strong id="rcpt-name">...</strong></div>
+            <div class="receipt-row"><span>تاريخ العملية:</span><span id="rcpt-date">...</span></div>
+            <div class="receipt-row"><span>وقت الدفع:</span><span id="rcpt-time">...</span></div>
+            <div class="receipt-row"><span>عدد الحصص المحتسبة:</span><span id="rcpt-sessions">-</span></div>
+            <div class="receipt-total receipt-row"><span>المبلغ الصافي:</span><span id="rcpt-amount">0 دج</span></div>
+        </div>
+        <p style="font-size:0.75rem; color:var(--red); text-align:center; margin:10px 0 0 0;">
+            <i class="fas fa-lock"></i> هذا الوصل مرجعي للنظام فقط.
+        </p>
+        <button class="btn-main" onclick="window.closeReceiptModal()">إغلاق الوصل</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+        getFirestore, collection, addDoc, getDocs, query, where
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+        authDomain: "molakasati.firebaseapp.com",
+        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+        projectId: "molakasati",
+        storageBucket: "molakasati.firebasestorage.app",
+        messagingSenderId: "981780224226",
+        appId: "1:981780224226:web:6565de586fffa9f33326bb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let localArchiveArray = [];
+
+    // ==============================
+    // PAYDAY CHECK
+    // ==============================
+    function isPayday() {
+        return new Date().getDate() >= 25;
+    }
+
+    function renderPaydayBanner() {
+        const banner = document.getElementById('payday-banner');
+        const msg = document.getElementById('payday-msg');
+        if (isPayday()) {
+            banner.className = 'payday-banner active';
+            msg.innerHTML = `<b>✅ اليوم يوم الصرف!</b> يمكنك الآن صرف مستحقات الأساتذة.`;
+        } else {
+            const daysLeft = 25 - new Date().getDate();
+            banner.className = 'payday-banner locked';
+            msg.innerHTML = `🔒 <b>وقت الصرف بعد ${daysLeft} يوم</b> (الدفع يُفتح من اليوم الـ 25 من كل شهر).`;
+        }
+    }
+
+    // ==============================
+    // MAIN LOAD
+    // ==============================
+    async function loadSalariesAndArchive() {
+        renderPaydayBanner();
+
+        try {
+            const [groupsSnap, studentsSnap, sessionsSnap, paymentsSnap] = await Promise.all([
+                getDocs(collection(db, "groups")).catch(() => null),
+                getDocs(collection(db, "students")).catch(() => null),
+                getDocs(query(collection(db, "sessions"), where("status", "==", "done"))).catch(() => null),
+                getDocs(collection(db, "salary_payments")).catch(() => null)
+            ]);
+
+            // Parse groups
+            const groups = [];
+            if (groupsSnap) groupsSnap.forEach(d => groups.push({ id: d.id, ...d.data() }));
+
+            // Parse students
+            const students = [];
+            if (studentsSnap) studentsSnap.forEach(d => students.push(d.data()));
+
+            // Parse completed sessions → build teacher accrued map
+            // teacherAccruedMap[teacherName] = { total: number, sessions: [{date, groupName, amount}] }
+            const teacherAccruedMap = {};
+
+            if (sessionsSnap) {
+                sessionsSnap.forEach(d => {
+                    const s = d.data();
+                    if (!s.teacherName || !s.groupName) return;
+
+                    const amount = Number(s.teacherShare || 0);
+                    if (!teacherAccruedMap[s.teacherName]) {
+                        teacherAccruedMap[s.teacherName] = { total: 0, sessions: [] };
+                    }
+                    teacherAccruedMap[s.teacherName].total += amount;
+                    teacherAccruedMap[s.teacherName].sessions.push({
+                        date: s.date || '',
+                        groupName: s.groupName,
+                        amount
+                    });
+                });
+            }
+
+            // Parse archive & deduct paid amounts
+            localArchiveArray = [];
+            if (paymentsSnap) {
+                paymentsSnap.forEach(d => {
+                    const data = d.data();
+                    localArchiveArray.push({
+                        id: d.id,
+                        teacherName: data.teacherName || 'غير معروف',
+                        amount: Number(data.amount || 0),
+                        date: data.date || '',
+                        time: data.time || '',
+                        sessionsCount: data.sessionsCount || 0,
+                        timestamp: data.timestamp || new Date().toISOString()
+                    });
+                });
+            }
+            localArchiveArray.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            // Deduct already paid
+            localArchiveArray.forEach(p => {
+                if (teacherAccruedMap[p.teacherName]) {
+                    teacherAccruedMap[p.teacherName].total -= p.amount;
+                }
+            });
+
+            renderPendingList(teacherAccruedMap);
+            renderArchiveList();
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('pending-salaries-list').innerHTML =
+                `<p style='color:var(--red);text-align:center;'>فشل معالجة البيانات. تحقق من الاتصال.</p>`;
+        }
+    }
+
+    // ==============================
+    // RENDER PENDING
+    // ==============================
+    function renderPendingList(map) {
+        const container = document.getElementById('pending-salaries-list');
+        const entries = Object.entries(map);
+
+        if (!entries.length) {
+            container.innerHTML = `<div class="no-sessions-notice">
+                📭 لا توجد حصص مسجّلة بعد.<br>
+                <small>سجّل الحصص أولاً من صفحة <a href="sessions.html">تسجيل الحصص</a></small>
+            </div>`;
+            return;
+        }
+
+        container.innerHTML = entries.map(([name, data]) => {
+            const balance = Math.max(0, Math.round(data.total));
+            const sessionsCount = data.sessions.length;
+
+            // Recent 3 sessions chips
+            const recentSessions = data.sessions.slice(-3).reverse();
+
+            return `
+            <div class="teacher-pay-card">
+                <div class="card-top">
+                    <div>
+                        <div class="teacher-name-row">👨‍🏫 ${name}</div>
+                        <div class="accrued-row">
+                            <span class="accrued-chip">📚 ${sessionsCount} حصة مكتملة</span>
+                            <span class="accrued-chip ${balance > 0 ? 'red' : 'green'}">
+                                ${balance > 0 ? `💰 ${balance} دج مستحق` : '✅ مُسوّى'}
+                            </span>
+                        </div>
+                    </div>
+                    ${balance > 0 ? (isPayday()
+                        ? `<button class="btn-pay" onclick="window.openPayModal('${name}', ${balance}, ${sessionsCount})">
+                               <i class="fas fa-hand-holding-dollar"></i> صرف
+                           </button>`
+                        : `<span style="font-size:0.75rem;color:var(--orange);font-weight:700;text-align:center;max-width:80px;">
+                               ⏳ انتظر<br>يوم 25
+                           </span>`
+                    ) : ''}
+                </div>
+
+                ${recentSessions.length > 0 ? `
+                <div class="sessions-breakdown">
+                    <p>📋 آخر الحصص المسجّلة:</p>
+                    <div class="session-chip-list">
+                        ${recentSessions.map(s =>
+                            `<span class="session-chip">${s.date} · ${s.groupName} · ${s.amount} دج</span>`
+                        ).join('')}
+                        ${sessionsCount > 3 ? `<span class="session-chip" style="background:#f1f5f9;color:var(--slate);">+${sessionsCount-3} أخرى</span>` : ''}
+                    </div>
+                </div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    // ==============================
+    // RENDER ARCHIVE
+    // ==============================
+    function renderArchiveList() {
+        const container = document.getElementById('payment-archive-list');
+        if (!localArchiveArray.length) {
+            container.innerHTML = `<p style="text-align:center;color:var(--slate);font-size:0.9rem;">
+                السجل فارغ. لم يتم تسجيل أي عمليات دفع بعد.
+            </p>`;
+            return;
+        }
+
+        container.innerHTML = localArchiveArray.map(p => `
+            <div class="archive-item" onclick="window.viewReceipt('${p.id}')">
+                <div>
+                    <strong>استلام الأستاذ: ${p.teacherName}</strong>
+                    <span class="archive-meta">🗓️ ${p.date} · 🕐 ${p.time}</span>
+                </div>
+                <strong style="color:var(--green); font-size:1.05rem;">+${p.amount} دج</strong>
+            </div>
+        `).join('');
+    }
+
+    // ==============================
+    // MODAL CONTROLS
+    // ==============================
+    let currentSessionsCount = 0;
+
+    window.closePayModal = () => { document.getElementById('pay-modal').style.display = 'none'; };
+    window.closeReceiptModal = () => { document.getElementById('receipt-modal').style.display = 'none'; };
+
+    window.openPayModal = function(name, suggestedAmount, sessionsCount) {
+        currentSessionsCount = sessionsCount;
+        document.getElementById('pay-teacher-name').value = name;
+        document.getElementById('modal-teacher-display').innerText = name;
+        document.getElementById('pay-amount-input').value = suggestedAmount;
+        document.getElementById('pay-modal').style.display = 'flex';
+    };
+
+    window.executePayment = async function() {
+        const name = document.getElementById('pay-teacher-name').value;
+        const amount = Number(document.getElementById('pay-amount-input').value);
+        const btn = document.getElementById('confirmPayBtn');
+
+        if (!amount || amount <= 0) { alert("أدخل مبلغ صرف صحيح!"); return; }
+
+        btn.disabled = true;
+        try {
+            const now = new Date();
+            await addDoc(collection(db, "salary_payments"), {
+                teacherName: name,
+                amount,
+                sessionsCount: currentSessionsCount,
+                date: now.toLocaleDateString('ar-DZ'),
+                time: now.toLocaleTimeString('ar-DZ'),
+                timestamp: now.toISOString()
+            });
+
+            window.closePayModal();
+            await loadSalariesAndArchive();
+
+        } catch (e) {
+            console.error(e);
+            alert("فشل الاتصال بخادم Firebase المالي.");
+        } finally {
+            btn.disabled = false;
+        }
+    };
+
+    window.viewReceipt = function(paymentId) {
+        const p = localArchiveArray.find(x => x.id === paymentId);
+        if (!p) return;
+
+        document.getElementById('rcpt-id').innerText = '#' + p.id.substr(0, 7).toUpperCase();
+        document.getElementById('rcpt-name').innerText = p.teacherName;
+        document.getElementById('rcpt-date').innerText = p.date || 'غير محدد';
+        document.getElementById('rcpt-time').innerText = p.time || 'غير محدد';
+        document.getElementById('rcpt-sessions').innerText = p.sessionsCount ? `${p.sessionsCount} حصة` : '-';
+        document.getElementById('rcpt-amount').innerText = p.amount + ' دج';
+
+        document.getElementById('receipt-modal').style.display = 'flex';
+    };
+
+    loadSalariesAndArchive();
+</script>
+</body>
+</html>

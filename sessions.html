@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تسجيل الحصص اليومية - كناشي Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #f0f4ff;
+            --white: #ffffff;
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --red: #ef4444;
+            --red-light: #fef2f2;
+            --green: #16a34a;
+            --green-light: #f0fdf4;
+            --orange: #f59e0b;
+            --orange-light: #fffbeb;
+            --slate: #64748b;
+            --dark: #0f172a;
+            --radius: 18px;
+            --shadow: 0 4px 20px rgba(37,99,235,0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 0 0 60px 0;
+        }
+
+        /* ====== HEADER ====== */
+        .top-bar {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%);
+            padding: 22px 20px 70px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .top-bar::before {
+            content: '';
+            position: absolute;
+            width: 220px; height: 220px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+            top: -80px; left: -50px;
+        }
+        .top-bar::after {
+            content: '';
+            position: absolute;
+            width: 140px; height: 140px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            bottom: -40px; right: 30px;
+        }
+        .top-bar h1 {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 900;
+            position: relative; z-index: 1;
+        }
+        .top-bar p {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            position: relative; z-index: 1;
+        }
+
+        /* Date Selector floating card */
+        .date-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(37,99,235,0.15);
+            padding: 18px 20px;
+            margin: -45px 15px 0 15px;
+            position: relative; z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .date-card label {
+            font-size: 0.85rem;
+            color: var(--slate);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .date-card input[type="date"] {
+            flex: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark);
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8fafc;
+        }
+        .date-card input[type="date"]:focus { border-color: var(--blue); background: white; }
+        .date-icon { font-size: 1.6rem; }
+
+        /* ====== MAIN CONTENT ====== */
+        .main { padding: 20px 15px; }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--slate);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to left, transparent, #e2e8f0);
+            border-radius: 2px;
+        }
+
+        /* ====== SESSION CARD ====== */
+        .session-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 14px;
+            border: 2px solid transparent;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .session-card.status-done { border-color: #bbf7d0; background: #f0fdf4; }
+        .session-card.status-absent { border-color: #fecaca; background: #fef2f2; }
+
+        .session-card-header {
+            padding: 16px 18px 12px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .group-avatar {
+            width: 46px; height: 46px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .session-info { flex: 1; }
+        .session-info .group-name {
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--dark);
+        }
+        .session-info .teacher-name {
+            font-size: 0.82rem;
+            color: var(--slate);
+            margin-top: 2px;
+        }
+        .session-info .session-meta {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+        .meta-badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        .meta-badge.time { background: #fef9c3; color: #854d0e; }
+        .meta-badge.students { background: #f3e8ff; color: #7e22ce; }
+
+        .session-status-badge {
+            font-size: 0.78rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .status-done .session-status-badge { background: #bbf7d0; color: var(--green); }
+        .status-absent .session-status-badge { background: #fecaca; color: var(--red); }
+        .status-pending .session-status-badge { background: #fef3c7; color: #92400e; }
+
+        /* Action buttons */
+        .session-actions {
+            padding: 0 18px 16px 18px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-action {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-present {
+            background: var(--green);
+            color: white;
+        }
+        .btn-present:hover { background: #15803d; transform: translateY(-1px); }
+        .btn-absent {
+            background: var(--red-light);
+            color: var(--red);
+            border: 2px solid #fecaca;
+        }
+        .btn-absent:hover { background: #fee2e2; transform: translateY(-1px); }
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Salary preview inside card */
+        .salary-preview {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            margin: 0 18px 16px 18px;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px dashed #86efac;
+        }
+        .salary-preview span { font-size: 0.8rem; color: var(--green); font-weight: 700; }
+        .salary-preview strong { font-size: 1rem; color: var(--green); }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--slate);
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+        .empty-state p { font-size: 0.95rem; font-weight: 600; }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--slate);
+            font-weight: 700;
+        }
+        .spinner { animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .stat-item .num {
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+        .stat-item .lbl {
+            font-size: 0.72rem;
+            color: var(--slate);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .stat-item.total .num { color: var(--blue); }
+        .stat-item.done .num { color: var(--green); }
+        .stat-item.absent .num { color: var(--red); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--dark);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: var(--green); }
+        .toast.error { background: var(--red); }
+
+        /* Undo button inside session */
+        .btn-undo {
+            width: 100%;
+            margin: 0 18px 14px 18px;
+            width: calc(100% - 36px);
+            padding: 9px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--slate);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-undo:hover { background: #f8fafc; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h1>📚 تسجيل حصص اليوم</h1>
+    <p>راقب حضور الأساتذة وسجّل الحصص المكتملة</p>
+</div>
+
+<div class="date-card">
+    <span class="date-icon">📅</span>
+    <label>تاريخ الجلسة:</label>
+    <input type="date" id="session-date" onchange="loadSessionsForDate()">
+</div>
+
+<div class="main">
+    <div class="stats-bar" id="stats-bar" style="display:none;">
+        <div class="stat-item total">
+            <div class="num" id="stat-total">0</div>
+            <div class="lbl">إجمالي الحصص</div>
+        </div>
+        <div class="stat-item done">
+            <div class="num" id="stat-done">0</div>
+            <div class="lbl">مكتملة ✅</div>
+        </div>
+        <div class="stat-item absent">
+            <div class="num" id="stat-absent">0</div>
+            <div class="lbl">غياب الأستاذ ❌</div>
+        </div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-clipboard-list"></i> الحصص المجدولة</div>
+
+    <div id="sessions-container">
+        <div class="loading"><span class="spinner">⏳</span> جاري تحميل الأفواج...</div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+        getFirestore, collection, addDoc, getDocs,
+        query, where, deleteDoc, doc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+        authDomain: "molakasati.firebaseapp.com",
+        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+        projectId: "molakasati",
+        storageBucket: "molakasati.firebasestorage.app",
+        messagingSenderId: "981780224226",
+        appId: "1:981780224226:web:6565de586fffa9f33326bb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- Day mapping ---
+    const DAY_NAMES_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+    let allGroups = [];
+    let allStudents = [];
+    let todaySessionDocs = {}; // groupName -> { id, status }
+
+    // Set today's date by default
+    const dateInput = document.getElementById('session-date');
+    const now = new Date();
+    dateInput.value = now.toISOString().split('T')[0];
+
+    window.loadSessionsForDate = async function() {
+        const selectedDate = dateInput.value;
+        if (!selectedDate) return;
+
+        document.getElementById('sessions-container').innerHTML =
+            `<div class="loading"><span class="spinner">⏳</span> جاري تحميل الأفواج...</div>`;
+        document.getElementById('stats-bar').style.display = 'none';
+
+        try {
+            // Load groups & students (only once ideally)
+            const [groupsSnap, studentsSnap] = await Promise.all([
+                getDocs(collection(db, "groups")),
+                getDocs(collection(db, "students"))
+            ]);
+
+            allGroups = [];
+            groupsSnap.forEach(d => allGroups.push({ id: d.id, ...d.data() }));
+
+            allStudents = [];
+            studentsSnap.forEach(d => allStudents.push(d.data()));
+
+            // Load sessions already recorded for this date
+            const sessionsSnap = await getDocs(
+                query(collection(db, "sessions"), where("date", "==", selectedDate))
+            );
+            todaySessionDocs = {};
+            sessionsSnap.forEach(d => {
+                const data = d.data();
+                todaySessionDocs[data.groupName] = { docId: d.id, status: data.status };
+            });
+
+            // Filter groups by Arabic day name from schedule array
+            const DAY_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+            const selectedDayAr = DAY_AR[new Date(selectedDate + "T12:00:00").getDay()];
+
+            const scheduledGroups = allGroups.filter(g => {
+                if (!g.schedule || !Array.isArray(g.schedule) || g.schedule.length === 0) return false;
+                return g.schedule.some(s => s.day === selectedDayAr);
+            });
+
+            renderSessions(scheduledGroups, selectedDate, selectedDayAr);
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('sessions-container').innerHTML =
+                `<div class="empty-state"><div class="icon">❌</div><p>فشل الاتصال بقاعدة البيانات</p></div>`;
+        }
+    };
+
+    function renderSessions(groups, date, selectedDayAr) {
+        const container = document.getElementById('sessions-container');
+
+        if (!groups.length) {
+            container.innerHTML = `<div class="empty-state">
+                <div class="icon">📭</div>
+                <p>لا توجد أفواج مجدولة لهذا اليوم</p>
+            </div>`;
+            return;
+        }
+
+        let doneCount = 0, absentCount = 0;
+
+        container.innerHTML = groups.map(group => {
+            const studentsCount = allStudents.filter(s => s.group === group.name).length;
+            const sessionsPerMonth = group.sessionsCount || group.sessionsPerMonth || 4;
+            const sessionValue = (studentsCount * Number(group.price || 0)) / sessionsPerMonth;
+            const teacherShare = Math.round(sessionValue * 0.50);
+
+            // Get time for this specific day
+            const todaySchedule = (group.schedule || []).find(s => s.day === selectedDayAr);
+            const sessionTime = todaySchedule ? todaySchedule.time + (todaySchedule.endTime ? ` ← ${todaySchedule.endTime}` : '') : '';
+
+            const recorded = todaySessionDocs[group.name];
+            let statusClass = 'status-pending';
+            let statusLabel = '⏳ بانتظار التسجيل';
+
+            if (recorded) {
+                if (recorded.status === 'done') {
+                    statusClass = 'status-done';
+                    statusLabel = '✅ مكتملة';
+                    doneCount++;
+                } else if (recorded.status === 'absent') {
+                    statusClass = 'status-absent';
+                    statusLabel = '❌ الأستاذ غائب';
+                    absentCount++;
+                }
+            }
+
+            const isDone = recorded?.status === 'done';
+            const isAbsent = recorded?.status === 'absent';
+            const isRecorded = isDone || isAbsent;
+
+            return `
+            <div class="session-card ${statusClass}" id="card-${group.name.replace(/\s/g,'_')}">
+                <div class="session-card-header">
+                    <div class="group-avatar">📚</div>
+                    <div class="session-info">
+                        <div class="group-name">${group.name}</div>
+                        <div class="teacher-name"><i class="fas fa-chalkboard-teacher"></i> ${group.teacherName || 'غير محدد'}</div>
+                        <div class="session-meta">
+                            <span class="meta-badge students">👥 ${studentsCount} تلميذ</span>
+                            <span class="meta-badge time">🔁 ${sessionsPerMonth} حصة/شهر</span>
+                            ${sessionTime ? `<span class="meta-badge time">🕐 ${sessionTime}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="session-status-badge">${statusLabel}</span>
+                </div>
+
+                ${isDone ? `
+                <div class="salary-preview">
+                    <span>💰 مستحقات هذه الحصة:</span>
+                    <strong>${teacherShare} دج</strong>
+                </div>` : ''}
+
+                ${!isRecorded ? `
+                <div class="session-actions">
+                    <button class="btn-action btn-present"
+                        onclick="window.recordSession('${group.name}', '${group.teacherName || ''}', 'done', '${date}', ${teacherShare})">
+                        <i class="fas fa-check-circle"></i> الأستاذ حضر وأدّى الحصة
+                    </button>
+                    <button class="btn-action btn-absent"
+                        onclick="window.recordSession('${group.name}', '${group.teacherName || ''}', 'absent', '${date}', 0)">
+                        <i class="fas fa-times-circle"></i> غائب
+                    </button>
+                </div>` : `
+                <button class="btn-undo"
+                    onclick="window.undoSession('${group.name}', '${recorded?.docId || ''}', '${date}')">
+                    <i class="fas fa-rotate-left"></i> تراجع عن هذا التسجيل
+                </button>`}
+            </div>`;
+        }).join('');
+
+        // Update stats
+        const statsBar = document.getElementById('stats-bar');
+        statsBar.style.display = 'grid';
+        document.getElementById('stat-total').textContent = groups.length;
+        document.getElementById('stat-done').textContent = doneCount;
+        document.getElementById('stat-absent').textContent = absentCount;
+    }
+
+    window.recordSession = async function(groupName, teacherName, status, date, teacherShare) {
+        const cardId = `card-${groupName.replace(/\s/g,'_')}`;
+        const card = document.getElementById(cardId);
+        if (card) card.style.opacity = '0.5';
+
+        try {
+            const docRef = await addDoc(collection(db, "sessions"), {
+                groupName,
+                teacherName,
+                status,         // 'done' | 'absent'
+                date,
+                teacherShare,   // المبلغ الذي يستحقه الأستاذ عن هذه الحصة
+                timestamp: new Date().toISOString()
+            });
+
+            todaySessionDocs[groupName] = { docId: docRef.id, status };
+
+            showToast(
+                status === 'done' ? '✅ تم تسجيل الحصة بنجاح' : '❌ تم تسجيل غياب الأستاذ',
+                status === 'done' ? 'success' : 'error'
+            );
+
+            await loadSessionsForDate();
+
+        } catch (err) {
+            console.error(err);
+            if (card) card.style.opacity = '1';
+            showToast('⚠️ فشل الحفظ في Firebase', 'error');
+        }
+    };
+
+    window.undoSession = async function(groupName, docId, date) {
+        if (!docId) return;
+        if (!confirm('هل تريد حذف هذا التسجيل؟')) return;
+
+        try {
+            await deleteDoc(doc(db, "sessions", docId));
+            delete todaySessionDocs[groupName];
+            showToast('↩️ تم التراجع عن التسجيل', '');
+            await loadSessionsForDate();
+        } catch (err) {
+            console.error(err);
+            showToast('⚠️ فشل الحذف', 'error');
+        }
+    };
+
+    function showToast(msg, type = '') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `toast ${type} show`;
+        setTimeout(() => t.className = `toast ${type}`, 2800);
+    }
+
+    // Auto-load on page open
+    loadSessionsForDate();
+</script>
+</body>
+</html>

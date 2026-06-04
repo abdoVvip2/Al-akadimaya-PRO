@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>التحليلات المالية المتقدمة - كناشي Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #f8fafc; --white: #ffffff; --blue: #2563eb;
+            --red: #ef4444; --green: #22c55e; --orange: #f59e0b;
+            --slate: #64748b; --dark: #0f172a; --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg); margin: 0; padding: 15px;
+            color: var(--dark); line-height: 1.5;
+        }
+
+        .app-wrapper { max-width: 520px; margin: 0 auto; padding-bottom: 40px; }
+
+        /* ── Header ── */
+        .page-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px; padding: 18px 20px;
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+            border-right: 5px solid var(--blue);
+        }
+        .page-header h2 { margin: 0; font-size: 1.25rem; font-weight: 900; }
+
+        /* ── Financial Cards ── */
+        .finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .fin-card {
+            background: var(--white); padding: 16px; border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f7;
+            position: relative; overflow: hidden;
+        }
+        .fin-card.full-width { grid-column: span 2; background: linear-gradient(135deg, #0f172a, #1e293b); color: var(--white); }
+        .fin-card small { display: block; color: var(--slate); font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; }
+        .fin-card.full-width small { color: #94a3b8; }
+        .fin-card b { font-size: 1.4rem; font-weight: 900; display: block; word-break: break-all; }
+        .fin-card.full-width b { font-size: 1.8rem; color: var(--green); }
+        .fin-card .icon-bg { position: absolute; left: 12px; bottom: 12px; font-size: 1.5rem; opacity: 0.15; }
+
+        .analysis-section {
+            background: var(--white); padding: 20px; border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #eef2f7;
+            margin-bottom: 20px;
+        }
+        .analysis-section h3 { margin: 0 0 16px 0; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        
+        /* ── Expenses Rows & Actions ── */
+        .expense-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; border-radius: 12px; background: #f8fafc;
+            margin-bottom: 8px; border: 1px solid #edf2f7;
+        }
+        .expense-info { display: flex; align-items: center; gap: 8px; }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .expense-actions { display: flex; gap: 6px; }
+        .btn-mini {
+            border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-mini-edit { background: #fff7ed; color: var(--orange); }
+        .btn-mini-del { background: #fef2f2; color: var(--red); }
+
+        /* ── Teacher Rows ── */
+        .teacher-salary-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 8px; border-bottom: 1px solid #f1f5f9;
+        }
+        .teacher-salary-row:last-child { border: none; }
+        .teacher-info { display: flex; align-items: center; gap: 10px; }
+        .teacher-avatar {
+            width: 36px; height: 36px; background: #eff6ff; color: var(--blue);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* ── Modals ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,23,42,0.75); backdrop-filter: blur(6px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--white); padding: 26px; width: 92%; max-width: 420px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25); border-radius: 24px;
+        }
+        .inp {
+            width: 100%; padding: 12px 14px; margin-bottom: 12px;
+            border: 2px solid #e2e8f0; border-radius: 12px;
+            font-size: 0.97rem; outline: none; font-family: 'Cairo', inherit;
+        }
+        .inp:focus { border-color: var(--blue); }
+        .btn-main {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: var(--blue); color: white; font-weight: 800; cursor: pointer;
+            font-size: 1.05rem; font-family: 'Cairo', inherit;
+        }
+        .btn-cancel {
+            width: 100%; background: none; border: none; margin-top: 10px;
+            color: var(--slate); cursor: pointer; font-family: 'Cairo', inherit;
+            padding: 8px; border-radius: 10px;
+        }
+
+        .btn-action-outline {
+            width: 100%; background: #f1f5f9; color: var(--dark); border: 1px dashed #cbd5e1;
+            padding: 12px; border-radius: 12px; font-weight: 700; font-family: 'Cairo', inherit;
+            cursor: pointer; text-align: center; margin-bottom: 20px;
+        }
+        .loading { text-align: center; padding: 40px; color: var(--slate); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <div class="page-header">
+        <span style="font-size:1.5rem;">📈</span>
+        <h2>التحليلات والمخططات المالية الحية</h2>
+    </div>
+
+    <div class="finance-grid">
+        <div class="fin-card full-width">
+            <small>الصافي الحقيقي للأرباح</small>
+            <b id="net-profit">0 دج</b>
+            <div class="icon-bg"><i class="fas fa-wallet"></i></div>
+        </div>
+        <div class="fin-card">
+            <small>إجمالي المداخيل</small>
+            <b id="total-revenue" style="color: var(--green);">0 دج</b>
+        </div>
+        <div class="fin-card">
+            <small>إجمالي رواتب الأساتذة</small>
+            <b id="total-teachers-payout" style="color: var(--red);">0 دج</b>
+        </div>
+    </div>
+
+    <button class="btn-action-outline" onclick="window.openExpenseModal()">
+        <i class="fas fa-plus-circle"></i> تسجيل وإدخال مصروف جديد
+    </button>
+
+    <div class="analysis-section">
+        <h3><i class="fas fa-chart-pie" style="color: var(--blue);"></i> مخطط التوزيع المالي الشامل</h3>
+        <div style="position: relative; width:100%; max-width:290px; margin:0 auto;">
+            <canvas id="financialChart"></canvas>
+        </div>
+    </div>
+
+    <div class="analysis-section">
+        <h3><i class="fas fa-receipt" style="color: var(--orange);"></i> قائمة وإدارة المصاريف التشغيلية</h3>
+        <div id="expenses-log-list">
+            <div class="loading">جاري جلب الفواتير...</div>
+        </div>
+    </div>
+
+    <div class="analysis-section">
+        <h3><i class="fas fa-user-tie" style="color: var(--slate);"></i> توزيع رواتب الأساتذة</h3>
+        <div id="teachers-salary-list">
+            <div class="loading">جاري حساب المستحقات...</div>
+        </div>
+    </div>
+</div>
+
+<div id="expense-modal" class="modal-overlay" onclick="window.closeExpenseModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 id="modal-expense-title" style="margin-top:0; font-weight:800;">تسجيل مصروف جديد</h3>
+        <input type="hidden" id="edit-expense-id">
+        
+        <label style="display:block; margin-bottom:5px; font-size:0.88rem; color:var(--slate); font-weight:700;">نوع أو اسم المصروف (اكتب يدوياً):</label>
+        <input type="text" id="exp-type" class="inp" placeholder="مثال: فاتورة كهرباء، كراء، طباعة...">
+
+        <label style="display:block; margin-bottom:5px; font-size:0.88rem; color:var(--slate); font-weight:700;">المبلغ التكليفي (دج):</label>
+        <input type="number" id="exp-amount" class="inp" placeholder="المبلغ">
+
+        <button class="btn-main" id="saveExpenseBtn" onclick="window.saveExpense()">💾 حفظ المصروف</button>
+        <button class="btn-cancel" onclick="window.closeExpenseModal()">إلغاء</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+        authDomain: "molakasati.firebaseapp.com",
+        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+        projectId: "molakasati",
+        storageBucket: "molakasati.firebasestorage.app",
+        messagingSenderId: "981780224226",
+        appId: "1:981780224226:web:6565de586fffa9f33326bb",
+        measurementId: "G-H52ZV49J1C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let chartInstance = null;
+    let localExpensesArray = [];
+
+    // دالة لتوليد لون ثابت بناءً على اسم الكلمة لضمان التناسق المرئي
+    function generateColorFromString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        let color = '#';
+        for (let i = 0; i < 3; i++) {
+            let value = (hash >> (i * 8)) & 0xFF;
+            color += ('00' + value.toString(16)).substr(-2);
+        }
+        return color;
+    }
+
+    window.openExpenseModal = function(id = null) {
+        document.getElementById('expense-modal').style.display = 'flex';
+        if (id) {
+            const exp = localExpensesArray.find(x => x.id === id);
+            document.getElementById('modal-expense-title').innerText = "تعديل بيانات المصروف";
+            document.getElementById('edit-expense-id').value = exp.id;
+            document.getElementById('exp-type').value = exp.type;
+            document.getElementById('exp-amount').value = exp.amount;
+        } else {
+            document.getElementById('modal-expense-title').innerText = "تسجيل مصروف جديد";
+            document.getElementById('edit-expense-id').value = "";
+            document.getElementById('exp-type').value = "";
+            document.getElementById('exp-amount').value = "";
+        }
+    };
+
+    window.closeExpenseModal = function() {
+        document.getElementById('expense-modal').style.display = 'none';
+    };
+
+    window.saveExpense = async function() {
+        const type = document.getElementById('exp-type').value.trim();
+        const amount = Number(document.getElementById('exp-amount').value);
+        const editId = document.getElementById('edit-expense-id').value;
+        const btn = document.getElementById('saveExpenseBtn');
+
+        if (!type || !amount || amount <= 0) { alert("الرجاء ملء الحقول بأرقام وبيانات صحيحة!"); return; }
+
+        btn.disabled = true;
+        try {
+            if (editId) {
+                await updateDoc(doc(db, "expenses", editId), { type, amount });
+            } else {
+                await addDoc(collection(db, "expenses"), { type, amount, date: new Date().toISOString() });
+            }
+            window.closeExpenseModal();
+            calculateFinancials();
+        } catch (e) {
+            console.error(e);
+        } finally {
+            btn.disabled = false;
+        }
+    };
+
+    window.deleteExpense = async function(id) {
+        if (!confirm("هل تريد حذف هذا المصروف نهائياً؟")) return;
+        await deleteDoc(doc(db, "expenses", id));
+        calculateFinancials();
+    };
+
+    async function calculateFinancials() {
+        try {
+            // 1. جلب المصاريف
+            const expensesSnap = await getDocs(collection(db, "expenses"));
+            localExpensesArray = [];
+            let totalOpExpenses = 0;
+            let dynamicOpExpensesMap = {};
+
+            expensesSnap.forEach(doc => {
+                const data = doc.data();
+                const expItem = { id: doc.id, ...data };
+                localExpensesArray.push(expItem);
+                totalOpExpenses += Number(data.amount || 0);
+                
+                dynamicOpExpensesMap[data.type] = (dynamicOpExpensesMap[data.type] || 0) + Number(data.amount || 0);
+            });
+
+            // 2. جلب الأفواج والتلاميذ
+            const groupsSnap = await getDocs(collection(db, "groups"));
+            const studentsSnap = await getDocs(collection(db, "students"));
+
+            let localGroups = [];
+            groupsSnap.forEach(doc => localGroups.push(doc.data()));
+
+            let localStudents = [];
+            studentsSnap.forEach(doc => localStudents.push(doc.data()));
+
+            let totalRevenue = 0;
+            let teacherSalariesMap = {};
+
+            localGroups.forEach(g => {
+                const membersCount = localStudents.filter(s => s.group === g.name).length;
+                const groupRevenue = membersCount * Number(g.price || 0);
+                totalRevenue += groupRevenue;
+
+                if (g.teacherName) {
+                    const estimatedSalary = groupRevenue * 0.50; // الأستاذ يتقاضى 50% كمعيار حسابي تلقائي
+                    teacherSalariesMap[g.teacherName] = (teacherSalariesMap[g.teacherName] || 0) + estimatedSalary;
+                }
+            });
+
+            let totalTeachersPayout = Object.values(teacherSalariesMap).reduce((a, b) => a + b, 0);
+            let netProfit = totalRevenue - (totalOpExpenses + totalTeachersPayout);
+
+            // تحديث البطاقات المالية بالأرقام العربية الفصحى بدون فورمات أجنبي يغير الأرقام
+            document.getElementById('total-revenue').innerText = totalRevenue + " دج";
+            document.getElementById('total-teachers-payout').innerText = totalTeachersPayout + " دج";
+            
+            const netProfitEl = document.getElementById('net-profit');
+            netProfitEl.innerText = netProfit + " دج";
+            netProfitEl.style.color = netProfit >= 0 ? "var(--green)" : "var(--red)";
+
+            // رندر السجلات وإدارة البيانات
+            renderExpensesList();
+            renderTeachersList(teacherSalariesMap);
+
+            // بناء المخطط الشامل التوزيع (يشمل الأرباح، رواتب الأساتذة، وكل مصروف تشغيلي على حدة)
+            buildComprehensiveChart(netProfit, totalTeachersPayout, dynamicOpExpensesMap);
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function renderExpensesList() {
+        const container = document.getElementById('expenses-log-list');
+        if (!localExpensesArray.length) {
+            container.innerHTML = `<p style="text-align:center;color:var(--slate);font-size:0.9rem;">لا توجد مصاريف مسجلة حالياً.</p>`;
+            return;
+        }
+        container.innerHTML = localExpensesArray.map(e => `
+            <div class="expense-item">
+                <div class="expense-info">
+                    <span class="color-dot" style="background:${generateColorFromString(e.type)}"></span>
+                    <strong>${e.type}:</strong> <span>${e.amount} دج</span>
+                </div>
+                <div class="expense-actions">
+                    <button class="btn-mini btn-mini-edit" onclick="window.openExpenseModal('${e.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn-mini btn-mini-del" onclick="window.deleteExpense('${e.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderTeachersList(salariesMap) {
+        const container = document.getElementById('teachers-salary-list');
+        const entries = Object.entries(salariesMap).sort((a,b) => b[1] - a[1]);
+        if(!entries.length) {
+            container.innerHTML = `<p style="text-align:center;color:var(--slate);font-size:0.9rem;">لا توجد مستحقات أساتذة.</p>`;
+            return;
+        }
+        container.innerHTML = entries.map(([name, val]) => `
+            <div class="teacher-salary-row">
+                <div class="teacher-info">
+                    <div class="teacher-avatar"><i class="fas fa-user-tie"></i></div>
+                    <span>${name}</span>
+                </div>
+                <strong style="color:var(--red);">${val} دج</strong>
+            </div>
+        `).join('');
+    }
+
+    function buildComprehensiveChart(netProfit, totalTeachers, opExpensesMap) {
+        const ctx = document.getElementById('financialChart').getContext('2d');
+        if (chartInstance) { chartInstance.destroy(); }
+
+        // تحضير مصفوفة البيانات ومصفوفة الألوان المخصصة لكل نوع ديناميكي
+        let labels = [];
+        let data = [];
+        let colors = [];
+
+        // 1. إضافة الأرباح الصافية (إذا كانت موجبة لتظهر بالدائرة)
+        if (netProfit > 0) {
+            labels.push("الربح الصافي الحقيقي");
+            data.push(netProfit);
+            colors.push("#22c55e"); // اللون الأخضر للأرباح
+        }
+
+        // 2. إضافة رواتب الأساتذة
+        if (totalTeachers > 0) {
+            labels.push("إجمالي رواتب الأساتذة");
+            data.push(totalTeachers);
+            colors.push("#ef4444"); // اللون الأحمر للرواتب
+        }
+
+        // 3. إضافة كل مصروف كتبه المستخدم بلونه الخاص
+        for (let [type, amount] of Object.entries(opExpensesMap)) {
+            if (amount > 0) {
+                labels.push(`مصروف: ${type}`);
+                data.push(amount);
+                colors.push(generateColorFromString(type)); // لون مخصص ومولد من الكلمة
+            }
+        }
+
+        chartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { family: 'Cairo' } } }
+                }
+            }
+        });
+    }
+
+    calculateFinancials();
+</script>
+</body>
+</html>

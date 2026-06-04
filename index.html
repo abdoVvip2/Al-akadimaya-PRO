@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الأكادمية Pro — الدخول</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #1a56db;
+            --blue-deep: #1043b0;
+            --blue-glow: rgba(26,86,219,0.35);
+            --gold: #f5a623;
+            --white: #ffffff;
+            --text: #0d1b3e;
+            --muted: #6b7a99;
+            --border: #dde4f0;
+            --bg: #f0f4fc;
+            --red: #dc2626;
+            --red-light: #fef2f2;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── Animated background blobs ── */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.45;
+            pointer-events: none;
+            animation: floatBlob 8s ease-in-out infinite alternate;
+        }
+        body::before {
+            width: 480px; height: 480px;
+            background: radial-gradient(circle, #bfdbfe, #93c5fd);
+            top: -180px; right: -120px;
+        }
+        body::after {
+            width: 360px; height: 360px;
+            background: radial-gradient(circle, #dbeafe, #bfdbfe);
+            bottom: -140px; left: -100px;
+            animation-delay: -4s;
+        }
+        @keyframes floatBlob {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(30px, 20px) scale(1.08); }
+        }
+
+        /* ── Card ── */
+        .card {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 40px 32px 36px;
+            box-shadow: 0 24px 60px rgba(26,86,219,0.12), 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.85);
+            position: relative;
+            z-index: 10;
+            animation: cardIn 0.55s cubic-bezier(0.34,1.3,0.64,1) both;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(32px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── Top decoration line ── */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 32px; left: 32px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--blue), var(--gold), var(--blue), transparent);
+            border-radius: 0 0 4px 4px;
+            opacity: 0.7;
+        }
+
+        /* ── Brand ── */
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+            animation: fadeSlide 0.5s 0.15s ease both;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-wrap {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+            border-radius: 22px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px var(--blue-glow);
+            position: relative;
+        }
+        .logo-wrap::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(26,86,219,0.3), rgba(245,166,35,0.2));
+            z-index: -1;
+        }
+        .logo-wrap i { font-size: 2rem; color: white; }
+
+        .brand h1 {
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+        .brand h1 span { color: var(--blue); }
+
+        .welcome-line {
+            font-size: 0.88rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* ── Greeting box ── */
+        .greeting-box {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #bfdbfe;
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeSlide 0.5s 0.25s ease both;
+        }
+        .greeting-box .wave { font-size: 1.6rem; animation: wave 2s ease-in-out infinite; }
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(18deg); }
+            75% { transform: rotate(-10deg); }
+        }
+        .greeting-box p {
+            font-size: 0.87rem;
+            color: var(--blue-deep);
+            font-weight: 700;
+            line-height: 1.5;
+        }
+        .greeting-box p small {
+            display: block;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.78rem;
+            margin-top: 2px;
+        }
+
+        /* ── Role selector ── */
+        .role-wrap {
+            margin-bottom: 22px;
+            animation: fadeSlide 0.5s 0.3s ease both;
+        }
+        .role-label {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--muted);
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .role-btn {
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            background: #f8faff;
+            user-select: none;
+        }
+        .role-btn i {
+            font-size: 1.35rem;
+            color: var(--muted);
+            display: block;
+            margin-bottom: 6px;
+            transition: color 0.2s;
+        }
+        .role-btn span {
+            font-size: 0.87rem;
+            font-weight: 800;
+            color: var(--muted);
+            transition: color 0.2s;
+        }
+        .role-btn.active {
+            border-color: var(--blue);
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            box-shadow: 0 4px 14px rgba(26,86,219,0.15);
+            transform: translateY(-2px);
+        }
+        .role-btn.active i, .role-btn.active span { color: var(--blue); }
+
+        /* ── Input ── */
+        .input-wrap {
+            position: relative;
+            margin-bottom: 20px;
+            animation: fadeSlide 0.5s 0.35s ease both;
+        }
+        .input-wrap i.icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 14px 46px 14px 46px;
+            background: #f5f8ff;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-size: 0.97rem;
+            font-family: 'Cairo', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            letter-spacing: 2px;
+        }
+        .input-wrap input::placeholder { letter-spacing: 0; }
+        .input-wrap input:focus {
+            border-color: var(--blue);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(26,86,219,0.08);
+        }
+        .toggle-pass {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: color 0.15s;
+        }
+        .toggle-pass:hover { color: var(--blue); }
+
+        /* ── Error ── */
+        .error-msg {
+            display: none;
+            background: var(--red-light);
+            color: var(--red);
+            border: 1px solid #fca5a5;
+            padding: 11px 14px;
+            border-radius: 12px;
+            font-size: 0.83rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            align-items: center;
+            gap: 8px;
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%,60%  { transform: translateX(-6px); }
+            40%,80%  { transform: translateX(6px); }
+        }
+
+        /* ── Login button ── */
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 900;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px var(--blue-glow);
+            transition: all 0.2s ease;
+            animation: fadeSlide 0.5s 0.4s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+            border-radius: inherit;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px var(--blue-glow); }
+        .login-btn:active { transform: scale(0.98); }
+        .login-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+        .spinner {
+            display: none;
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.65s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Footer ── */
+        .footer-note {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 0.76rem;
+            color: var(--muted);
+            font-weight: 600;
+            animation: fadeSlide 0.5s 0.45s ease both;
+        }
+        .footer-note span { color: var(--blue); font-weight: 800; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <!-- Brand -->
+    <div class="brand">
+        <div class="logo-wrap">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <h1>الأكادمية <span>Pro</span></h1>
+        <p class="welcome-line">منصة إدارة مراكز الدعس المدرسي</p>
+    </div>
+
+    <!-- Greeting -->
+    <div class="greeting-box">
+        <span class="wave">👋</span>
+        <p>
+            أهلاً وسهلاً بك مجدداً!
+            <small>اختر صلاحيتك وأدخل كلمة السر للمتابعة</small>
+        </p>
+    </div>
+
+    <!-- Role -->
+    <div class="role-wrap">
+        <span class="role-label"><i class="fas fa-user-circle"></i> نوع الحساب</span>
+        <div class="role-grid">
+            <div class="role-btn active" id="roleManager" onclick="selectRole('manager')">
+                <i class="fas fa-user-cog"></i>
+                <span>مُسيّر</span>
+            </div>
+            <div class="role-btn" id="roleAdmin" onclick="selectRole('admin')">
+                <i class="fas fa-user-shield"></i>
+                <span>مدير</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="errorBlock">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="errorText">كلمة المرور غير صحيحة!</span>
+    </div>
+
+    <!-- Password -->
+    <div class="input-wrap">
+        <i class="icon fas fa-lock"></i>
+        <input type="password" id="passwordInput"
+               placeholder="كلمة السر"
+               onkeydown="if(event.key==='Enter') handleLogin()">
+        <i class="toggle-pass fas fa-eye" id="toggleIcon" onclick="togglePassword()"></i>
+    </div>
+
+    <!-- Submit -->
+    <button class="login-btn" id="submitBtn" onclick="handleLogin()">
+        <span class="spinner" id="btnSpinner"></span>
+        <span id="btnText">دخول إلى النظام</span>
+        <i class="fas fa-arrow-left" id="btnIcon"></i>
+    </button>
+
+    <p class="footer-note">
+        <span>الأكادمية Pro</span> — جميع الحقوق محفوظة &copy; 2025
+    </p>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const _cfg = {
+        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+        authDomain: "molakasati.firebaseapp.com",
+        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+        projectId: "molakasati",
+        storageBucket: "molakasati.firebasestorage.app",
+        messagingSenderId: "981780224226",
+        appId: "1:981780224226:web:6565de586fffa9f33326bb",
+        measurementId: "G-H52ZV49J1C"
+    };
+    const _app = initializeApp(_cfg);
+    const _db  = getFirestore(_app);
+
+    let currentRole = 'manager';
+
+    const _P = {
+        manager: "msr19#school",
+        admin: "kilarbF@coaj"
+    };
+
+    window.selectRole = function(role) {
+        currentRole = role;
+        document.getElementById('roleManager').classList.toggle('active', role === 'manager');
+        document.getElementById('roleAdmin').classList.toggle('active', role === 'admin');
+        document.getElementById('errorBlock').style.display = 'none';
+    };
+
+    window.togglePassword = function() {
+        const inp = document.getElementById('passwordInput');
+        const ico = document.getElementById('toggleIcon');
+        const isHidden = inp.type === 'password';
+        inp.type = isHidden ? 'text' : 'password';
+        ico.className = `toggle-pass fas fa-eye${isHidden ? '-slash' : ''}`;
+    };
+
+    window.handleLogin = async function() {
+        const pass = document.getElementById('passwordInput').value;
+        const errBlock = document.getElementById('errorBlock');
+        const btn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('btnSpinner');
+        const btnIcon = document.getElementById('btnIcon');
+        const btnText = document.getElementById('btnText');
+
+        errBlock.style.display = 'none';
+
+        if (pass !== _P[currentRole]) {
+            errBlock.style.display = 'flex';
+            // reset animation
+            errBlock.style.animation = 'none';
+            errBlock.offsetHeight;
+            errBlock.style.animation = '';
+            document.getElementById('errorText').innerText = "كلمة المرور غير صحيحة!";
+            document.getElementById('passwordInput').focus();
+            return;
+        }
+
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        btnIcon.style.display = 'none';
+        btnText.innerText = 'جارٍ التحقق...';
+
+        try {
+            await setDoc(doc(_db, "users", currentRole), {
+                status: "online",
+                last_login: serverTimestamp(),
+                role: currentRole
+            }, { merge: true });
+
+            localStorage.setItem("kanashi_user_name", currentRole === 'admin' ? "المدير العام" : "المسير الإداري");
+            localStorage.setItem("kanashi_role", currentRole);
+
+            btnText.innerText = 'مرحباً بك ✓';
+            setTimeout(() => { window.location.href = "home.html"; }, 600);
+
+        } catch (e) {
+            console.error(e);
+            errBlock.style.display = 'flex';
+            document.getElementById('errorText').innerText = "تعذّر الاتصال. تحقق من الشبكة وأعد المحاولة.";
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            btnIcon.style.display = 'inline';
+            btnText.innerText = 'دخول إلى النظام';
+        }
+    };
+</script>
+</body>
+</html>
