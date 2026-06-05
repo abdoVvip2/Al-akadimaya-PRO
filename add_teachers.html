@@ -11,6 +11,7 @@
             --bg: #f8fafc; --white: #ffffff;
             --blue: #2563eb; --green: #22c55e;
             --red: #ef4444; --orange: #f97316;
+            --purple: #7c3aed;
             --slate: #64748b; --dark: #0f172a;
             --radius: 18px;
         }
@@ -58,7 +59,12 @@
             position: relative; overflow: hidden;
             transition: box-shadow 0.2s;
         }
-        .teacher-card::before {
+        .teacher-card.type-prep::before {
+            content: ''; position: absolute;
+            top: 0; right: 0; width: 4px; height: 100%;
+            background: var(--purple);
+        }
+        .teacher-card.type-normal::before {
             content: ''; position: absolute;
             top: 0; right: 0; width: 4px; height: 100%;
             background: var(--blue);
@@ -68,10 +74,18 @@
         .info p  { margin: 6px 0 0; font-size: 0.88rem; color: var(--slate); display: flex; align-items: center; gap: 7px; }
 
         .payment-status {
-            margin-top: 10px; display: inline-flex; align-items: center;
+            margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;
             padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 700;
-            background: #eff6ff; color: #1e40af;
         }
+        .payment-status.ratio-badge { background: #eff6ff; color: #1e40af; }
+        .payment-status.salary-badge { background: #f5f3ff; color: #6d28d9; }
+        .teacher-type-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+            margin-top: 6px; margin-right: 6px;
+        }
+        .badge-normal { background: #eff6ff; color: #1d4ed8; }
+        .badge-prep   { background: #f5f3ff; color: #6d28d9; }
 
         .action-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
@@ -117,12 +131,38 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
             border-radius: 26px;
             animation: mIn 0.2s ease;
+            max-height: 90vh; overflow-y: auto;
         }
         @keyframes mIn {
             from { opacity:0; transform:translateY(18px) scale(0.97); }
             to   { opacity:1; transform:translateY(0) scale(1); }
         }
         .modal-content h3 { margin: 0 0 18px; text-align: center; font-size: 1.2rem; font-weight: 900; }
+
+        /* ── نوع الأستاذ (راديو) ── */
+        .type-selector {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; margin-bottom: 14px;
+        }
+        .type-option input[type="radio"] { display: none; }
+        .type-option label {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 6px; padding: 14px 10px;
+            border: 2px solid #e8edf5; border-radius: 14px;
+            cursor: pointer; transition: all 0.15s;
+            font-size: 0.9rem; font-weight: 700; color: var(--slate);
+        }
+        .type-option label i { font-size: 1.5rem; }
+        .type-option input[type="radio"]:checked + label {
+            border-color: var(--blue); background: #eff6ff; color: var(--blue);
+        }
+        .type-option input[value="prep"]:checked + label {
+            border-color: var(--purple); background: #f5f3ff; color: var(--purple);
+        }
+        .type-section-label {
+            font-size: 0.82rem; font-weight: 700; color: var(--slate);
+            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+        }
 
         .inp {
             width: 100%; padding: 13px 15px; margin-bottom: 12px;
@@ -132,6 +172,42 @@
             font-family: 'Cairo', inherit;
         }
         .inp:focus { border-color: var(--blue); }
+        .inp.inp-purple:focus { border-color: var(--purple); }
+        .inp[type="number"] { -moz-appearance: textfield; }
+        .inp[type="number"]::-webkit-outer-spin-button,
+        .inp[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* حقل النسبة مع اللاحقة % */
+        .ratio-wrapper {
+            position: relative; margin-bottom: 12px;
+        }
+        .ratio-wrapper .inp {
+            margin-bottom: 0;
+            padding-left: 44px;
+        }
+        .ratio-suffix {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            font-size: 1rem; font-weight: 900; color: var(--blue);
+            pointer-events: none;
+        }
+
+        /* حقل الراتب مع اللاحقة دج */
+        .salary-wrapper {
+            position: relative; margin-bottom: 12px;
+        }
+        .salary-wrapper .inp {
+            margin-bottom: 0;
+            padding-left: 44px;
+        }
+        .salary-suffix {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            font-size: 0.8rem; font-weight: 900; color: var(--purple);
+            pointer-events: none;
+        }
+
+        /* الحقول المخصصة لكل نوع */
+        .fields-normal { display: block; }
+        .fields-prep   { display: none; }
 
         .btn-submit {
             background: var(--blue); color: white; border: none;
@@ -139,6 +215,7 @@
             font-weight: 800; cursor: pointer; margin-top: 6px;
             font-size: 1rem; font-family: 'Cairo', inherit;
             box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+            transition: background 0.2s;
         }
 
         .btn-cancel {
@@ -154,6 +231,15 @@
         .info-row b { color: var(--dark); font-weight: 700; }
 
         .loading { text-align: center; padding: 40px; color: var(--slate); font-weight: 600; }
+
+        /* رسالة خطأ النسبة */
+        .ratio-error {
+            background: #fef2f2; color: #dc2626;
+            border-radius: 10px; padding: 8px 12px;
+            font-size: 0.85rem; font-weight: 700;
+            margin-bottom: 10px; display: none;
+            align-items: center; gap: 7px;
+        }
     </style>
 </head>
 <body>
@@ -174,32 +260,78 @@
 
 <button class="fab" onclick="window.openModal()"><i class="fas fa-plus"></i></button>
 
+<!-- مودال الإضافة / التعديل -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <h3 id="modalTitle">إضافة أستاذ جديد</h3>
         <input type="hidden" id="editId">
-        <input type="text"   id="name"  class="inp" placeholder="الاسم الكامل للأستاذ">
+
+        <!-- اختيار نوع الأستاذ -->
+        <div class="type-section-label"><i class="fas fa-tag"></i> نوع الأستاذ</div>
+        <div class="type-selector">
+            <div class="type-option">
+                <input type="radio" name="teacherType" id="typeNormal" value="normal" checked onchange="window.onTypeChange()">
+                <label for="typeNormal">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    أستاذ عادي
+                </label>
+            </div>
+            <div class="type-option">
+                <input type="radio" name="teacherType" id="typePrep" value="prep" onchange="window.onTypeChange()">
+                <label for="typePrep">
+                    <i class="fas fa-child"></i>
+                    معلم تحضيري
+                </label>
+            </div>
+        </div>
+
+        <!-- الحقول المشتركة -->
+        <input type="text"   id="name"    class="inp" placeholder="الاسم الكامل للأستاذ">
         <input type="text"   id="subject" class="inp" placeholder="المادة الـمُدرّسة (مثال: رياضيات)">
-        <input type="number" id="phone" class="inp" placeholder="رقم هاتف الأستاذ">
-        
-        <input type="number" id="ratio" class="inp" placeholder="نسبة الأستاذ من المداخيل (%)" min="0" max="100" value="0" 
-               oninput="window.validateRatioLive(this)" 
-               onkeyup="window.validateRatioLive(this)" 
-               onpaste="window.validateRatioLive(this)">
+        <input type="tel"    id="phone"   class="inp" placeholder="رقم هاتف الأستاذ" inputmode="numeric">
+
+        <!-- حقول الأستاذ العادي: النسبة -->
+        <div class="fields-normal" id="fieldsNormal">
+            <div class="type-section-label" style="margin-top:4px;"><i class="fas fa-percentage"></i> نسبة الأستاذ من المداخيل</div>
+            <div class="ratio-wrapper">
+                <input type="number" id="ratio" class="inp"
+                       placeholder="مثال: 30" min="0" max="100" step="1"
+                       inputmode="numeric"
+                       oninput="window.onRatioInput(this)">
+                <span class="ratio-suffix">%</span>
+            </div>
+            <div class="ratio-error" id="ratioError">
+                <i class="fas fa-exclamation-triangle"></i> النسبة يجب أن تكون بين 0 و 100%
+            </div>
+        </div>
+
+        <!-- حقول المعلم التحضيري: الراتب -->
+        <div class="fields-prep" id="fieldsPrep">
+            <div class="type-section-label" style="margin-top:4px;"><i class="fas fa-money-bill-wave"></i> الراتب الشهري الثابت</div>
+            <div class="salary-wrapper">
+                <input type="number" id="salary" class="inp inp-purple"
+                       placeholder="مثال: 25000" min="0" step="1"
+                       inputmode="numeric">
+                <span class="salary-suffix">دج</span>
+            </div>
+        </div>
 
         <button class="btn-submit" id="saveBtn" onclick="window.save()">💾 حفظ البيانات</button>
         <button class="btn-cancel" onclick="window.closeModal()">إلغاء</button>
     </div>
 </div>
 
+<!-- مودال تفاصيل الأستاذ -->
 <div id="detail-modal" class="modal">
     <div class="modal-content">
         <h3>بطاقة بيانات الأستاذ</h3>
         <div class="info-row"><span>الاسم الكامل:</span> <b id="det-name">—</b></div>
+        <div class="info-row"><span>النوع:</span> <b id="det-type">—</b></div>
         <div class="info-row"><span>المادة:</span> <b id="det-subject">—</b></div>
         <div class="info-row"><span>رقم الهاتف:</span> <b id="det-phone">—</b></div>
         <div class="info-row"><span>تاريخ التعاقد/الانضمام:</span> <b id="det-date">—</b></div>
-        <div class="info-row"><span>النسبة المئوية الحالية:</span> <b id="det-ratio">—</b></div>
+        <div class="info-row" id="det-ratio-row"><span>النسبة المئوية الحالية:</span> <b id="det-ratio">—</b></div>
+        <div class="info-row" id="det-salary-row" style="display:none;"><span>الراتب الشهري:</span> <b id="det-salary">—</b></div>
         <button class="btn-submit" style="background: var(--slate);" onclick="window.closeDetailModal()">إغلاق النافذة</button>
     </div>
 </div>
@@ -224,15 +356,29 @@
 
     let localTeachersArray = [];
 
-    // دالة الفحص الفوري أثناء الكتابة لمنع التتابع السريع للأرقام (مثل 100666)
-    window.validateRatioLive = function(input) {
-        let val = Number(input.value);
-        if (input.value !== "" && (val > 100 || val < 0)) {
-            input.value = 100;
-            alert("لا يمكن أن تكون النسبة فوق 100%!");
+    /* ── تغيير نوع الأستاذ ── */
+    window.onTypeChange = function() {
+        const isPrep = document.getElementById("typePrep").checked;
+        document.getElementById("fieldsNormal").style.display = isPrep ? "none" : "block";
+        document.getElementById("fieldsPrep").style.display   = isPrep ? "block" : "none";
+        document.getElementById("ratioError").style.display   = "none";
+    }
+
+    /* ── فحص النسبة أثناء الكتابة ── */
+    window.onRatioInput = function(input) {
+        // منع الأرقام العشرية: نزيل أي نقطة أو فاصلة
+        input.value = input.value.replace(/[.,]/g, "");
+        const val = parseInt(input.value, 10);
+        const errBox = document.getElementById("ratioError");
+        if (input.value !== "" && (isNaN(val) || val > 100 || val < 0)) {
+            errBox.style.display = "flex";
+            // لا نصحح تلقائياً هنا، نتركه يصحح بنفسه
+        } else {
+            errBox.style.display = "none";
         }
     }
 
+    /* ── جلب وعرض الأساتذة ── */
     async function fetchAndRenderTeachers() {
         const container = document.getElementById("list");
         container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> جارٍ جلب البيانات الحية...</div>';
@@ -240,11 +386,9 @@
         try {
             const querySnapshot = await getDocs(collection(db, "teachers"));
             localTeachersArray = [];
-            
-            querySnapshot.forEach((doc) => {
-                localTeachersArray.push({ id: doc.id, ...doc.data() });
+            querySnapshot.forEach((d) => {
+                localTeachersArray.push({ id: d.id, ...d.data() });
             });
-
             window.renderList(localTeachersArray);
         } catch (error) {
             console.error("Loading error:", error);
@@ -264,20 +408,31 @@
         }
 
         container.innerHTML = teachers.map(t => {
+            const isPrep = t.teacherType === "prep";
+            const cardClass = isPrep ? "type-prep" : "type-normal";
+            const typeBadge = isPrep
+                ? `<span class="teacher-type-badge badge-prep"><i class="fas fa-child"></i> معلم تحضيري</span>`
+                : `<span class="teacher-type-badge badge-normal"><i class="fas fa-chalkboard-teacher"></i> أستاذ عادي</span>`;
+
+            const payBadge = isPrep
+                ? `<div class="payment-status salary-badge"><i class="fas fa-money-bill-wave"></i> الراتب: ${Number(t.salary || 0).toLocaleString('ar-DZ')} دج/شهر</div>`
+                : `<div class="payment-status ratio-badge"><i class="fas fa-percentage"></i> نسبة الأستاذ: ${t.ratio || 0}%</div>`;
+
             return `
-            <div class="teacher-card">
+            <div class="teacher-card ${cardClass}">
                 <div class="info">
                     <h4>${t.name}</h4>
                     <p><i class="fas fa-book"></i> المادة: ${t.subject || 'غير محدد'}</p>
-                    <div class="payment-status">
-                        <i class="fas fa-percentage"></i> نسبة الأستاذ: ${t.ratio || 0}%
+                    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:4px; margin-top:8px;">
+                        ${typeBadge}
+                        ${payBadge}
                     </div>
                 </div>
                 <div class="action-grid">
                     ${t.phone ? `
                         <a href="https://wa.me/${t.phone}" class="btn-op btn-wa" target="_blank" title="واتساب الأستاذ"><i class="fab fa-whatsapp"></i></a>
                         <a href="tel:${t.phone}" class="btn-op btn-ph" title="اتصال مباشر"><i class="fas fa-phone-alt"></i></a>` : ''}
-                    <button class="btn-op btn-ar" onclick="window.openDetailModal('${t.id}')" title="عرض التفاصيل كاملة"><i class="fas fa-id-card"></i></button>
+                    <button class="btn-op btn-ar" onclick="window.openDetailModal('${t.id}')" title="عرض التفاصيل"><i class="fas fa-id-card"></i></button>
                     <button class="btn-op btn-ed" onclick="window.openModal('${t.id}')" title="تعديل البيانات"><i class="fas fa-user-edit"></i></button>
                     <button class="btn-op btn-dl" onclick="window.removeTeacher('${t.id}')" title="حذف نهائي"><i class="fas fa-trash-alt"></i></button>
                 </div>
@@ -287,16 +442,16 @@
 
     window.searchTeachers = function() {
         const term = document.getElementById("search-input").value.toLowerCase().trim();
-        if (!term) {
-            window.renderList(localTeachersArray);
-            return;
-        }
+        if (!term) { window.renderList(localTeachersArray); return; }
         const filtered = localTeachersArray.filter(t => t.name && t.name.toLowerCase().includes(term));
         window.renderList(filtered);
     }
 
+    /* ── فتح المودال ── */
     window.openModal = async function(id = null) {
         document.getElementById("modal").style.display = "flex";
+        document.getElementById("ratioError").style.display = "none";
+
         if (id) {
             document.getElementById("modalTitle").innerText = "تعديل بيانات الأستاذ";
             document.getElementById("editId").value = id;
@@ -306,67 +461,86 @@
             
             if (docSnap.exists()) {
                 const t = docSnap.data();
-                document.getElementById("name").value = t.name || "";
+                const isPrep = t.teacherType === "prep";
+
+                document.getElementById("typeNormal").checked = !isPrep;
+                document.getElementById("typePrep").checked   = isPrep;
+                window.onTypeChange();
+
+                document.getElementById("name").value    = t.name || "";
                 document.getElementById("subject").value = t.subject || "";
-                document.getElementById("phone").value = t.phone || "";
-                document.getElementById("ratio").value = t.ratio || "0";
+                document.getElementById("phone").value   = t.phone || "";
+                document.getElementById("ratio").value   = (!isPrep && t.ratio !== undefined) ? t.ratio : "";
+                document.getElementById("salary").value  = (isPrep && t.salary !== undefined) ? t.salary : "";
             }
         } else {
             document.getElementById("modalTitle").innerText = "إضافة أستاذ جديد";
             document.getElementById("editId").value = "";
-            document.getElementById("name").value = "";
+            document.getElementById("typeNormal").checked = true;
+            document.getElementById("typePrep").checked   = false;
+            window.onTypeChange();
+            document.getElementById("name").value    = "";
             document.getElementById("subject").value = "";
-            document.getElementById("phone").value = "";
-            document.getElementById("ratio").value = "0";
+            document.getElementById("phone").value   = "";
+            document.getElementById("ratio").value   = "";
+            document.getElementById("salary").value  = "";
         }
     }
 
     window.closeModal = function() { document.getElementById("modal").style.display = "none"; }
 
+    /* ── الحفظ ── */
     window.save = async function() {
-        const name = document.getElementById("name").value.trim();
+        const name    = document.getElementById("name").value.trim();
         const subject = document.getElementById("subject").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const ratio = Number(document.getElementById("ratio").value || 0);
-        const editId = document.getElementById("editId").value;
+        const phone   = document.getElementById("phone").value.trim();
+        const editId  = document.getElementById("editId").value;
         const saveBtn = document.getElementById("saveBtn");
+        const isPrep  = document.getElementById("typePrep").checked;
 
         if (!name) { alert("اسم الأستاذ حقل إجباري!"); return; }
 
-        // صمام أمان أخير لمنع الحفظ في قاعدة البيانات نهائياً إذا كانت القيمة خارج النطاق المسموح
-        if (ratio < 0 || ratio > 100) { 
-            alert("خطأ صارم: لا يمكن أن تكون النسبة فوق 100%!"); 
-            return; 
+        let dataToSave = { name, subject, phone, teacherType: isPrep ? "prep" : "normal" };
+
+        if (isPrep) {
+            const salary = parseInt(document.getElementById("salary").value || 0, 10);
+            if (isNaN(salary) || salary < 0) { alert("يرجى إدخال راتب صحيح!"); return; }
+            dataToSave.salary = salary;
+            dataToSave.ratio  = 0; // نصفّر النسبة للمعلم التحضيري
+        } else {
+            const ratioRaw = document.getElementById("ratio").value.replace(/[.,]/g, "");
+            const ratio    = parseInt(ratioRaw, 10);
+
+            // صمام أمان صارم: منع الحفظ إذا كانت النسبة خارج النطاق
+            if (ratioRaw === "" || isNaN(ratio)) {
+                alert("يرجى إدخال نسبة صحيحة بين 0 و 100.");
+                return;
+            }
+            if (ratio < 0 || ratio > 100) {
+                document.getElementById("ratioError").style.display = "flex";
+                alert("❌ لا يمكن حفظ نسبة فوق 100%! صحح القيمة أولاً.");
+                return;
+            }
+            dataToSave.ratio  = ratio;
+            dataToSave.salary = 0;
         }
 
-        saveBtn.disabled = true;
-        saveBtn.innerText = "جاري الحفظ والرفع للنظام...";
+        saveBtn.disabled  = true;
+        saveBtn.innerText = "جاري الحفظ...";
 
         try {
             if (editId) {
-                const docRef = doc(db, "teachers", editId);
-                await updateDoc(docRef, {
-                    name: name,
-                    subject: subject,
-                    phone: phone,
-                    ratio: ratio
-                });
+                await updateDoc(doc(db, "teachers", editId), dataToSave);
             } else {
-                await addDoc(collection(db, "teachers"), {
-                    name: name,
-                    subject: subject,
-                    phone: phone,
-                    ratio: ratio,
-                    registeredAt: serverTimestamp()
-                });
+                await addDoc(collection(db, "teachers"), { ...dataToSave, registeredAt: serverTimestamp() });
             }
             window.closeModal();
             fetchAndRenderTeachers();
         } catch (error) {
             console.error("Error saving document: ", error);
-            alert("حدث خطأ أثناء الاتصال بالخادم وحفظ البيانات.");
+            alert("حدث خطأ أثناء الاتصال بالخادم.");
         } finally {
-            saveBtn.disabled = false;
+            saveBtn.disabled  = false;
             saveBtn.innerText = "💾 حفظ البيانات";
         }
     }
@@ -377,22 +551,27 @@
                 await deleteDoc(doc(db, "teachers", id));
                 fetchAndRenderTeachers();
             } catch (error) {
-                console.error("Error deleting document: ", error);
-                alert("لم تتم العملية بالشكل الصحيح، تفقد قواعد الصلاحيات لديك.");
+                alert("لم تتم العملية، تفقد قواعد الصلاحيات لديك.");
             }
         }
     }
 
     window.openDetailModal = async function(id) {
-        const docRef = doc(db, "teachers", id);
-        const docSnap = await getDoc(docRef);
-        
+        const docSnap = await getDoc(doc(db, "teachers", id));
         if (docSnap.exists()) {
             const t = docSnap.data();
-            document.getElementById("det-name").innerText = t.name || "—";
+            const isPrep = t.teacherType === "prep";
+
+            document.getElementById("det-name").innerText    = t.name || "—";
+            document.getElementById("det-type").innerText    = isPrep ? "معلم تحضيري 🟣" : "أستاذ عادي 🔵";
             document.getElementById("det-subject").innerText = t.subject || "غير محدد";
-            document.getElementById("det-phone").innerText = t.phone || "لا يوجد رقم هاتف متاح";
-            document.getElementById("det-ratio").innerText = (t.ratio || "0") + "%";
+            document.getElementById("det-phone").innerText   = t.phone || "لا يوجد رقم هاتف";
+
+            document.getElementById("det-ratio-row").style.display  = isPrep ? "none" : "flex";
+            document.getElementById("det-salary-row").style.display = isPrep ? "flex" : "none";
+
+            document.getElementById("det-ratio").innerText  = (t.ratio || "0") + "%";
+            document.getElementById("det-salary").innerText = Number(t.salary || 0).toLocaleString('ar-DZ') + " دج/شهر";
 
             if (t.registeredAt && t.registeredAt.seconds) {
                 const jsDate = new Date(t.registeredAt.seconds * 1000);
