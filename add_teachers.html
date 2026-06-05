@@ -181,7 +181,11 @@
         <input type="text"   id="name"  class="inp" placeholder="الاسم الكامل للأستاذ">
         <input type="text"   id="subject" class="inp" placeholder="المادة الـمُدرّسة (مثال: رياضيات)">
         <input type="number" id="phone" class="inp" placeholder="رقم هاتف الأستاذ">
-        <input type="number" id="ratio" class="inp" placeholder="نسبة الأستاذ من المداخيل (%)" min="0" max="100" value="0">
+        
+        <input type="number" id="ratio" class="inp" placeholder="نسبة الأستاذ من المداخيل (%)" min="0" max="100" value="0" 
+               oninput="window.validateRatioLive(this)" 
+               onkeyup="window.validateRatioLive(this)" 
+               onpaste="window.validateRatioLive(this)">
 
         <button class="btn-submit" id="saveBtn" onclick="window.save()">💾 حفظ البيانات</button>
         <button class="btn-cancel" onclick="window.closeModal()">إلغاء</button>
@@ -219,6 +223,15 @@
     const db = getFirestore(app);
 
     let localTeachersArray = [];
+
+    // دالة الفحص الفوري أثناء الكتابة لمنع التتابع السريع للأرقام (مثل 100666)
+    window.validateRatioLive = function(input) {
+        let val = Number(input.value);
+        if (input.value !== "" && (val > 100 || val < 0)) {
+            input.value = 100;
+            alert("لا يمكن أن تكون النسبة فوق 100%!");
+        }
+    }
 
     async function fetchAndRenderTeachers() {
         const container = document.getElementById("list");
@@ -319,6 +332,12 @@
         const saveBtn = document.getElementById("saveBtn");
 
         if (!name) { alert("اسم الأستاذ حقل إجباري!"); return; }
+
+        // صمام أمان أخير لمنع الحفظ في قاعدة البيانات نهائياً إذا كانت القيمة خارج النطاق المسموح
+        if (ratio < 0 || ratio > 100) { 
+            alert("خطأ صارم: لا يمكن أن تكون النسبة فوق 100%!"); 
+            return; 
+        }
 
         saveBtn.disabled = true;
         saveBtn.innerText = "جاري الحفظ والرفع للنظام...";
