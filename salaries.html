@@ -10,6 +10,7 @@
         :root {
             --bg: #f8fafc; --white: #ffffff; --blue: #2563eb;
             --red: #ef4444; --green: #22c55e; --orange: #f59e0b;
+            --purple: #7c3aed;
             --slate: #64748b; --dark: #0f172a; --radius: 18px;
         }
 
@@ -25,24 +26,17 @@
 
         /* ===== PAYDAY BANNER ===== */
         .payday-banner {
-            border-radius: 16px;
-            padding: 14px 18px;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
+            border-radius: 16px; padding: 14px 18px; margin-bottom: 18px;
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 700; font-size: 0.9rem;
         }
         .payday-banner.active {
             background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-            border: 2px solid #86efac;
-            color: #15803d;
+            border: 2px solid #86efac; color: #15803d;
         }
         .payday-banner.locked {
             background: linear-gradient(135deg, #fef9c3, #fef3c7);
-            border: 2px solid #fde68a;
-            color: #92400e;
+            border: 2px solid #fde68a; color: #92400e;
         }
         .payday-banner .icon { font-size: 1.5rem; flex-shrink: 0; }
 
@@ -72,26 +66,41 @@
             margin-bottom: 12px; border: 1px solid #edf2f7;
             overflow: hidden;
         }
+        /* بطاقة المعلم التحضيري */
+        .teacher-pay-card.prep-card {
+            border-color: #e9d5ff;
+            background: #faf5ff;
+        }
+        .teacher-pay-card.prep-card .card-top {
+            border-right: 4px solid var(--purple);
+        }
+
         .card-top {
             padding: 14px 16px;
             display: flex; justify-content: space-between; align-items: flex-start;
         }
-        .teacher-name-row { font-weight: 900; font-size: 1rem; }
+        .teacher-name-row { font-weight: 900; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
+        .type-label {
+            font-size: 0.72rem; font-weight: 700;
+            padding: 2px 8px; border-radius: 20px;
+        }
+        .type-label.prep { background: #f3e8ff; color: var(--purple); }
+        .type-label.normal { background: #eff6ff; color: var(--blue); }
+
         .accrued-row {
-            font-size: 0.83rem; color: var(--slate); margin-top: 5px;
+            font-size: 0.83rem; color: var(--slate); margin-top: 7px;
             display: flex; flex-wrap: wrap; gap: 8px;
         }
         .accrued-chip {
-            background: #eff6ff;
-            color: var(--blue);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.78rem;
+            background: #eff6ff; color: var(--blue);
+            padding: 3px 10px; border-radius: 20px;
+            font-weight: 700; font-size: 0.78rem;
         }
-        .accrued-chip.red { background: #fef2f2; color: var(--red); }
+        .accrued-chip.red   { background: #fef2f2; color: var(--red); }
         .accrued-chip.green { background: #f0fdf4; color: #15803d; }
+        .accrued-chip.purple { background: #f3e8ff; color: var(--purple); }
 
+        /* ── زر الصرف والقفل ── */
         .btn-pay {
             background: var(--green); color: white; border: none;
             padding: 9px 16px; border-radius: 10px;
@@ -99,40 +108,47 @@
             cursor: pointer; font-size: 0.85rem;
             white-space: nowrap; flex-shrink: 0;
         }
-        .btn-pay:hover { background: #16a34a; }
+        .btn-pay.purple-pay { background: var(--purple); }
+        .btn-pay:hover { opacity: 0.88; }
+
+        .btn-locked {
+            background: #f1f5f9; color: var(--slate);
+            border: 2px dashed #cbd5e1;
+            padding: 9px 14px; border-radius: 10px;
+            font-weight: 700; font-family: 'Cairo', inherit;
+            font-size: 0.8rem; white-space: nowrap;
+            flex-shrink: 0; cursor: not-allowed;
+            display: flex; align-items: center; gap: 5px;
+        }
 
         .sessions-breakdown {
-            background: #f0fdf4;
-            border-top: 1px dashed #bbf7d0;
+            background: #f0fdf4; border-top: 1px dashed #bbf7d0;
             padding: 10px 16px;
         }
+        .sessions-breakdown.prep-breakdown {
+            background: #f5f3ff; border-top: 1px dashed #ddd6fe;
+        }
         .sessions-breakdown p {
-            font-size: 0.78rem;
+            font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;
             color: #15803d;
-            font-weight: 700;
-            margin-bottom: 4px;
         }
-        .session-chip-list {
-            display: flex; flex-wrap: wrap; gap: 6px;
-        }
+        .sessions-breakdown.prep-breakdown p { color: var(--purple); }
+        .session-chip-list { display: flex; flex-wrap: wrap; gap: 6px; }
         .session-chip {
-            background: white;
-            border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 3px 10px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: #15803d;
+            background: white; border: 1px solid #bbf7d0;
+            border-radius: 8px; padding: 3px 10px;
+            font-size: 0.72rem; font-weight: 700; color: #15803d;
         }
 
         /* ===== ARCHIVE ===== */
         .archive-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px; border-radius: 12px; background: #fffbf5;
-            margin-bottom: 8px; border: 1px solid #fef3c7; cursor: pointer;
-            transition: background 0.2s;
+            margin-bottom: 8px; border: 1px solid #fef3c7;
+            cursor: pointer; transition: background 0.2s;
         }
-        .archive-item:hover { background: #fef9c3; }
+        .archive-item.prep-archive { background: #faf5ff; border-color: #e9d5ff; }
+        .archive-item:hover { opacity: 0.85; }
         .archive-meta { font-size: 0.8rem; color: var(--slate); display: block; margin-top: 2px; }
 
         /* ===== MODALS ===== */
@@ -154,8 +170,9 @@
 
         /* ===== RECEIPT ===== */
         .receipt-container {
-            background: #ffffff; border: 2px dashed #cbd5e1; padding: 20px;
-            border-radius: 12px; position: relative; user-select: none;
+            background: #ffffff; border: 2px dashed #cbd5e1;
+            padding: 20px; border-radius: 12px;
+            position: relative; user-select: none;
         }
         .receipt-header {
             text-align: center; border-bottom: 1px dashed #cbd5e1;
@@ -185,17 +202,10 @@
             font-family: 'Cairo', sans-serif;
         }
         .loading { text-align: center; padding: 30px; color: var(--slate); font-weight: 600; }
-
-        /* zero-sessions notice */
         .no-sessions-notice {
-            text-align: center;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            color: var(--slate);
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 2px dashed #e2e8f0;
+            text-align: center; padding: 20px; background: #f8fafc;
+            border-radius: 12px; color: var(--slate); font-size: 0.9rem;
+            font-weight: 600; border: 2px dashed #e2e8f0;
         }
     </style>
 </head>
@@ -208,24 +218,21 @@
         <h2>مستحقات وأرشيف رواتب الأساتذة</h2>
     </div>
 
-    <!-- Payday Banner -->
     <div id="payday-banner" class="payday-banner locked">
         <span class="icon">🔒</span>
         <div id="payday-msg">جاري تحديد وضع الصرف...</div>
     </div>
 
-    <!-- Pending Salaries -->
     <div class="analysis-section">
         <h3>
             <i class="fas fa-hourglass-half" style="color: var(--orange);"></i>
-            مستحقات معلقة (محسوبة من الحصص الفعلية)
+            مستحقات معلقة
         </h3>
         <div id="pending-salaries-list">
             <div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري مراجعة سجل الحصص...</div>
         </div>
     </div>
 
-    <!-- Archive -->
     <div class="analysis-section">
         <h3>
             <i class="fas fa-archive" style="color: var(--blue);"></i>
@@ -243,8 +250,9 @@
     <div class="modal-content" onclick="event.stopPropagation()">
         <h3 style="margin-top:0; font-weight:800; color: var(--green);">تأكيد صرف راتب</h3>
         <input type="hidden" id="pay-teacher-name">
+        <input type="hidden" id="pay-teacher-type">
         <p style="margin-bottom:12px;">الأستاذ: <strong id="modal-teacher-display">...</strong></p>
-        <p style="font-size:0.82rem; color:var(--slate); margin-bottom:8px;">المبلغ المقترح بناءً على الحصص المسجّلة:</p>
+        <p style="font-size:0.82rem; color:var(--slate); margin-bottom:8px;" id="modal-amount-label">المبلغ المقترح:</p>
         <input type="number" id="pay-amount-input" class="inp" placeholder="المبلغ (دج)">
         <button class="btn-main" style="background: var(--green);" id="confirmPayBtn" onclick="window.executePayment()">
             ✅ تأكيد وتسجيل في الأرشيف
@@ -264,9 +272,10 @@
             </div>
             <div class="receipt-row"><span>الرقم التسلسلي:</span><strong id="rcpt-id">#00000</strong></div>
             <div class="receipt-row"><span>اسم الأستاذ:</span><strong id="rcpt-name">...</strong></div>
+            <div class="receipt-row"><span>نوع الأستاذ:</span><span id="rcpt-type">—</span></div>
             <div class="receipt-row"><span>تاريخ العملية:</span><span id="rcpt-date">...</span></div>
             <div class="receipt-row"><span>وقت الدفع:</span><span id="rcpt-time">...</span></div>
-            <div class="receipt-row"><span>عدد الحصص المحتسبة:</span><span id="rcpt-sessions">-</span></div>
+            <div class="receipt-row" id="rcpt-sessions-row"><span>عدد الحصص المحتسبة:</span><span id="rcpt-sessions">-</span></div>
             <div class="receipt-total receipt-row"><span>المبلغ الصافي:</span><span id="rcpt-amount">0 دج</span></div>
         </div>
         <p style="font-size:0.75rem; color:var(--red); text-align:center; margin:10px 0 0 0;">
@@ -297,16 +306,11 @@
 
     let localArchiveArray = [];
 
-    // ==============================
-    // PAYDAY CHECK
-    // ==============================
-    function isPayday() {
-        return new Date().getDate() >= 25;
-    }
+    function isPayday() { return new Date().getDate() >= 25; }
 
     function renderPaydayBanner() {
         const banner = document.getElementById('payday-banner');
-        const msg = document.getElementById('payday-msg');
+        const msg    = document.getElementById('payday-msg');
         if (isPayday()) {
             banner.className = 'payday-banner active';
             msg.innerHTML = `<b>✅ اليوم يوم الصرف!</b> يمكنك الآن صرف مستحقات الأساتذة.`;
@@ -317,76 +321,82 @@
         }
     }
 
-    // ==============================
-    // MAIN LOAD
-    // ==============================
     async function loadSalariesAndArchive() {
         renderPaydayBanner();
 
         try {
-            const [groupsSnap, studentsSnap, sessionsSnap, paymentsSnap] = await Promise.all([
-                getDocs(collection(db, "groups")).catch(() => null),
-                getDocs(collection(db, "students")).catch(() => null),
+            const [teachersSnap, sessionsSnap, paymentsSnap] = await Promise.all([
+                getDocs(collection(db, "teachers")).catch(() => null),
                 getDocs(query(collection(db, "sessions"), where("status", "==", "done"))).catch(() => null),
                 getDocs(collection(db, "salary_payments")).catch(() => null)
             ]);
 
-            // Parse groups
-            const groups = [];
-            if (groupsSnap) groupsSnap.forEach(d => groups.push({ id: d.id, ...d.data() }));
+            // ── جلب الأساتذة ──
+            const teachers = [];
+            if (teachersSnap) teachersSnap.forEach(d => teachers.push({ id: d.id, ...d.data() }));
 
-            // Parse students
-            const students = [];
-            if (studentsSnap) studentsSnap.forEach(d => students.push(d.data()));
-
-            // Parse completed sessions → build teacher accrued map
-            // teacherAccruedMap[teacherName] = { total: number, sessions: [{date, groupName, amount}] }
-            const teacherAccruedMap = {};
+            // ── بناء خريطة مستحقات الأساتذة العاديين من الحصص ──
+            const sessionAccruedMap = {};   // teacherName → { total, sessions[] }
 
             if (sessionsSnap) {
                 sessionsSnap.forEach(d => {
                     const s = d.data();
-                    if (!s.teacherName || !s.groupName) return;
-
+                    if (!s.teacherName) return;
                     const amount = Number(s.teacherShare || 0);
-                    if (!teacherAccruedMap[s.teacherName]) {
-                        teacherAccruedMap[s.teacherName] = { total: 0, sessions: [] };
+                    if (!sessionAccruedMap[s.teacherName]) {
+                        sessionAccruedMap[s.teacherName] = { total: 0, sessions: [] };
                     }
-                    teacherAccruedMap[s.teacherName].total += amount;
-                    teacherAccruedMap[s.teacherName].sessions.push({
-                        date: s.date || '',
-                        groupName: s.groupName,
-                        amount
+                    sessionAccruedMap[s.teacherName].total += amount;
+                    sessionAccruedMap[s.teacherName].sessions.push({
+                        date: s.date || '', groupName: s.groupName || '', amount
                     });
                 });
             }
 
-            // Parse archive & deduct paid amounts
+            // ── أرشيف الدفعات ──
             localArchiveArray = [];
             if (paymentsSnap) {
                 paymentsSnap.forEach(d => {
                     const data = d.data();
                     localArchiveArray.push({
                         id: d.id,
-                        teacherName: data.teacherName || 'غير معروف',
-                        amount: Number(data.amount || 0),
-                        date: data.date || '',
-                        time: data.time || '',
+                        teacherName:  data.teacherName || 'غير معروف',
+                        teacherType:  data.teacherType || 'normal',
+                        amount:       Number(data.amount || 0),
+                        date:         data.date || '',
+                        time:         data.time || '',
                         sessionsCount: data.sessionsCount || 0,
-                        timestamp: data.timestamp || new Date().toISOString()
+                        timestamp:    data.timestamp || new Date().toISOString()
                     });
                 });
             }
             localArchiveArray.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-            // Deduct already paid
+            // ── خصم المدفوع من مستحقات الأساتذة العاديين ──
             localArchiveArray.forEach(p => {
-                if (teacherAccruedMap[p.teacherName]) {
-                    teacherAccruedMap[p.teacherName].total -= p.amount;
+                if (p.teacherType === 'normal' && sessionAccruedMap[p.teacherName]) {
+                    sessionAccruedMap[p.teacherName].total -= p.amount;
                 }
             });
 
-            renderPendingList(teacherAccruedMap);
+            // ── تحديد آخر دفعة لكل معلم تحضيري (لمنع الدفع المزدوج في نفس الشهر) ──
+            const prepLastPaidMonth = {};
+            localArchiveArray.forEach(p => {
+                if (p.teacherType === 'prep' && p.date) {
+                    // نخزّن "شهر-سنة" من تاريخ آخر دفعة
+                    const parts = p.date.split('/');
+                    if (parts.length >= 2) {
+                        const key = `${parts[1]}-${parts[2] || ''}`;
+                        if (!prepLastPaidMonth[p.teacherName]) prepLastPaidMonth[p.teacherName] = key;
+                    }
+                }
+            });
+            const currentMonthKey = (() => {
+                const n = new Date();
+                return `${n.getMonth() + 1}-${n.getFullYear()}`;
+            })();
+
+            renderPendingList(teachers, sessionAccruedMap, prepLastPaidMonth, currentMonthKey);
             renderArchiveList();
 
         } catch (err) {
@@ -399,47 +409,40 @@
     // ==============================
     // RENDER PENDING
     // ==============================
-    function renderPendingList(map) {
+    function renderPendingList(teachers, sessionMap, prepLastPaidMonth, currentMonthKey) {
         const container = document.getElementById('pending-salaries-list');
-        const entries = Object.entries(map);
+        let html = '';
 
-        if (!entries.length) {
-            container.innerHTML = `<div class="no-sessions-notice">
-                📭 لا توجد حصص مسجّلة بعد.<br>
-                <small>سجّل الحصص أولاً من صفحة <a href="sessions.html">تسجيل الحصص</a></small>
-            </div>`;
-            return;
-        }
-
-        container.innerHTML = entries.map(([name, data]) => {
+        // ── 1. الأساتذة العاديون (من الحصص) ──
+        const normalEntries = Object.entries(sessionMap);
+        normalEntries.forEach(([name, data]) => {
             const balance = Math.max(0, Math.round(data.total));
             const sessionsCount = data.sessions.length;
-
-            // Recent 3 sessions chips
             const recentSessions = data.sessions.slice(-3).reverse();
 
-            return `
+            html += `
             <div class="teacher-pay-card">
                 <div class="card-top">
                     <div>
-                        <div class="teacher-name-row">👨‍🏫 ${name}</div>
+                        <div class="teacher-name-row">
+                            👨‍🏫 ${name}
+                            <span class="type-label normal">أستاذ عادي</span>
+                        </div>
                         <div class="accrued-row">
-                            <span class="accrued-chip">📚 ${sessionsCount} حصة مكتملة</span>
+                            <span class="accrued-chip">📚 ${sessionsCount} حصة</span>
                             <span class="accrued-chip ${balance > 0 ? 'red' : 'green'}">
                                 ${balance > 0 ? `💰 ${balance} دج مستحق` : '✅ مُسوّى'}
                             </span>
                         </div>
                     </div>
-                    ${balance > 0 ? (isPayday()
-                        ? `<button class="btn-pay" onclick="window.openPayModal('${name}', ${balance}, ${sessionsCount})">
-                               <i class="fas fa-hand-holding-dollar"></i> صرف
-                           </button>`
-                        : `<span style="font-size:0.75rem;color:var(--orange);font-weight:700;text-align:center;max-width:80px;">
-                               ⏳ انتظر<br>يوم 25
-                           </span>`
-                    ) : ''}
+                    ${balance > 0
+                        ? (isPayday()
+                            ? `<button class="btn-pay" onclick="window.openPayModal('${name}','normal',${balance},${sessionsCount})">
+                                   <i class="fas fa-hand-holding-dollar"></i> صرف
+                               </button>`
+                            : `<span class="btn-locked"><i class="fas fa-lock"></i> يوم 25</span>`)
+                        : ''}
                 </div>
-
                 ${recentSessions.length > 0 ? `
                 <div class="sessions-breakdown">
                     <p>📋 آخر الحصص المسجّلة:</p>
@@ -451,7 +454,61 @@
                     </div>
                 </div>` : ''}
             </div>`;
-        }).join('');
+        });
+
+        // ── 2. المعلمون التحضيريون (راتب ثابت) ──
+        const prepTeachers = teachers.filter(t => t.teacherType === 'prep');
+
+        prepTeachers.forEach(t => {
+            const salary = Number(t.salary || 0);
+            const alreadyPaidThisMonth = prepLastPaidMonth[t.name] === currentMonthKey;
+            const canPay = isPayday() && !alreadyPaidThisMonth;
+
+            // زر الصرف أو القفل
+            let actionBtn = '';
+            if (alreadyPaidThisMonth) {
+                actionBtn = `<span class="btn-locked" style="background:#f0fdf4;border-color:#86efac;color:#15803d;">
+                    <i class="fas fa-check-circle"></i> مدفوع
+                </span>`;
+            } else if (isPayday()) {
+                actionBtn = `<button class="btn-pay purple-pay" onclick="window.openPayModal('${t.name}','prep',${salary},0)">
+                    <i class="fas fa-hand-holding-dollar"></i> صرف
+                </button>`;
+            } else {
+                const daysLeft = 25 - new Date().getDate();
+                actionBtn = `<span class="btn-locked"><i class="fas fa-lock"></i> بعد ${daysLeft}ي</span>`;
+            }
+
+            html += `
+            <div class="teacher-pay-card prep-card">
+                <div class="card-top">
+                    <div>
+                        <div class="teacher-name-row">
+                            🧑‍🎓 ${t.name}
+                            <span class="type-label prep">تحضيري</span>
+                        </div>
+                        <div class="accrued-row">
+                            <span class="accrued-chip purple">💜 راتب ثابت: ${salary.toLocaleString('ar-DZ')} دج/شهر</span>
+                            ${t.subject ? `<span class="accrued-chip">📖 ${t.subject}</span>` : ''}
+                        </div>
+                    </div>
+                    ${actionBtn}
+                </div>
+                <div class="sessions-breakdown prep-breakdown">
+                    <p>ℹ️ الراتب محدد مسبقاً في ملف الأستاذ — لا يرتبط بعدد الحصص</p>
+                </div>
+            </div>`;
+        });
+
+        if (!html) {
+            container.innerHTML = `<div class="no-sessions-notice">
+                📭 لا توجد بيانات للعرض بعد.<br>
+                <small>تأكد من تسجيل الحصص وإضافة الأساتذة.</small>
+            </div>`;
+            return;
+        }
+
+        container.innerHTML = html;
     }
 
     // ==============================
@@ -467,9 +524,9 @@
         }
 
         container.innerHTML = localArchiveArray.map(p => `
-            <div class="archive-item" onclick="window.viewReceipt('${p.id}')">
+            <div class="archive-item ${p.teacherType === 'prep' ? 'prep-archive' : ''}" onclick="window.viewReceipt('${p.id}')">
                 <div>
-                    <strong>استلام الأستاذ: ${p.teacherName}</strong>
+                    <strong>${p.teacherType === 'prep' ? '🧑‍🎓' : '👨‍🏫'} ${p.teacherName}</strong>
                     <span class="archive-meta">🗓️ ${p.date} · 🕐 ${p.time}</span>
                 </div>
                 <strong style="color:var(--green); font-size:1.05rem;">+${p.amount} دج</strong>
@@ -478,25 +535,35 @@
     }
 
     // ==============================
-    // MODAL CONTROLS
+    // MODAL
     // ==============================
     let currentSessionsCount = 0;
 
-    window.closePayModal = () => { document.getElementById('pay-modal').style.display = 'none'; };
+    window.closePayModal    = () => { document.getElementById('pay-modal').style.display = 'none'; };
     window.closeReceiptModal = () => { document.getElementById('receipt-modal').style.display = 'none'; };
 
-    window.openPayModal = function(name, suggestedAmount, sessionsCount) {
+    window.openPayModal = function(name, type, suggestedAmount, sessionsCount) {
         currentSessionsCount = sessionsCount;
-        document.getElementById('pay-teacher-name').value = name;
+        document.getElementById('pay-teacher-name').value  = name;
+        document.getElementById('pay-teacher-type').value  = type;
         document.getElementById('modal-teacher-display').innerText = name;
-        document.getElementById('pay-amount-input').value = suggestedAmount;
+        document.getElementById('pay-amount-input').value  = suggestedAmount;
+
+        document.getElementById('modal-amount-label').innerText = type === 'prep'
+            ? 'الراتب الشهري الثابت (يمكن تعديله):'
+            : 'المبلغ المقترح بناءً على الحصص المسجّلة:';
+
+        const btn = document.getElementById('confirmPayBtn');
+        btn.style.background = type === 'prep' ? 'var(--purple)' : 'var(--green)';
+
         document.getElementById('pay-modal').style.display = 'flex';
     };
 
     window.executePayment = async function() {
-        const name = document.getElementById('pay-teacher-name').value;
+        const name   = document.getElementById('pay-teacher-name').value;
+        const type   = document.getElementById('pay-teacher-type').value;
         const amount = Number(document.getElementById('pay-amount-input').value);
-        const btn = document.getElementById('confirmPayBtn');
+        const btn    = document.getElementById('confirmPayBtn');
 
         if (!amount || amount <= 0) { alert("أدخل مبلغ صرف صحيح!"); return; }
 
@@ -504,20 +571,19 @@
         try {
             const now = new Date();
             await addDoc(collection(db, "salary_payments"), {
-                teacherName: name,
+                teacherName:   name,
+                teacherType:   type,
                 amount,
                 sessionsCount: currentSessionsCount,
-                date: now.toLocaleDateString('ar-DZ'),
-                time: now.toLocaleTimeString('ar-DZ'),
+                date:      now.toLocaleDateString('ar-DZ'),
+                time:      now.toLocaleTimeString('ar-DZ'),
                 timestamp: now.toISOString()
             });
-
             window.closePayModal();
             await loadSalariesAndArchive();
-
         } catch (e) {
             console.error(e);
-            alert("فشل الاتصال بخادم Firebase المالي.");
+            alert("فشل الاتصال بخادم Firebase.");
         } finally {
             btn.disabled = false;
         }
@@ -527,12 +593,20 @@
         const p = localArchiveArray.find(x => x.id === paymentId);
         if (!p) return;
 
-        document.getElementById('rcpt-id').innerText = '#' + p.id.substr(0, 7).toUpperCase();
-        document.getElementById('rcpt-name').innerText = p.teacherName;
-        document.getElementById('rcpt-date').innerText = p.date || 'غير محدد';
-        document.getElementById('rcpt-time').innerText = p.time || 'غير محدد';
-        document.getElementById('rcpt-sessions').innerText = p.sessionsCount ? `${p.sessionsCount} حصة` : '-';
+        document.getElementById('rcpt-id').innerText     = '#' + p.id.substr(0, 7).toUpperCase();
+        document.getElementById('rcpt-name').innerText   = p.teacherName;
+        document.getElementById('rcpt-type').innerText   = p.teacherType === 'prep' ? 'معلم تحضيري 🟣' : 'أستاذ عادي 🔵';
+        document.getElementById('rcpt-date').innerText   = p.date || 'غير محدد';
+        document.getElementById('rcpt-time').innerText   = p.time || 'غير محدد';
         document.getElementById('rcpt-amount').innerText = p.amount + ' دج';
+
+        const sessRow = document.getElementById('rcpt-sessions-row');
+        if (p.teacherType === 'prep') {
+            sessRow.style.display = 'none';
+        } else {
+            sessRow.style.display = 'flex';
+            document.getElementById('rcpt-sessions').innerText = p.sessionsCount ? `${p.sessionsCount} حصة` : '-';
+        }
 
         document.getElementById('receipt-modal').style.display = 'flex';
     };
