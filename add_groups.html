@@ -516,7 +516,6 @@
                 window.closeAllModals(); loadAllData();
             }).finally(() => saveGroupBtn.disabled = false);
         } else {
-            if (localGroupsArray.some(g => g.name === name)) { alert("اسم الفوج موجود مسبقاً!"); saveGroupBtn.disabled = false; return; }
             addDoc(collection(db, "groups"), { name, teacherName, price, sessionsCount, schedule }).then(() => {
                 window.closeAllModals(); loadAllData();
             }).finally(() => saveGroupBtn.disabled = false);
