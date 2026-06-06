@@ -3,248 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة الأساتذة - كناشي Pro</title>
+    <title>إدارة الأساتذة - مركز المعالي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg: #f8fafc; --white: #ffffff;
-            --blue: #2563eb; --green: #22c55e;
-            --red: #ef4444; --orange: #f97316;
-            --purple: #7c3aed;
-            --slate: #64748b; --dark: #0f172a;
-            --radius: 18px;
+            --bg:#f8fafc; --white:#ffffff;
+            --blue:#2563eb; --blue-light:#eff6ff;
+            --green:#22c55e;
+            --red:#ef4444; --red-light:#fef2f2;
+            --orange:#f97316; --orange-light:#fff7ed;
+            --purple:#7c3aed; --purple-light:#f5f3ff;
+            --teal:#0891b2; --teal-light:#ecfeff;
+            --slate:#64748b; --dark:#0f172a;
+            --border:#e8edf5; --radius:18px;
         }
+        *{font-variant-numeric:lining-nums;box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--dark);line-height:1.5;}
+        .app-wrapper{width:100%;max-width:460px;margin:0 auto;padding:15px 15px 110px;}
 
-        * { font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; box-sizing: border-box; }
+        .role-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:14px;margin-bottom:16px;font-size:0.85rem;font-weight:800;}
+        .role-banner.manager{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+        .role-banner.admin{background:var(--blue-light);color:#1d4ed8;border:1px solid #bfdbfe;}
 
-        body {
-            font-family: 'Cairo', "Segoe UI", sans-serif;
-            background: var(--bg); margin: 0; padding: 15px;
-            color: var(--dark); line-height: 1.5;
-        }
-        .app-wrapper { width: 100%; max-width: 460px; margin: 0 auto; padding-bottom: 110px; }
+        .top-nav{display:flex;align-items:center;margin-bottom:16px;gap:14px;}
+        .back-link{background:var(--white);border:none;width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);color:var(--dark);text-decoration:none;transition:.15s;cursor:pointer;}
+        .back-link:active{transform:scale(.9);}
+        .top-nav h2{margin:0;font-size:1.3rem;font-weight:900;}
 
-        /* ── top nav ── */
-        .top-nav { display: flex; align-items: center; margin-bottom: 16px; gap: 14px; }
-        .back-link {
-            background: var(--white); border: none; width: 44px; height: 44px;
-            border-radius: 14px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08); color: var(--dark);
-            text-decoration: none; transition: 0.15s;
-        }
-        .back-link:active { transform: scale(0.9); }
-        .top-nav h2 { margin: 0; font-size: 1.3rem; font-weight: 900; }
+        .search-bar{background:var(--white);border-radius:14px;padding:11px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;align-items:center;gap:10px;margin-bottom:20px;border:1px solid var(--border);}
+        .search-bar input{flex:1;border:none;outline:none;font-size:1rem;background:transparent;font-family:'Cairo',inherit;color:var(--dark);}
+        .search-bar i{color:var(--slate);}
 
-        /* ── search ── */
-        .search-bar {
-            background: var(--white); border-radius: 14px;
-            padding: 11px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex; align-items: center; gap: 10px;
-            margin-bottom: 20px; border: 1px solid #e8edf5;
-        }
-        .search-bar input {
-            flex: 1; border: none; outline: none;
-            font-size: 1rem; background: transparent;
-            font-family: 'Cairo', inherit; color: var(--dark);
-        }
-        .search-bar i { color: var(--slate); }
+        .teacher-card{background:var(--white);padding:18px 20px;border-radius:var(--radius);margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid var(--border);position:relative;overflow:hidden;transition:box-shadow .2s;}
+        .teacher-card.type-prep::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--purple);}
+        .teacher-card.type-normal::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--blue);}
 
-        /* ── teacher card ── */
-        .teacher-card {
-            background: var(--white); padding: 18px 20px;
-            border-radius: var(--radius); margin-bottom: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border: 1px solid #e8edf5;
-            position: relative; overflow: hidden;
-            transition: box-shadow 0.2s;
-        }
-        .teacher-card.type-prep::before {
-            content: ''; position: absolute;
-            top: 0; right: 0; width: 4px; height: 100%;
-            background: var(--purple);
-        }
-        .teacher-card.type-normal::before {
-            content: ''; position: absolute;
-            top: 0; right: 0; width: 4px; height: 100%;
-            background: var(--blue);
-        }
+        .info h4{margin:0;font-size:1.1rem;font-weight:900;}
+        .info p{margin:6px 0 0;font-size:.88rem;color:var(--slate);display:flex;align-items:center;gap:7px;}
 
-        .info h4 { margin: 0; font-size: 1.1rem; font-weight: 900; }
-        .info p  { margin: 6px 0 0; font-size: 0.88rem; color: var(--slate); display: flex; align-items: center; gap: 7px; }
+        .badges-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;}
+        .badge-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.78rem;font-weight:700;}
+        .badge-normal{background:var(--blue-light);color:#1d4ed8;}
+        .badge-prep{background:var(--purple-light);color:#6d28d9;}
+        .badge-pay{background:var(--blue-light);color:#1e40af;}
+        .badge-salary{background:var(--purple-light);color:#6d28d9;}
+        .badge-locked{background:#f1f5f9;color:var(--slate);}
 
-        .payment-status {
-            margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 700;
-        }
-        .payment-status.ratio-badge { background: #eff6ff; color: #1e40af; }
-        .payment-status.salary-badge { background: #f5f3ff; color: #6d28d9; }
-        .teacher-type-badge {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
-            margin-top: 6px; margin-right: 6px;
-        }
-        .badge-normal { background: #eff6ff; color: #1d4ed8; }
-        .badge-prep   { background: #f5f3ff; color: #6d28d9; }
+        .paths-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+        .path-tag{background:var(--teal-light);color:var(--teal);border:1px solid #a5f3fc;padding:3px 10px;border-radius:10px;font-size:.75rem;font-weight:700;}
 
-        .action-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
-            gap: 9px; margin-top: 16px;
-            border-top: 1px solid #f1f5f9; padding-top: 14px;
-        }
-        .btn-op {
-            height: 48px; border: none; border-radius: 13px;
-            cursor: pointer; display: flex; align-items: center;
-            justify-content: center; font-size: 1.1rem;
-            transition: all 0.15s; text-decoration: none;
-        }
-        .btn-op:active { transform: translateY(2px); opacity: 0.8; }
-        .btn-wa { background: #e8faf0; color: #16a34a; }
-        .btn-ph { background: #eff6ff; color: #2563eb; }
-        .btn-ar { background: #fff7ed; color: #c2410c; }
-        .btn-ed { background: #f8fafc; color: #475569; border: 1px solid #f1f5f9; }
-        .btn-dl { background: #fef2f2; color: #dc2626; }
+        .action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(44px,1fr));gap:9px;margin-top:16px;border-top:1px solid #f1f5f9;padding-top:14px;}
+        .btn-op{height:48px;border:none;border-radius:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .15s;text-decoration:none;}
+        .btn-op:active{transform:translateY(2px);opacity:.8;}
+        .btn-wa{background:#e8faf0;color:#16a34a;}
+        .btn-ph{background:var(--blue-light);color:var(--blue);}
+        .btn-ar{background:#fff7ed;color:#c2410c;}
+        .btn-ed{background:#f8fafc;color:#475569;border:1px solid #f1f5f9;}
+        .btn-dl{background:var(--red-light);color:#dc2626;}
 
-        /* ── FAB ── */
-        .fab {
-            position: fixed; bottom: 28px; left: 24px;
-            width: 62px; height: 62px;
-            background: var(--blue); color: white;
-            border-radius: 20px; border: none; font-size: 24px;
-            box-shadow: 0 10px 24px rgba(37,99,235,0.4);
-            cursor: pointer; z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
-        }
-        .fab:active { transform: scale(0.88) rotate(90deg); }
+        .fab{position:fixed;bottom:28px;left:24px;width:62px;height:62px;background:var(--blue);color:white;border-radius:20px;border:none;font-size:24px;box-shadow:0 10px 24px rgba(37,99,235,.4);cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;transition:.2s;}
+        .fab:active{transform:scale(.88) rotate(90deg);}
 
-        /* ── MODAL ── */
-        .modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(15,23,42,0.75); z-index: 2000;
-            justify-content: center; align-items: center;
-            backdrop-filter: blur(6px);
-        }
-        .modal-content {
-            background: white; padding: 28px;
-            width: 92%; max-width: 390px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
-            border-radius: 26px;
-            animation: mIn 0.2s ease;
-            max-height: 90vh; overflow-y: auto;
-        }
-        @keyframes mIn {
-            from { opacity:0; transform:translateY(18px) scale(0.97); }
-            to   { opacity:1; transform:translateY(0) scale(1); }
-        }
-        .modal-content h3 { margin: 0 0 18px; text-align: center; font-size: 1.2rem; font-weight: 900; }
+        .modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:2000;justify-content:center;align-items:center;backdrop-filter:blur(6px);}
+        .modal-content{background:white;padding:28px;width:92%;max-width:400px;box-shadow:0 25px 50px -12px rgba(0,0,0,.3);border-radius:26px;animation:mIn .2s ease;max-height:92vh;overflow-y:auto;}
+        @keyframes mIn{from{opacity:0;transform:translateY(18px) scale(.97);}to{opacity:1;transform:none;}}
+        .modal-content h3{margin:0 0 18px;text-align:center;font-size:1.2rem;font-weight:900;}
 
-        /* ── نوع الأستاذ (راديو) ── */
-        .type-selector {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 10px; margin-bottom: 14px;
-        }
-        .type-option input[type="radio"] { display: none; }
-        .type-option label {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 6px; padding: 14px 10px;
-            border: 2px solid #e8edf5; border-radius: 14px;
-            cursor: pointer; transition: all 0.15s;
-            font-size: 0.9rem; font-weight: 700; color: var(--slate);
-        }
-        .type-option label i { font-size: 1.5rem; }
-        .type-option input[type="radio"]:checked + label {
-            border-color: var(--blue); background: #eff6ff; color: var(--blue);
-        }
-        .type-option input[value="prep"]:checked + label {
-            border-color: var(--purple); background: #f5f3ff; color: var(--purple);
-        }
-        .type-section-label {
-            font-size: 0.82rem; font-weight: 700; color: var(--slate);
-            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
-        }
+        .type-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+        .type-option input[type="radio"]{display:none;}
+        .type-option label{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px;border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:all .15s;font-size:.9rem;font-weight:700;color:var(--slate);}
+        .type-option label i{font-size:1.5rem;}
+        .type-option input[type="radio"]:checked+label{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+        .type-option input[value="prep"]:checked+label{border-color:var(--purple);background:var(--purple-light);color:var(--purple);}
 
-        .inp {
-            width: 100%; padding: 13px 15px; margin-bottom: 12px;
-            border: 2px solid #e8edf5; border-radius: 13px;
-            font-size: 0.97rem; outline: none;
-            transition: border-color 0.15s;
-            font-family: 'Cairo', inherit;
-        }
-        .inp:focus { border-color: var(--blue); }
-        .inp.inp-purple:focus { border-color: var(--purple); }
-        .inp[type="number"] { -moz-appearance: textfield; }
-        .inp[type="number"]::-webkit-outer-spin-button,
-        .inp[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .section-label{font-size:.8rem;font-weight:700;color:var(--slate);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+        .inp{width:100%;padding:13px 15px;margin-bottom:12px;border:2px solid var(--border);border-radius:13px;font-size:.97rem;outline:none;transition:border-color .15s;font-family:'Cairo',inherit;color:var(--dark);background:var(--bg);}
+        .inp:focus{border-color:var(--blue);background:white;}
+        .inp.inp-purple:focus{border-color:var(--purple);}
 
-        /* حقل النسبة مع اللاحقة % */
-        .ratio-wrapper {
-            position: relative; margin-bottom: 12px;
-        }
-        .ratio-wrapper .inp {
-            margin-bottom: 0;
-            padding-left: 44px;
-        }
-        .ratio-suffix {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            font-size: 1rem; font-weight: 900; color: var(--blue);
-            pointer-events: none;
-        }
+        .ratio-wrapper,.salary-wrapper{position:relative;margin-bottom:12px;}
+        .ratio-wrapper .inp,.salary-wrapper .inp{margin-bottom:0;padding-left:44px;}
+        .ratio-suffix{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:1rem;font-weight:900;color:var(--blue);pointer-events:none;}
+        .salary-suffix{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:.8rem;font-weight:900;color:var(--purple);pointer-events:none;}
+        .fields-normal{display:block;}
+        .fields-prep{display:none;}
 
-        /* حقل الراتب مع اللاحقة دج */
-        .salary-wrapper {
-            position: relative; margin-bottom: 12px;
-        }
-        .salary-wrapper .inp {
-            margin-bottom: 0;
-            padding-left: 44px;
-        }
-        .salary-suffix {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            font-size: 0.8rem; font-weight: 900; color: var(--purple);
-            pointer-events: none;
-        }
+        /* ── اختيار المسارات ── */
+        .paths-select-wrap{margin-bottom:14px;}
+        .path-category{margin-bottom:12px;}
+        .path-category-title{font-size:.75rem;font-weight:800;color:var(--slate);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+        .path-chips{display:flex;flex-wrap:wrap;gap:6px;}
+        .path-chip input[type="checkbox"]{display:none;}
+        .path-chip label{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:#f8fafc;font-size:.78rem;font-weight:700;color:var(--slate);cursor:pointer;transition:all .15s;user-select:none;}
+        .path-chip input:checked+label{background:var(--teal-light);border-color:#14b8a6;color:var(--teal);}
+        .path-chip label:hover{border-color:#94a3b8;}
 
-        /* الحقول المخصصة لكل نوع */
-        .fields-normal { display: block; }
-        .fields-prep   { display: none; }
+        .btn-submit{background:var(--blue);color:white;border:none;width:100%;padding:15px;border-radius:14px;font-weight:800;cursor:pointer;margin-top:6px;font-size:1rem;font-family:'Cairo',inherit;box-shadow:0 4px 12px rgba(37,99,235,.25);transition:background .2s;}
+        .btn-cancel{width:100%;background:none;border:none;margin-top:12px;color:var(--slate);cursor:pointer;font-family:'Cairo',inherit;font-size:.97rem;padding:8px;border-radius:10px;}
+        .ratio-error{background:var(--red-light);color:#dc2626;border-radius:10px;padding:8px 12px;font-size:.85rem;font-weight:700;margin-bottom:10px;display:none;align-items:center;gap:7px;}
 
-        .btn-submit {
-            background: var(--blue); color: white; border: none;
-            width: 100%; padding: 15px; border-radius: 14px;
-            font-weight: 800; cursor: pointer; margin-top: 6px;
-            font-size: 1rem; font-family: 'Cairo', inherit;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
-            transition: background 0.2s;
-        }
+        .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9;font-size:.95rem;}
+        .info-row:last-child{border:none;}
+        .info-row span{color:var(--slate);font-weight:600;}
+        .info-row b{color:var(--dark);font-weight:700;text-align:left;max-width:60%;}
+        .info-row.col{flex-direction:column;gap:8px;align-items:flex-start;}
 
-        .btn-cancel {
-            width: 100%; background: none; border: none;
-            margin-top: 12px; color: var(--slate); cursor: pointer;
-            font-family: 'Cairo', inherit; font-size: 0.97rem;
-            padding: 8px; border-radius: 10px;
-        }
-
-        /* ── مودال عرض تفاصيل الأستاذ ── */
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
-        .info-row span { color: var(--slate); font-weight: 600; }
-        .info-row b { color: var(--dark); font-weight: 700; }
-
-        .loading { text-align: center; padding: 40px; color: var(--slate); font-weight: 600; }
-
-        /* رسالة خطأ النسبة */
-        .ratio-error {
-            background: #fef2f2; color: #dc2626;
-            border-radius: 10px; padding: 8px 12px;
-            font-size: 0.85rem; font-weight: 700;
-            margin-bottom: 10px; display: none;
-            align-items: center; gap: 7px;
-        }
+        .loading{text-align:center;padding:40px;color:var(--slate);font-weight:600;}
+        .empty-state{text-align:center;padding:70px 20px;}
+        .empty-state i{font-size:3.5rem;color:#cbd5e1;margin-bottom:14px;display:block;}
+        .empty-state p{color:var(--slate);font-weight:600;}
     </style>
 </head>
 <body>
-
 <div class="app-wrapper">
+
+    <div id="roleBanner" class="role-banner manager">
+        <i class="fas fa-user-cog"></i>
+        <span id="roleText">مُسيّر — صلاحيات محدودة</span>
+    </div>
+
     <div class="top-nav">
         <a href="home.html" class="back-link"><i class="fas fa-chevron-right"></i></a>
         <h2>قائمة الأساتذة</h2>
@@ -252,67 +130,99 @@
 
     <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" id="search-input" placeholder="ابحث عن أستاذ بالتطابق المباشر..." oninput="window.searchTeachers()">
+        <input type="text" id="search-input" placeholder="ابحث عن أستاذ..." oninput="window.searchTeachers()">
     </div>
 
-    <div id="list"><div class="loading"><i class="fas fa-spinner fa-spin"></i> جاري تحميل بيانات الأساتذة...</div></div>
+    <div id="list"><div class="loading"><i class="fas fa-spinner fa-spin"></i> جارٍ تحميل البيانات...</div></div>
 </div>
 
-<button class="fab" onclick="window.openModal()"><i class="fas fa-plus"></i></button>
+<button class="fab" id="fabBtn" onclick="window.openModal()" style="display:none;"><i class="fas fa-plus"></i></button>
 
-<!-- مودال الإضافة / التعديل -->
+<!-- مودال إضافة / تعديل (admin only) -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <h3 id="modalTitle">إضافة أستاذ جديد</h3>
         <input type="hidden" id="editId">
 
-        <!-- اختيار نوع الأستاذ -->
-        <div class="type-section-label"><i class="fas fa-tag"></i> نوع الأستاذ</div>
+        <div class="section-label"><i class="fas fa-tag"></i> نوع الأستاذ</div>
         <div class="type-selector">
             <div class="type-option">
                 <input type="radio" name="teacherType" id="typeNormal" value="normal" checked onchange="window.onTypeChange()">
-                <label for="typeNormal">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    أستاذ عادي
-                </label>
+                <label for="typeNormal"><i class="fas fa-chalkboard-teacher"></i> أستاذ عادي</label>
             </div>
             <div class="type-option">
                 <input type="radio" name="teacherType" id="typePrep" value="prep" onchange="window.onTypeChange()">
-                <label for="typePrep">
-                    <i class="fas fa-child"></i>
-                    معلم تحضيري
-                </label>
+                <label for="typePrep"><i class="fas fa-child"></i> معلم تحضيري</label>
             </div>
         </div>
 
-        <!-- الحقول المشتركة -->
-        <input type="text"   id="name"    class="inp" placeholder="الاسم الكامل للأستاذ">
-        <input type="text"   id="subject" class="inp" placeholder="المادة الـمُدرّسة (مثال: رياضيات)">
-        <input type="tel"    id="phone"   class="inp" placeholder="رقم هاتف الأستاذ" inputmode="numeric">
+        <input type="text" id="name"    class="inp" placeholder="الاسم الكامل للأستاذ">
+        <input type="text" id="subject" class="inp" placeholder="التخصص / المادة المُدرَّسة">
+        <input type="tel"  id="phone"   class="inp" placeholder="رقم الهاتف" inputmode="numeric">
 
-        <!-- حقول الأستاذ العادي: النسبة -->
         <div class="fields-normal" id="fieldsNormal">
-            <div class="type-section-label" style="margin-top:4px;"><i class="fas fa-percentage"></i> نسبة الأستاذ من المداخيل</div>
+            <div class="section-label" style="margin-top:4px;"><i class="fas fa-percentage"></i> نسبة الأستاذ من المداخيل</div>
             <div class="ratio-wrapper">
-                <input type="number" id="ratio" class="inp"
-                       placeholder="مثال: 30" min="0" max="100" step="1"
-                       inputmode="numeric"
-                       oninput="window.onRatioInput(this)">
+                <input type="number" id="ratio" class="inp" placeholder="مثال: 30" min="0" max="100" step="1" inputmode="numeric" oninput="window.onRatioInput(this)">
                 <span class="ratio-suffix">%</span>
             </div>
-            <div class="ratio-error" id="ratioError">
-                <i class="fas fa-exclamation-triangle"></i> النسبة يجب أن تكون بين 0 و 100%
+            <div class="ratio-error" id="ratioError"><i class="fas fa-exclamation-triangle"></i> النسبة يجب أن تكون بين 0 و 100%</div>
+        </div>
+
+        <div class="fields-prep" id="fieldsPrep">
+            <div class="section-label" style="margin-top:4px;"><i class="fas fa-money-bill-wave"></i> الراتب الشهري الثابت</div>
+            <div class="salary-wrapper">
+                <input type="number" id="salary" class="inp inp-purple" placeholder="مثال: 25000" min="0" inputmode="numeric">
+                <span class="salary-suffix">دج</span>
             </div>
         </div>
 
-        <!-- حقول المعلم التحضيري: الراتب -->
-        <div class="fields-prep" id="fieldsPrep">
-            <div class="type-section-label" style="margin-top:4px;"><i class="fas fa-money-bill-wave"></i> الراتب الشهري الثابت</div>
-            <div class="salary-wrapper">
-                <input type="number" id="salary" class="inp inp-purple"
-                       placeholder="مثال: 25000" min="0" step="1"
-                       inputmode="numeric">
-                <span class="salary-suffix">دج</span>
+        <!-- ══ اختيار المسارات ══ -->
+        <div class="paths-select-wrap">
+            <div class="section-label"><i class="fas fa-chalkboard"></i> المسارات / السنوات التي يدرّسها</div>
+
+            <div class="path-category">
+                <div class="path-category-title"><i class="fas fa-school"></i> ابتدائي</div>
+                <div class="path-chips">
+                    <div class="path-chip"><input type="checkbox" id="p1ab" value="السنة 1 ابتدائي"><label for="p1ab">السنة 1</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p2ab" value="السنة 2 ابتدائي"><label for="p2ab">السنة 2</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p3ab" value="السنة 3 ابتدائي"><label for="p3ab">السنة 3</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p4ab" value="السنة 4 ابتدائي"><label for="p4ab">السنة 4</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p5ab" value="السنة 5 ابتدائي"><label for="p5ab">السنة 5</label></div>
+                </div>
+            </div>
+
+            <div class="path-category">
+                <div class="path-category-title"><i class="fas fa-graduation-cap"></i> متوسط</div>
+                <div class="path-chips">
+                    <div class="path-chip"><input type="checkbox" id="p1mt" value="السنة 1 متوسط"><label for="p1mt">السنة 1</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p2mt" value="السنة 2 متوسط"><label for="p2mt">السنة 2</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p3mt" value="السنة 3 متوسط"><label for="p3mt">السنة 3</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p4mt" value="السنة 4 متوسط"><label for="p4mt">السنة 4</label></div>
+                </div>
+            </div>
+
+            <div class="path-category">
+                <div class="path-category-title"><i class="fas fa-award"></i> ثانوي</div>
+                <div class="path-chips">
+                    <div class="path-chip"><input type="checkbox" id="p1th" value="السنة 1 ثانوي"><label for="p1th">السنة 1</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p2th" value="السنة 2 ثانوي"><label for="p2th">السنة 2</label></div>
+                    <div class="path-chip"><input type="checkbox" id="p3th" value="السنة 3 ثانوي"><label for="p3th">السنة 3</label></div>
+                </div>
+            </div>
+
+            <div class="path-category">
+                <div class="path-category-title"><i class="fas fa-star"></i> برامج أخرى</div>
+                <div class="path-chips">
+                    <div class="path-chip"><input type="checkbox" id="pquran"  value="حفظ القرآن"><label for="pquran">حفظ القرآن</label></div>
+                    <div class="path-chip"><input type="checkbox" id="pmquran" value="مع القرآن"><label for="pmquran">مع القرآن</label></div>
+                    <div class="path-chip"><input type="checkbox" id="psorob"  value="السوروبان"><label for="psorob">السوروبان</label></div>
+                    <div class="path-chip"><input type="checkbox" id="pai"     value="الذكاء الاصطناعي"><label for="pai">الذكاء الاصطناعي</label></div>
+                    <div class="path-chip"><input type="checkbox" id="pread"   value="تحدي القراءة"><label for="pread">تحدي القراءة</label></div>
+                    <div class="path-chip"><input type="checkbox" id="pworks"  value="الورشات"><label for="pworks">الورشات</label></div>
+                    <div class="path-chip"><input type="checkbox" id="pcours"  value="الدورات"><label for="pcours">الدورات</label></div>
+                    <div class="path-chip"><input type="checkbox" id="pmisc"   value="متفرقات"><label for="pmisc">متفرقات</label></div>
+                </div>
             </div>
         </div>
 
@@ -327,268 +237,256 @@
         <h3>بطاقة بيانات الأستاذ</h3>
         <div class="info-row"><span>الاسم الكامل:</span> <b id="det-name">—</b></div>
         <div class="info-row"><span>النوع:</span> <b id="det-type">—</b></div>
-        <div class="info-row"><span>المادة:</span> <b id="det-subject">—</b></div>
+        <div class="info-row"><span>التخصص / المادة:</span> <b id="det-subject">—</b></div>
         <div class="info-row"><span>رقم الهاتف:</span> <b id="det-phone">—</b></div>
-        <div class="info-row"><span>تاريخ التعاقد/الانضمام:</span> <b id="det-date">—</b></div>
-        <div class="info-row" id="det-ratio-row"><span>النسبة المئوية الحالية:</span> <b id="det-ratio">—</b></div>
+        <div class="info-row"><span>تاريخ التسجيل:</span> <b id="det-date">—</b></div>
+        <div class="info-row col"><span>المسارات التي يدرّسها:</span><div id="det-paths" class="paths-row" style="margin-top:0;"></div></div>
+        <div class="info-row" id="det-ratio-row"><span>النسبة المئوية:</span> <b id="det-ratio">—</b></div>
         <div class="info-row" id="det-salary-row" style="display:none;"><span>الراتب الشهري:</span> <b id="det-salary">—</b></div>
-        <button class="btn-submit" style="background: var(--slate);" onclick="window.closeDetailModal()">إغلاق النافذة</button>
+        <button class="btn-submit" style="background:var(--slate);" onclick="window.closeDetailModal()">إغلاق</button>
     </div>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
-        authDomain: "molakasati.firebaseapp.com",
-        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
-        projectId: "molakasati",
-        storageBucket: "molakasati.firebasestorage.app",
-        messagingSenderId: "981780224226",
-        appId: "1:981780224226:web:6565de586fffa9f33326bb",
-        measurementId: "G-H52ZV49J1C"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+    authDomain: "molakasati.firebaseapp.com",
+    databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+    projectId: "molakasati",
+    storageBucket: "molakasati.firebasestorage.app",
+    messagingSenderId: "981780224226",
+    appId: "1:981780224226:web:6565de586fffa9f33326bb",
+    measurementId: "G-H52ZV49J1C"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+// ══ الدور ══
+const currentRole = localStorage.getItem("kanashi_role") || "manager";
+const isAdmin = currentRole === "admin";
 
-    let localTeachersArray = [];
+// تحديث البانر
+const banner = document.getElementById("roleBanner");
+if (isAdmin) {
+    banner.className = "role-banner admin";
+    banner.innerHTML = '<i class="fas fa-user-shield"></i> <span>مدير — صلاحيات كاملة</span>';
+} else {
+    banner.className = "role-banner manager";
+    banner.innerHTML = '<i class="fas fa-user-cog"></i> <span> مرحبا بك سيادة مُسيّر — </span>';
+}
+if (isAdmin) document.getElementById("fabBtn").style.display = "flex";
 
-    /* ── تغيير نوع الأستاذ ── */
-    window.onTypeChange = function() {
-        const isPrep = document.getElementById("typePrep").checked;
-        document.getElementById("fieldsNormal").style.display = isPrep ? "none" : "block";
-        document.getElementById("fieldsPrep").style.display   = isPrep ? "block" : "none";
-        document.getElementById("ratioError").style.display   = "none";
+let localTeachersArray = [];
+
+window.onTypeChange = function() {
+    const isPrep = document.getElementById("typePrep").checked;
+    document.getElementById("fieldsNormal").style.display = isPrep ? "none" : "block";
+    document.getElementById("fieldsPrep").style.display   = isPrep ? "block" : "none";
+    document.getElementById("ratioError").style.display   = "none";
+};
+
+window.onRatioInput = function(input) {
+    input.value = input.value.replace(/[.,]/g,"");
+    const v = parseInt(input.value,10);
+    const e = document.getElementById("ratioError");
+    e.style.display = (input.value!==""&&(isNaN(v)||v>100||v<0)) ? "flex" : "none";
+};
+
+function getSelectedPaths() {
+    return [...document.querySelectorAll('.paths-select-wrap input[type="checkbox"]:checked')].map(c=>c.value);
+}
+function setSelectedPaths(paths=[]) {
+    document.querySelectorAll('.paths-select-wrap input[type="checkbox"]').forEach(c => c.checked=paths.includes(c.value));
+}
+function clearPaths() {
+    document.querySelectorAll('.paths-select-wrap input[type="checkbox"]').forEach(c => c.checked=false);
+}
+
+async function fetchAndRender() {
+    const container = document.getElementById("list");
+    container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> جارٍ جلب البيانات...</div>';
+    try {
+        const snap = await getDocs(collection(db,"teachers"));
+        localTeachersArray = [];
+        snap.forEach(d => localTeachersArray.push({id:d.id,...d.data()}));
+        window.renderList(localTeachersArray);
+    } catch(e) {
+        container.innerHTML = `<div class="loading" style="color:var(--red);">فشل الاتصال. تحقق من الصلاحيات.</div>`;
     }
+}
 
-    /* ── فحص النسبة أثناء الكتابة ── */
-    window.onRatioInput = function(input) {
-        // منع الأرقام العشرية: نزيل أي نقطة أو فاصلة
-        input.value = input.value.replace(/[.,]/g, "");
-        const val = parseInt(input.value, 10);
-        const errBox = document.getElementById("ratioError");
-        if (input.value !== "" && (isNaN(val) || val > 100 || val < 0)) {
-            errBox.style.display = "flex";
-            // لا نصحح تلقائياً هنا، نتركه يصحح بنفسه
-        } else {
-            errBox.style.display = "none";
-        }
+window.renderList = function(teachers) {
+    const container = document.getElementById("list");
+    if (!teachers.length) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-chalkboard-teacher"></i><p>لا يوجد أساتذة مسجلون حالياً</p></div>`;
+        return;
     }
+    container.innerHTML = teachers.map(t => {
+        const isPrep = t.teacherType === "prep";
 
-    /* ── جلب وعرض الأساتذة ── */
-    async function fetchAndRenderTeachers() {
-        const container = document.getElementById("list");
-        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> جارٍ جلب البيانات الحية...</div>';
-        
-        try {
-            const querySnapshot = await getDocs(collection(db, "teachers"));
-            localTeachersArray = [];
-            querySnapshot.forEach((d) => {
-                localTeachersArray.push({ id: d.id, ...d.data() });
-            });
-            window.renderList(localTeachersArray);
-        } catch (error) {
-            console.error("Loading error:", error);
-            container.innerHTML = `<div class="loading" style="color:var(--red);">فشل الاتصال بالنظام الخارجي. تأكد من إعدادات الصلاحيات وقواعد الوصول للبيانات.</div>`;
-        }
-    }
+        const typeBadge = isPrep
+            ? `<span class="badge-pill badge-prep"><i class="fas fa-child"></i> معلم تحضيري</span>`
+            : `<span class="badge-pill badge-normal"><i class="fas fa-chalkboard-teacher"></i> أستاذ عادي</span>`;
 
-    window.renderList = function(teachers) {
-        const container = document.getElementById("list");
-        if (!teachers.length) {
-            container.innerHTML = `
-                <div style="text-align:center; padding:70px 20px;">
-                    <i class="fas fa-chalkboard-teacher" style="font-size:3.5rem; color:#cbd5e1; margin-bottom:14px; display:block;"></i>
-                    <p style="color:var(--slate); font-weight:600;">لا يوجد أساتذة مسجلين حالياً</p>
-                </div>`;
-            return;
-        }
+        const payBadge = isAdmin
+            ? (isPrep
+                ? `<span class="badge-pill badge-salary"><i class="fas fa-money-bill-wave"></i> ${Number(t.salary||0).toLocaleString()} دج/شهر</span>`
+                : `<span class="badge-pill badge-pay"><i class="fas fa-percentage"></i> نسبة: ${t.ratio||0}%</span>`)
+            : `<span class="badge-pill badge-locked"><i class="fas fa-lock"></i> مخفي</span>`;
 
-        container.innerHTML = teachers.map(t => {
-            const isPrep = t.teacherType === "prep";
-            const cardClass = isPrep ? "type-prep" : "type-normal";
-            const typeBadge = isPrep
-                ? `<span class="teacher-type-badge badge-prep"><i class="fas fa-child"></i> معلم تحضيري</span>`
-                : `<span class="teacher-type-badge badge-normal"><i class="fas fa-chalkboard-teacher"></i> أستاذ عادي</span>`;
+        const paths = t.paths||[];
+        const pathsHTML = paths.length
+            ? `<div class="paths-row">${paths.map(p=>`<span class="path-tag">${p}</span>`).join('')}</div>`
+            : `<div class="paths-row"><span style="font-size:.78rem;color:var(--slate);">لم تُحدَّد مسارات بعد</span></div>`;
 
-            const payBadge = isPrep
-                ? `<div class="payment-status salary-badge"><i class="fas fa-money-bill-wave"></i> الراتب: ${Number(t.salary || 0).toLocaleString('ar-DZ')} دج/شهر</div>`
-                : `<div class="payment-status ratio-badge"><i class="fas fa-percentage"></i> نسبة الأستاذ: ${t.ratio || 0}%</div>`;
+        const adminBtns = isAdmin ? `
+            <button class="btn-op btn-ed" onclick="window.openModal('${t.id}')" title="تعديل"><i class="fas fa-user-edit"></i></button>
+            <button class="btn-op btn-dl" onclick="window.removeTeacher('${t.id}')" title="حذف"><i class="fas fa-trash-alt"></i></button>` : '';
 
-            return `
-            <div class="teacher-card ${cardClass}">
-                <div class="info">
-                    <h4>${t.name}</h4>
-                    <p><i class="fas fa-book"></i> المادة: ${t.subject || 'غير محدد'}</p>
-                    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:4px; margin-top:8px;">
-                        ${typeBadge}
-                        ${payBadge}
-                    </div>
-                </div>
-                <div class="action-grid">
-                    ${t.phone ? `
-                        <a href="https://wa.me/${t.phone}" class="btn-op btn-wa" target="_blank" title="واتساب الأستاذ"><i class="fab fa-whatsapp"></i></a>
-                        <a href="tel:${t.phone}" class="btn-op btn-ph" title="اتصال مباشر"><i class="fas fa-phone-alt"></i></a>` : ''}
-                    <button class="btn-op btn-ar" onclick="window.openDetailModal('${t.id}')" title="عرض التفاصيل"><i class="fas fa-id-card"></i></button>
-                    <button class="btn-op btn-ed" onclick="window.openModal('${t.id}')" title="تعديل البيانات"><i class="fas fa-user-edit"></i></button>
-                    <button class="btn-op btn-dl" onclick="window.removeTeacher('${t.id}')" title="حذف نهائي"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            </div>`;
-        }).join("");
-    }
+        return `
+        <div class="teacher-card ${isPrep?'type-prep':'type-normal'}">
+            <div class="info">
+                <h4>${t.name}</h4>
+                <p><i class="fas fa-book"></i> ${t.subject||'غير محدد'}</p>
+                <div class="badges-row">${typeBadge} ${payBadge}</div>
+                ${pathsHTML}
+            </div>
+            <div class="action-grid">
+                ${t.phone ? `
+                    <a href="https://wa.me/${t.phone}" class="btn-op btn-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="tel:${t.phone}" class="btn-op btn-ph"><i class="fas fa-phone-alt"></i></a>` : ''}
+                <button class="btn-op btn-ar" onclick="window.openDetailModal('${t.id}')"><i class="fas fa-id-card"></i></button>
+                ${adminBtns}
+            </div>
+        </div>`;
+    }).join("");
+};
 
-    window.searchTeachers = function() {
-        const term = document.getElementById("search-input").value.toLowerCase().trim();
-        if (!term) { window.renderList(localTeachersArray); return; }
-        const filtered = localTeachersArray.filter(t => t.name && t.name.toLowerCase().includes(term));
-        window.renderList(filtered);
-    }
+window.searchTeachers = function() {
+    const term = document.getElementById("search-input").value.toLowerCase().trim();
+    window.renderList(term ? localTeachersArray.filter(t=>t.name&&t.name.toLowerCase().includes(term)) : localTeachersArray);
+};
 
-    /* ── فتح المودال ── */
-    window.openModal = async function(id = null) {
-        document.getElementById("modal").style.display = "flex";
-        document.getElementById("ratioError").style.display = "none";
+window.openModal = async function(id=null) {
+    if (!isAdmin) { alert("⛔ ليس لديك صلاحية لهذا الإجراء."); return; }
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("ratioError").style.display = "none";
+    clearPaths();
 
-        if (id) {
-            document.getElementById("modalTitle").innerText = "تعديل بيانات الأستاذ";
-            document.getElementById("editId").value = id;
-            
-            const docRef = doc(db, "teachers", id);
-            const docSnap = await getDoc(docRef);
-            
-            if (docSnap.exists()) {
-                const t = docSnap.data();
-                const isPrep = t.teacherType === "prep";
-
-                document.getElementById("typeNormal").checked = !isPrep;
-                document.getElementById("typePrep").checked   = isPrep;
-                window.onTypeChange();
-
-                document.getElementById("name").value    = t.name || "";
-                document.getElementById("subject").value = t.subject || "";
-                document.getElementById("phone").value   = t.phone || "";
-                document.getElementById("ratio").value   = (!isPrep && t.ratio !== undefined) ? t.ratio : "";
-                document.getElementById("salary").value  = (isPrep && t.salary !== undefined) ? t.salary : "";
-            }
-        } else {
-            document.getElementById("modalTitle").innerText = "إضافة أستاذ جديد";
-            document.getElementById("editId").value = "";
-            document.getElementById("typeNormal").checked = true;
-            document.getElementById("typePrep").checked   = false;
+    if (id) {
+        document.getElementById("modalTitle").innerText = "تعديل بيانات الأستاذ";
+        document.getElementById("editId").value = id;
+        const snap = await getDoc(doc(db,"teachers",id));
+        if (snap.exists()) {
+            const t = snap.data();
+            const isPrep = t.teacherType==="prep";
+            document.getElementById("typeNormal").checked = !isPrep;
+            document.getElementById("typePrep").checked   = isPrep;
             window.onTypeChange();
-            document.getElementById("name").value    = "";
-            document.getElementById("subject").value = "";
-            document.getElementById("phone").value   = "";
-            document.getElementById("ratio").value   = "";
-            document.getElementById("salary").value  = "";
+            document.getElementById("name").value    = t.name||"";
+            document.getElementById("subject").value = t.subject||"";
+            document.getElementById("phone").value   = t.phone||"";
+            document.getElementById("ratio").value   = (!isPrep&&t.ratio!==undefined)?t.ratio:"";
+            document.getElementById("salary").value  = (isPrep&&t.salary!==undefined)?t.salary:"";
+            setSelectedPaths(t.paths||[]);
         }
+    } else {
+        document.getElementById("modalTitle").innerText = "إضافة أستاذ جديد";
+        document.getElementById("editId").value = "";
+        document.getElementById("typeNormal").checked = true;
+        document.getElementById("typePrep").checked   = false;
+        window.onTypeChange();
+        ["name","subject","phone","ratio","salary"].forEach(f=>document.getElementById(f).value="");
+    }
+};
+
+window.closeModal = ()=>document.getElementById("modal").style.display="none";
+
+window.save = async function() {
+    if (!isAdmin) { alert("⛔ ليس لديك صلاحية لهذا الإجراء."); return; }
+    const name    = document.getElementById("name").value.trim();
+    const subject = document.getElementById("subject").value.trim();
+    const phone   = document.getElementById("phone").value.trim();
+    const editId  = document.getElementById("editId").value;
+    const btn     = document.getElementById("saveBtn");
+    const isPrep  = document.getElementById("typePrep").checked;
+    const paths   = getSelectedPaths();
+
+    if (!name) { alert("اسم الأستاذ إجباري!"); return; }
+
+    let data = {name,subject,phone,teacherType:isPrep?"prep":"normal",paths};
+
+    if (isPrep) {
+        const salary = parseInt(document.getElementById("salary").value||0,10);
+        if (isNaN(salary)||salary<0){alert("يرجى إدخال راتب صحيح!");return;}
+        data.salary=salary; data.ratio=0;
+    } else {
+        const raw = document.getElementById("ratio").value.replace(/[.,]/g,"");
+        const ratio = parseInt(raw,10);
+        if (raw===""||isNaN(ratio)){alert("يرجى إدخال نسبة صحيحة بين 0 و 100.");return;}
+        if (ratio<0||ratio>100){document.getElementById("ratioError").style.display="flex";alert("❌ النسبة لا يمكن أن تتجاوز 100%!");return;}
+        data.ratio=ratio; data.salary=0;
     }
 
-    window.closeModal = function() { document.getElementById("modal").style.display = "none"; }
+    btn.disabled=true; btn.innerText="جاري الحفظ...";
+    try {
+        if (editId) await updateDoc(doc(db,"teachers",editId),data);
+        else await addDoc(collection(db,"teachers"),{...data,registeredAt:serverTimestamp()});
+        window.closeModal(); fetchAndRender();
+    } catch(e){console.error(e);alert("خطأ في الاتصال.");}
+    finally{btn.disabled=false;btn.innerText="💾 حفظ البيانات";}
+};
 
-    /* ── الحفظ ── */
-    window.save = async function() {
-        const name    = document.getElementById("name").value.trim();
-        const subject = document.getElementById("subject").value.trim();
-        const phone   = document.getElementById("phone").value.trim();
-        const editId  = document.getElementById("editId").value;
-        const saveBtn = document.getElementById("saveBtn");
-        const isPrep  = document.getElementById("typePrep").checked;
+window.removeTeacher = async function(id) {
+    if (!isAdmin){alert("⛔ ليس لديك صلاحية.");return;}
+    if (!confirm("هل أنت متأكد من حذف هذا الأستاذ نهائياً؟"))return;
+    try{await deleteDoc(doc(db,"teachers",id));fetchAndRender();}
+    catch(e){alert("لم تتم العملية.");}
+};
 
-        if (!name) { alert("اسم الأستاذ حقل إجباري!"); return; }
+window.openDetailModal = async function(id) {
+    const snap = await getDoc(doc(db,"teachers",id));
+    if (!snap.exists())return;
+    const t = snap.data();
+    const isPrep = t.teacherType==="prep";
 
-        let dataToSave = { name, subject, phone, teacherType: isPrep ? "prep" : "normal" };
+    document.getElementById("det-name").innerText    = t.name||"—";
+    document.getElementById("det-type").innerText    = isPrep?"معلم تحضيري 🟣":"أستاذ عادي 🔵";
+    document.getElementById("det-subject").innerText = t.subject||"غير محدد";
+    document.getElementById("det-phone").innerText   = t.phone||"لا يوجد";
 
-        if (isPrep) {
-            const salary = parseInt(document.getElementById("salary").value || 0, 10);
-            if (isNaN(salary) || salary < 0) { alert("يرجى إدخال راتب صحيح!"); return; }
-            dataToSave.salary = salary;
-            dataToSave.ratio  = 0; // نصفّر النسبة للمعلم التحضيري
-        } else {
-            const ratioRaw = document.getElementById("ratio").value.replace(/[.,]/g, "");
-            const ratio    = parseInt(ratioRaw, 10);
+    const paths = t.paths||[];
+    document.getElementById("det-paths").innerHTML = paths.length
+        ? paths.map(p=>`<span class="path-tag">${p}</span>`).join('')
+        : '<span style="font-size:.8rem;color:var(--slate);">لم تُحدَّد مسارات</span>';
 
-            // صمام أمان صارم: منع الحفظ إذا كانت النسبة خارج النطاق
-            if (ratioRaw === "" || isNaN(ratio)) {
-                alert("يرجى إدخال نسبة صحيحة بين 0 و 100.");
-                return;
-            }
-            if (ratio < 0 || ratio > 100) {
-                document.getElementById("ratioError").style.display = "flex";
-                alert("❌ لا يمكن حفظ نسبة فوق 100%! صحح القيمة أولاً.");
-                return;
-            }
-            dataToSave.ratio  = ratio;
-            dataToSave.salary = 0;
-        }
-
-        saveBtn.disabled  = true;
-        saveBtn.innerText = "جاري الحفظ...";
-
-        try {
-            if (editId) {
-                await updateDoc(doc(db, "teachers", editId), dataToSave);
-            } else {
-                await addDoc(collection(db, "teachers"), { ...dataToSave, registeredAt: serverTimestamp() });
-            }
-            window.closeModal();
-            fetchAndRenderTeachers();
-        } catch (error) {
-            console.error("Error saving document: ", error);
-            alert("حدث خطأ أثناء الاتصال بالخادم.");
-        } finally {
-            saveBtn.disabled  = false;
-            saveBtn.innerText = "💾 حفظ البيانات";
-        }
+    // النسبة والراتب — للمدير فقط
+    const rRow = document.getElementById("det-ratio-row");
+    const sRow = document.getElementById("det-salary-row");
+    if (isAdmin) {
+        rRow.style.display  = isPrep?"none":"flex";
+        sRow.style.display  = isPrep?"flex":"none";
+        document.getElementById("det-ratio").innerText  = (t.ratio||"0")+"%";
+        document.getElementById("det-salary").innerText = Number(t.salary||0).toLocaleString('ar-DZ')+" دج/شهر";
+    } else {
+        rRow.style.display="none"; sRow.style.display="none";
     }
 
-    window.removeTeacher = async function(id) {
-        if (confirm("هل أنت متأكد من رغبتك في حذف هذا الأستاذ نهائياً من النظام؟")) {
-            try {
-                await deleteDoc(doc(db, "teachers", id));
-                fetchAndRenderTeachers();
-            } catch (error) {
-                alert("لم تتم العملية، تفقد قواعد الصلاحيات لديك.");
-            }
-        }
-    }
+    document.getElementById("det-date").innerText = t.registeredAt?.seconds
+        ? new Date(t.registeredAt.seconds*1000).toLocaleDateString("ar-DZ",{year:'numeric',month:'long',day:'numeric'})
+        : "غير محدد";
 
-    window.openDetailModal = async function(id) {
-        const docSnap = await getDoc(doc(db, "teachers", id));
-        if (docSnap.exists()) {
-            const t = docSnap.data();
-            const isPrep = t.teacherType === "prep";
+    document.getElementById("detail-modal").style.display="flex";
+};
 
-            document.getElementById("det-name").innerText    = t.name || "—";
-            document.getElementById("det-type").innerText    = isPrep ? "معلم تحضيري 🟣" : "أستاذ عادي 🔵";
-            document.getElementById("det-subject").innerText = t.subject || "غير محدد";
-            document.getElementById("det-phone").innerText   = t.phone || "لا يوجد رقم هاتف";
+window.closeDetailModal = ()=>document.getElementById("detail-modal").style.display="none";
 
-            document.getElementById("det-ratio-row").style.display  = isPrep ? "none" : "flex";
-            document.getElementById("det-salary-row").style.display = isPrep ? "flex" : "none";
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.style.display='none';}));
 
-            document.getElementById("det-ratio").innerText  = (t.ratio || "0") + "%";
-            document.getElementById("det-salary").innerText = Number(t.salary || 0).toLocaleString('ar-DZ') + " دج/شهر";
-
-            if (t.registeredAt && t.registeredAt.seconds) {
-                const jsDate = new Date(t.registeredAt.seconds * 1000);
-                document.getElementById("det-date").innerText = jsDate.toLocaleDateString("ar-DZ", {
-                    year: 'numeric', month: 'long', day: 'numeric'
-                });
-            } else {
-                document.getElementById("det-date").innerText = "مضاف قديماً أو غير محدد";
-            }
-
-            document.getElementById("detail-modal").style.display = "flex";
-        }
-    }
-
-    window.closeDetailModal = function() { document.getElementById("detail-modal").style.display = "none"; }
-
-    fetchAndRenderTeachers();
+fetchAndRender();
 </script>
 </body>
 </html>
