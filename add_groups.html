@@ -45,9 +45,12 @@
         .section-title { font-size: 0.82rem; font-weight: 800; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 4px 14px; display: flex; align-items: center; gap: 8px; position: relative; z-index: 10; }
         .section-title.dark { color: var(--text-mid); margin-top: 6px; }
 
+        /* 3-column grid */
         .main-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        /* 2-column grid */
         .two-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
 
+        /* Colorful cards like the image */
         .grid-card { border: none; border-radius: 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 8px 14px; text-align: center; font-family: 'Cairo', inherit; transition: transform 0.18s ease, box-shadow 0.18s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.12); position: relative; overflow: hidden; min-height: 100px; }
         .grid-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.18); }
         .grid-card:active { transform: scale(0.95); }
@@ -69,14 +72,15 @@
         .grid-card .card-num { font-size: 1.5rem; font-weight: 900; color: rgba(255,255,255,0.95); line-height: 1; margin-bottom: 2px; }
         .grid-card .card-label { font-size: 0.76rem; font-weight: 800; color: white; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
+        /* Wide 2-col cards */
         .two-grid .grid-card { min-height: 86px; flex-direction: row; gap: 14px; padding: 16px 20px; justify-content: flex-start; }
         .two-grid .grid-card .card-icon { font-size: 2rem; margin-bottom: 0; }
         .two-grid .grid-card .card-label { font-size: 0.88rem; text-align: right; }
 
+        /* Groups view */
         .view-container { display: none; }
         .dash-header { background: var(--white); padding: 14px 20px; border-radius: 18px; box-shadow: var(--shadow); margin-bottom: 18px; border: 1.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: var(--text-mid); }
         .dash-header span { color: var(--blue); background: var(--blue-light); padding: 4px 12px; border-radius: 10px; font-size: 0.85rem; }
-
         .group-card { background: var(--white); padding: 22px; border-radius: 24px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1.5px solid var(--border); position: relative; transition: transform 0.2s ease; }
         .group-card:hover { transform: translateY(-2px); border-color: #cbd5e1; }
         .group-title { font-size: 1.1rem; font-weight: 900; margin: 0 0 6px 0; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
@@ -93,21 +97,13 @@
         .btn-edit { background: var(--orange-light); color: var(--orange); }
         .btn-del  { background: var(--red-light); color: var(--red); }
 
+        /* Modals */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,27,62,0.6); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; opacity: 0; animation: fadeIn 0.2s ease forwards; }
-        .modal-content { background: var(--white); padding: 28px; width: 92%; max-width: 440px; max-height: 88vh; overflow-y: auto; border-radius: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid var(--border); transform: translateY(20px) scale(0.95); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .modal-content { background: var(--white); padding: 28px; width: 92%; max-width: 440px; max-height: 85vh; overflow-y: auto; border-radius: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid var(--border); transform: translateY(20px) scale(0.95); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .modal-content h3 { margin-top: 0; font-weight: 900; font-size: 1.15rem; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
         .modal-content h3 i { color: var(--blue); }
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes slideUp { to { transform: translateY(0) scale(1); } }
-
-        /* ── badge المسار في المودال ── */
-        .path-badge-modal {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--blue-light); color: var(--blue);
-            padding: 8px 16px; border-radius: 14px; font-weight: 800; font-size: 0.9rem;
-            margin-bottom: 18px; border: 1.5px solid #bfdbfe;
-        }
-        .path-badge-modal i { font-size: 1rem; }
 
         .inp { width: 100%; padding: 14px 16px; margin-bottom: 14px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 0.95rem; outline: none; transition: all 0.2s; background-color: var(--bg); font-family: 'Cairo', inherit; font-weight: 600; color: var(--text); }
         .inp:focus { border-color: var(--blue); background-color: var(--white); box-shadow: 0 0 0 4px var(--blue-light); }
@@ -134,18 +130,13 @@
         .schedule-tag .end-sep { color: var(--muted); margin: 0 2px; }
         .schedule-tag .end-t { color: var(--green); }
 
-        /* ── مودال ربط التلاميذ ── */
         .student-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid var(--border); }
         .student-row:last-child { border: none; }
         .student-row b { font-size: 0.95rem; color: var(--text-mid); }
-        .student-row small { display: block; font-size: 0.75rem; color: var(--muted); font-weight: 600; }
         .badge { font-size: 0.8rem; padding: 8px 14px; border-radius: 10px; font-weight: 800; cursor: pointer; border: none; font-family: 'Cairo', inherit; transition: transform 0.15s; }
         .badge:active { transform: scale(0.92); }
         .bg-blue { background: var(--blue-light); color: var(--blue); }
         .bg-red  { background: var(--red-light); color: var(--red); }
-
-        /* قسم الأساتذة في مودال الربط */
-        .link-section-title { font-size: 0.78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; padding: 10px 10px 6px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; background: var(--bg); border-radius: 10px; margin-bottom: 6px; }
 
         .fab { position: fixed; bottom: 30px; left: 30px; width: 64px; height: 64px; background: linear-gradient(135deg, var(--blue-deep), var(--blue)); color: white; border-radius: 22px; border: none; font-size: 28px; box-shadow: 0 10px 25px rgba(26,86,219,0.3); cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; z-index: 99; }
         .fab:active { transform: scale(0.9); }
@@ -154,7 +145,6 @@
         .empty-state .icon { font-size: 3rem; margin-bottom: 15px; color: var(--blue-light); }
         .empty-state p { font-weight: 700; font-size: 0.95rem; line-height: 1.6; }
         .loading { text-align: center; padding: 40px; color: var(--muted); font-weight: 800; }
-        .no-results { text-align: center; color: var(--muted); padding: 16px; font-size: 0.9rem; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -170,7 +160,10 @@
             <div class="hero-top">
                 <div class="brand-mark">
                     <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
-                    <div class="brand-name">مركز المعالي<small>إدارة المسارات التعليمية</small></div>
+                    <div class="brand-name">
+                        مركز المعالي
+                        <small>إدارة المسارات التعليمية</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -178,41 +171,116 @@
         <div class="cards-wrap">
             <div class="section-title"><i class="fas fa-school"></i> التعليم الابتدائي والثانوي</div>
             <div class="main-grid">
-                <button class="grid-card ct-green"  onclick="window.navigateToPath('السنة 1 ابتدائي')"><div class="card-icon">📚</div><div class="card-num">1<sup style="font-size:.65em">st</sup></div><div class="card-label">السنة الأولى ابتدائي</div></button>
-                <button class="grid-card ct-blue"   onclick="window.navigateToPath('السنة 2 ابتدائي')"><div class="card-icon">✏️</div><div class="card-num">2<sup style="font-size:.65em">nd</sup></div><div class="card-label">السنة الثانية ابتدائي</div></button>
-                <button class="grid-card ct-orange" onclick="window.navigateToPath('السنة 3 ابتدائي')"><div class="card-icon">🔢</div><div class="card-num">3<sup style="font-size:.65em">rd</sup></div><div class="card-label">السنة الثالثة ابتدائي</div></button>
-                <button class="grid-card ct-red"    onclick="window.navigateToPath('السنة 4 ابتدائي')"><div class="card-icon">🎨</div><div class="card-num">4</div><div class="card-label">السنة الرابعة ابتدائي</div></button>
-                <button class="grid-card ct-purple" onclick="window.navigateToPath('السنة 5 ابتدائي')"><div class="card-icon">🌟</div><div class="card-num">5</div><div class="card-label">السنة الخامسة ابتدائي</div></button>
-                <button class="grid-card ct-teal"   onclick="window.navigateToPath('السنة 1 متوسط')"><div class="card-icon">🎓</div><div class="card-num">1</div><div class="card-label">السنة الأولى متوسط</div></button>
-                <button class="grid-card ct-pink"   onclick="window.navigateToPath('السنة 2 متوسط')"><div class="card-icon">💻</div><div class="card-num">2</div><div class="card-label">السنة الثانية متوسط</div></button>
-                <button class="grid-card ct-indigo" onclick="window.navigateToPath('السنة 3 متوسط')"><div class="card-icon">🔬</div><div class="card-num">3</div><div class="card-label">السنة الثالثة متوسط</div></button>
-                <button class="grid-card ct-amber"  onclick="window.navigateToPath('السنة 4 متوسط')"><div class="card-icon">⚛️</div><div class="card-num">4</div><div class="card-label">السنة الرابعة متوسط</div></button>
-                <button class="grid-card ct-rose"   onclick="window.navigateToPath('السنة 1 ثانوي')"><div class="card-icon">🧬</div><div class="card-num">1</div><div class="card-label">السنة الأولى ثانوي</div></button>
-                <button class="grid-card ct-cyan"   onclick="window.navigateToPath('السنة 2 ثانوي')"><div class="card-icon">📐</div><div class="card-num">2</div><div class="card-label">السنة الثانية ثانوي</div></button>
-                <button class="grid-card ct-lime"   onclick="window.navigateToPath('السنة 3 ثانوي')"><div class="card-icon">🏆</div><div class="card-num">3</div><div class="card-label">السنة الثالثة ثانوي</div></button>
+                <button class="grid-card ct-green" onclick="window.navigateToPath('السنة 1 ابتدائي')">
+                    <div class="card-icon">📚</div>
+                    <div class="card-num">1<sup style="font-size:0.65em">st</sup></div>
+                    <div class="card-label">السنة الأولى ابتدائي</div>
+                </button>
+                <button class="grid-card ct-blue" onclick="window.navigateToPath('السنة 2 ابتدائي')">
+                    <div class="card-icon">✏️</div>
+                    <div class="card-num">2<sup style="font-size:0.65em">nd</sup></div>
+                    <div class="card-label">السنة الثانية ابتدائي</div>
+                </button>
+                <button class="grid-card ct-orange" onclick="window.navigateToPath('السنة 3 ابتدائي')">
+                    <div class="card-icon">🔢</div>
+                    <div class="card-num">3<sup style="font-size:0.65em">rd</sup></div>
+                    <div class="card-label">السنة الثالثة ابتدائي</div>
+                </button>
+                <button class="grid-card ct-red" onclick="window.navigateToPath('السنة 4 ابتدائي')">
+                    <div class="card-icon">🎨</div>
+                    <div class="card-num">4</div>
+                    <div class="card-label">السنة الرابعة ابتدائي</div>
+                </button>
+                <button class="grid-card ct-purple" onclick="window.navigateToPath('السنة 5 ابتدائي')">
+                    <div class="card-icon">🌟</div>
+                    <div class="card-num">5</div>
+                    <div class="card-label">السنة الخامسة ابتدائي</div>
+                </button>
+                <button class="grid-card ct-teal" onclick="window.navigateToPath('السنة 1 متوسط')">
+                    <div class="card-icon">🎓</div>
+                    <div class="card-num">1</div>
+                    <div class="card-label">السنة الأولى متوسط</div>
+                </button>
+                <button class="grid-card ct-pink" onclick="window.navigateToPath('السنة 2 متوسط')">
+                    <div class="card-icon">💻</div>
+                    <div class="card-num">2</div>
+                    <div class="card-label">السنة الثانية متوسط</div>
+                </button>
+                <button class="grid-card ct-indigo" onclick="window.navigateToPath('السنة 3 متوسط')">
+                    <div class="card-icon">🔬</div>
+                    <div class="card-num">3</div>
+                    <div class="card-label">السنة الثالثة متوسط</div>
+                </button>
+                <button class="grid-card ct-amber" onclick="window.navigateToPath('السنة 4 متوسط')">
+                    <div class="card-icon">⚛️</div>
+                    <div class="card-num">4</div>
+                    <div class="card-label">السنة الرابعة متوسط</div>
+                </button>
+                <button class="grid-card ct-rose" onclick="window.navigateToPath('السنة 1 ثانوي')">
+                    <div class="card-icon">🧬</div>
+                    <div class="card-num">1</div>
+                    <div class="card-label">السنة الأولى ثانوي</div>
+                </button>
+                <button class="grid-card ct-cyan" onclick="window.navigateToPath('السنة 2 ثانوي')">
+                    <div class="card-icon">📐</div>
+                    <div class="card-num">2</div>
+                    <div class="card-label">السنة الثانية ثانوي</div>
+                </button>
+                <button class="grid-card ct-lime" onclick="window.navigateToPath('السنة 3 ثانوي')">
+                    <div class="card-icon">🏆</div>
+                    <div class="card-num">3</div>
+                    <div class="card-label">السنة الثالثة ثانوي</div>
+                </button>
             </div>
 
             <div class="section-title dark"><i class="fas fa-star" style="color:#f59e0b;"></i> برامج ومسارات أخرى</div>
             <div class="two-grid">
-                <button class="grid-card ct-green"  onclick="window.navigateToPath('حفظ القرآن')"><div class="card-icon">🕌</div><div class="card-label">حفظ القرآن</div></button>
-                <button class="grid-card ct-blue"   onclick="window.navigateToPath('السوروبان')"><div class="card-icon">🧮</div><div class="card-label">السوروبان</div></button>
-                <button class="grid-card ct-red"    onclick="window.navigateToPath('الذكاء الاصطناعي')"><div class="card-icon">🤖</div><div class="card-label">الذكاء الاصطناعي</div></button>
-                <button class="grid-card ct-purple" onclick="window.navigateToPath('تحدي القراءة')"><div class="card-icon">📖</div><div class="card-label">تحدي القراءة</div></button>
-                <button class="grid-card ct-orange" onclick="window.navigateToPath('الورشات')"><div class="card-icon">🛠️</div><div class="card-label">الورشات</div></button>
-                <button class="grid-card ct-teal"   onclick="window.navigateToPath('الدورات')"><div class="card-icon">🎯</div><div class="card-label">الدورات</div></button>
-                <button class="grid-card ct-pink"   onclick="window.navigateToPath('متفرقات')"><div class="card-icon">✨</div><div class="card-label">متفرقات</div></button>
-                <button class="grid-card ct-indigo" onclick="window.navigateToPath('مع القرآن')"><div class="card-icon">📿</div><div class="card-label">مع القرآن</div></button>
+                <button class="grid-card ct-green" onclick="window.navigateToPath('حفظ القرآن')">
+                    <div class="card-icon">🕌</div>
+                    <div class="card-label">حفظ القرآن</div>
+                </button>
+                <button class="grid-card ct-blue" onclick="window.navigateToPath('السوروبان')">
+                    <div class="card-icon">🧮</div>
+                    <div class="card-label">السوروبان</div>
+                </button>
+                <button class="grid-card ct-red" onclick="window.navigateToPath('الذكاء الاصطناعي')">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-label">الذكاء الاصطناعي</div>
+                </button>
+                <button class="grid-card ct-purple" onclick="window.navigateToPath('تحدي القراءة')">
+                    <div class="card-icon">📖</div>
+                    <div class="card-label">تحدي القراءة</div>
+                </button>
+                <button class="grid-card ct-orange" onclick="window.navigateToPath('الورشات')">
+                    <div class="card-icon">🛠️</div>
+                    <div class="card-label">الورشات</div>
+                </button>
+                <button class="grid-card ct-teal" onclick="window.navigateToPath('الدورات')">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-label">الدورات</div>
+                </button>
+                <button class="grid-card ct-pink" onclick="window.navigateToPath('متفرقات')">
+                    <div class="card-icon">✨</div>
+                    <div class="card-label">متفرقات</div>
+                </button>
+                <button class="grid-card ct-indigo" onclick="window.navigateToPath('مع القرآن')">
+                    <div class="card-icon">📿</div>
+                    <div class="card-label">مع القرآن</div>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- الواجهة الثانية: أفواج المسار -->
+    <!-- الواجهة الثانية: عرض أفواج -->
     <div id="groups-view" class="view-container">
-        <div class="hero" style="padding-bottom:60px;">
+        <div class="hero" style="padding-bottom: 60px;">
             <div class="hero-top">
                 <div class="brand-mark">
                     <div class="brand-icon" onclick="window.backToNavigation()"><i class="fas fa-arrow-right"></i></div>
-                    <div class="brand-name">الأفواج المتاحة<small id="dash-path-name">اسم المسار</small></div>
+                    <div class="brand-name">
+                        الأفواج المتاحة
+                        <small id="dash-path-name">اسم المسار</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -226,32 +294,20 @@
 
 <button class="fab" id="main-fab" style="display:none;" onclick="window.openGroupModal()"><i class="fas fa-plus"></i></button>
 
-<!-- ══ مودال إضافة / تعديل فوج ══ -->
+<!-- مودال إضافة / تعديل فوج -->
 <div id="group-modal" class="modal-overlay" onclick="window.closeAllModals()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <h3><i class="fas fa-layer-group"></i> <span id="modal-title">إضافة فوج جديد</span></h3>
         <input type="hidden" id="edit-id">
-
-        <!-- ✅ بادج المسار — مرئي فقط، لا يمكن تعديله -->
-        <div class="path-badge-modal" id="path-badge-display">
-            <i class="fas fa-map-marker-alt"></i>
-            <span id="path-badge-text">—</span>
-        </div>
-
+        <span class="section-label">المسار التعليمي</span>
+        <input type="text" id="g-target-path" class="inp" readonly style="background:var(--bg); color:var(--muted);">
         <span class="section-label">معلومات الفوج</span>
-        <input type="text" id="g-name" class="inp" placeholder="اسم الفوج (مثال: فوج أ — عباقرة)">
-
-        <label style="display:block;margin-bottom:8px;font-size:0.85rem;color:var(--text-mid);font-weight:800;">الأستاذ المسؤول:</label>
+        <input type="text" id="g-name" class="inp" placeholder="اسم الفوج (مثال: فوج أ عباقرة)">
+        <label style="display:block; margin-bottom:8px; font-size:0.85rem; color:var(--text-mid); font-weight:800;">الأستاذ المسؤول:</label>
         <select id="g-teacher" class="inp"><option value="">-- اختر أستاذ الفوج --</option></select>
-
         <input type="number" id="g-price" class="inp" placeholder="سعر الاشتراك الإجمالي (دج)">
-
-        <label style="display:block;margin-bottom:8px;font-size:0.85rem;color:var(--text-mid);font-weight:800;">نظام الاشتراك:</label>
-        <select id="g-sessions" class="inp">
-            <option value="4">4 حصص</option>
-            <option value="8">8 حصص</option>
-        </select>
-
+        <label style="display:block; margin-bottom:8px; font-size:0.85rem; color:var(--text-mid); font-weight:800;">نظام الاشتراك:</label>
+        <select id="g-sessions" class="inp"><option value="4">4 حصص</option><option value="8">8 حصص</option></select>
         <div class="schedule-section">
             <label><i class="far fa-calendar-alt" style="color:var(--blue);"></i> الأيام والأوقات:</label>
             <label class="show-endtime-toggle">
@@ -265,362 +321,218 @@
             <div class="schedule-rows" id="schedule-rows"></div>
             <button class="btn-add-row" onclick="window.addScheduleRow()">+ إضافة يوم آخر</button>
         </div>
-
         <button class="btn-main" id="saveGroupBtn" onclick="window.saveGroup()">حفظ الفوج</button>
         <button class="btn-cancel" onclick="window.closeAllModals()">إلغاء</button>
     </div>
 </div>
 
-<!-- ══ مودال ربط التلاميذ (مفلتر حسب المسار) ══ -->
+<!-- مودال ربط التلاميذ -->
 <div id="link-student-modal" class="modal-overlay" onclick="window.closeAllModals()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <h3><i class="fas fa-user-plus"></i> إضافة تلميذ للفوج</h3>
         <input type="hidden" id="target-group-id">
-
-        <input type="text" id="search-student" class="inp" placeholder="ابحث بالاسم..." oninput="window.renderAvailableStudents()">
-
-        <!-- تلاميذ المسار -->
-        <div class="link-section-title"><i class="fas fa-user-graduate" style="color:var(--blue);"></i> تلاميذ هذا المسار</div>
-        <div id="available-students" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:16px;padding:8px;background:var(--bg);margin-bottom:14px;"></div>
-
-        <!-- أساتذة المسار — للمعلومة فقط -->
-        <div class="link-section-title"><i class="fas fa-chalkboard-teacher" style="color:var(--orange);"></i> أساتذة هذا المسار</div>
-        <div id="path-teachers-list" style="max-height:140px;overflow-y:auto;border:1px solid var(--border);border-radius:16px;padding:8px;background:var(--bg);margin-bottom:10px;"></div>
-
+        <input type="text" id="search-student" class="inp" placeholder="اكتب اسم التلميذ للبحث..." oninput="window.renderAvailableStudents()">
+        <div id="available-students" style="margin-top:12px; max-height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:16px; padding:8px; background:var(--bg);"></div>
         <button class="btn-cancel" onclick="window.closeAllModals()">إغلاق</button>
     </div>
 </div>
 
-<!-- ══ مودال عرض الأعضاء ══ -->
+<!-- مودال عرض الأعضاء -->
 <div id="view-members-modal" class="modal-overlay" onclick="window.closeAllModals()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <h3><i class="fas fa-users"></i> <span id="view-group-title">قائمة التلاميذ</span></h3>
-        <div id="members-area" style="max-height:400px;overflow-y:auto;background:var(--bg);border-radius:16px;border:1px solid var(--border);padding:8px;"></div>
+        <div id="members-area" style="max-height:400px; overflow-y:auto; background:var(--bg); border-radius:16px; border:1px solid var(--border); padding:8px;"></div>
         <button class="btn-cancel" onclick="window.closeAllModals()">إغلاق</button>
     </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
-    authDomain: "molakasati.firebaseapp.com",
-    databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
-    projectId: "molakasati",
-    storageBucket: "molakasati.firebasestorage.app",
-    messagingSenderId: "981780224226",
-    appId: "1:981780224226:web:6565de586fffa9f33326bb",
-    measurementId: "G-H52ZV49J1C"
-};
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+        authDomain: "molakasati.firebaseapp.com",
+        databaseURL: "https://molakasati-default-rtdb.firebaseio.com",
+        projectId: "molakasati",
+        storageBucket: "molakasati.firebasestorage.app",
+        messagingSenderId: "981780224226",
+        appId: "1:981780224226:web:6565de586fffa9f33326bb",
+        measurementId: "G-H52ZV49J1C"
+    };
 
-let localGroupsArray   = [];
-let localStudentsArray = [];
-let localTeachersArray = [];
-let showEndTime  = false;
-let selectedPath = "";
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-const DAYS = ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
+    let localGroupsArray = [], localStudentsArray = [], localTeachersArray = [];
+    let showEndTime = false, selectedPath = "";
+    const DAYS = ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
 
-window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none');
+    window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
-// ══ التنقل ══
-window.navigateToPath = function(pathName) {
-    selectedPath = pathName;
-    document.getElementById('navigation-view').style.display = 'none';
-    document.getElementById('groups-view').style.display     = 'block';
-    document.getElementById('main-fab').style.display        = 'flex';
-    document.getElementById('dash-path-name').innerText      = pathName;
-    window.renderMainGroups();
-};
-
-window.backToNavigation = function() {
-    selectedPath = "";
-    document.getElementById('navigation-view').style.display = 'block';
-    document.getElementById('groups-view').style.display     = 'none';
-    document.getElementById('main-fab').style.display        = 'none';
-};
-
-// ══ جدول المواعيد ══
-window.toggleEndTimeColumns = function() {
-    showEndTime = document.getElementById('toggle-endtime').checked;
-    document.getElementById('endtime-header-col').style.display = showEndTime ? '' : 'none';
-    document.getElementById('time-header').className = 'schedule-time-header' + (showEndTime?' has-endtime':'');
-    document.querySelectorAll('#schedule-rows .schedule-row').forEach(row => {
-        const e = row.querySelector('.end-time');
-        if (e) e.style.display = showEndTime ? '' : 'none';
-        row.className = 'schedule-row' + (showEndTime?' has-endtime':'');
-    });
-};
-
-window.addScheduleRow = function(day="", time="", endTime="") {
-    const container = document.getElementById('schedule-rows');
-    const div = document.createElement('div');
-    div.className = 'schedule-row' + (showEndTime?' has-endtime':'');
-    const dayOpts = `<option value="">اليوم</option>` + DAYS.map(d=>`<option ${d===day?'selected':''}>${d}</option>`).join('');
-    div.innerHTML = `<select>${dayOpts}</select><input type="time" value="${time}"><input type="time" class="end-time" value="${endTime}" style="display:${showEndTime?'':'none'}"><button class="btn-remove-row" onclick="window.removeScheduleRow(this)"><i class="fas fa-times"></i></button>`;
-    container.appendChild(div);
-};
-
-window.removeScheduleRow = function(btn) {
-    const c = document.getElementById('schedule-rows');
-    if (c.children.length <= 1) { alert("يجب الإبقاء على يوم واحد على الأقل!"); return; }
-    btn.closest('.schedule-row').remove();
-};
-
-// ══ جلب البيانات ══
-async function loadAllData() {
-    try {
-        const [gs,ss,ts] = await Promise.all([
-            getDocs(collection(db,"groups")),
-            getDocs(collection(db,"students")),
-            getDocs(collection(db,"teachers"))
-        ]);
-        localGroupsArray=[];
-        gs.forEach(d => localGroupsArray.push({id:d.id,...d.data()}));
-
-        localStudentsArray=[];
-        ss.forEach(d => {
-            const data = d.data();
-            const groups = Array.isArray(data.groups) ? data.groups
-                         : (data.group && data.group!=="غير محدد" ? [data.group] : []);
-            localStudentsArray.push({id:d.id,...data,groups});
-        });
-
-        localTeachersArray=[];
-        ts.forEach(d => localTeachersArray.push({id:d.id,...d.data()}));
-
-        if (selectedPath) window.renderMainGroups();
-    } catch(e) {
-        console.error(e);
-        document.getElementById("groups-list").innerHTML = `<div class="loading"><i class="fas fa-exclamation-circle" style="color:var(--red);font-size:2rem;display:block;margin-bottom:10px;"></i>حدث خطأ أثناء جلب البيانات.</div>`;
-    }
-}
-
-// ══ عرض الأفواج ══
-window.renderMainGroups = function() {
-    const container = document.getElementById('groups-list');
-    const filtered  = localGroupsArray.filter(g => g.path === selectedPath);
-    document.getElementById('dash-groups-count').innerText = filtered.length;
-
-    if (!filtered.length) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-folder-open icon"></i><p>لا توجد أفواج مسجلة هنا.<br>اضغط الزر العائم (+) للإضافة.</p></div>`;
-        return;
-    }
-
-    container.innerHTML = filtered.map(g => {
-        const members  = localStudentsArray.filter(s => s.groups && s.groups.includes(g.id));
-        const schedHTML = `<div class="schedule-tags">` +
-            (g.schedule||[]).map(s =>
-                `<span class="schedule-tag"><i class="far fa-clock"></i> ${s.day} ${s.time}${s.endTime?`<span class="end-sep">→</span><span class="end-t">${s.endTime}</span>`:''}</span>`
-            ).join('') + `</div>`;
-
-        return `
-        <div class="group-card">
-            <h3 class="group-title">${g.name} <span class="sessions-badge">${g.sessionsCount||4} حصص</span></h3>
-            <div class="group-teacher"><i class="fas fa-chalkboard-teacher" style="color:var(--blue);"></i> الأستاذ: <span>${g.teacherName||'غير محدد'}</span></div>
-            ${schedHTML}
-            <div class="group-info-grid">
-                <div class="info-item"><i class="fas fa-wallet"></i> <span>${Number(g.price||0).toLocaleString()} دج</span></div>
-                <div class="info-item"><i class="fas fa-user-graduate"></i> <span>${members.length} تلاميذ</span></div>
-            </div>
-            <div class="action-grid">
-                <button class="btn-icon btn-view" onclick="window.renderMembers('${g.id}','${g.name}')" title="عرض التلاميذ"><i class="fas fa-list"></i></button>
-                <button class="btn-icon btn-link" onclick="window.openLinkModal('${g.id}')" title="إضافة تلميذ"><i class="fas fa-plus"></i></button>
-                <button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-pen"></i></button>
-                <button class="btn-icon btn-del"  onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash"></i></button>
-            </div>
-        </div>`;
-    }).join('');
-};
-
-// ══ فتح مودال الفوج ══
-window.openGroupModal = function(id=null) {
-    showEndTime = false;
-    document.getElementById('toggle-endtime').checked = false;
-    document.getElementById('endtime-header-col').style.display = 'none';
-    document.getElementById('time-header').className = 'schedule-time-header';
-    document.getElementById('group-modal').style.display = 'flex';
-    document.getElementById('schedule-rows').innerHTML = '';
-
-    // ✅ عرض المسار كبادج مرئي فقط
-    document.getElementById('path-badge-text').innerText = selectedPath;
-
-    // ✅ فلترة الأساتذة حسب المسار الحالي
-    const pathTeachers = localTeachersArray.filter(t =>
-        !t.paths || t.paths.length === 0 || t.paths.includes(selectedPath)
-    );
-    const teacherSel = document.getElementById('g-teacher');
-    teacherSel.innerHTML = `<option value="">-- اختر أستاذ الفوج --</option>` +
-        pathTeachers.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
-
-    if (id) {
-        const g = localGroupsArray.find(x => x.id===id);
-        document.getElementById('modal-title').innerText = "تعديل الفوج";
-        document.getElementById('edit-id').value         = g.id;
-        document.getElementById('g-name').value          = g.name;
-        document.getElementById('g-teacher').value       = g.teacherName||"";
-        document.getElementById('g-price').value         = g.price;
-        document.getElementById('g-sessions').value      = g.sessionsCount||4;
-        const sched = g.schedule||[];
-        if (sched.some(s=>s.endTime)) {
-            showEndTime = true;
-            document.getElementById('toggle-endtime').checked = true;
-            document.getElementById('endtime-header-col').style.display = '';
-            document.getElementById('time-header').className = 'schedule-time-header has-endtime';
-        }
-        sched.forEach(s => window.addScheduleRow(s.day, s.time, s.endTime||""));
-    } else {
-        document.getElementById('modal-title').innerText = "إضافة فوج جديد";
-        ['edit-id','g-name','g-teacher','g-price'].forEach(fid => document.getElementById(fid).value="");
-        document.getElementById('g-sessions').value = "4";
-        window.addScheduleRow();
-    }
-};
-
-// ══ حفظ الفوج ══
-window.saveGroup = function() {
-    const name         = document.getElementById('g-name').value.trim();
-    const teacherName  = document.getElementById('g-teacher').value;
-    const price        = document.getElementById('g-price').value;
-    const sessionsCount= Number(document.getElementById('g-sessions').value);
-    const editId       = document.getElementById('edit-id').value;
-    const btn          = document.getElementById('saveGroupBtn');
-    const schedule     = [];
-
-    document.querySelectorAll('#schedule-rows .schedule-row').forEach(row => {
-        const day    = row.querySelector('select').value;
-        const time   = row.querySelector('input[type="time"]:not(.end-time)').value;
-        const endVal = row.querySelector('.end-time').value;
-        if (day && time) schedule.push({day, time, endTime: showEndTime ? endVal : ""});
-    });
-
-    if (!name || !price)  { alert("الرجاء إدخال اسم الفوج والسعر!"); return; }
-    if (!teacherName)     { alert("الرجاء اختيار الأستاذ!"); return; }
-    if (!schedule.length) { alert("أضف توقيتاً واحداً على الأقل!"); return; }
-
-    btn.disabled = true;
-    const payload = {name, path: selectedPath, teacherName, price, sessionsCount, schedule};
-    (editId ? updateDoc(doc(db,"groups",editId), payload) : addDoc(collection(db,"groups"), payload))
-        .then(() => { window.closeAllModals(); loadAllData(); })
-        .finally(() => btn.disabled=false);
-};
-
-// ══ حذف فوج ══
-window.deleteGroup = function(id) {
-    const t = localGroupsArray.find(g => g.id===id);
-    if (!confirm(`تأكيد حذف الفوج "${t.name}" بشكل نهائي؟`)) return;
-    deleteDoc(doc(db,"groups",id)).then(async () => {
-        for (let s of localStudentsArray) {
-            if (s.groups && s.groups.includes(id)) {
-                await updateDoc(doc(db,"students",s.id), {groups: s.groups.filter(gId=>gId!==id)});
-            }
-        }
-        loadAllData();
-    });
-};
-
-// ══ مودال ربط التلاميذ — مفلتر حسب المسار ══
-window.openLinkModal = function(groupId) {
-    document.getElementById('target-group-id').value = groupId;
-    document.getElementById('search-student').value  = "";
-    document.getElementById('link-student-modal').style.display = 'flex';
-    window.renderAvailableStudents();
-    window.renderPathTeachers();
-};
-
-// تلاميذ لديهم هذا المسار ضمن مساراتهم
-window.renderAvailableStudents = function() {
-    const gId  = document.getElementById('target-group-id').value;
-    const term = document.getElementById('search-student').value.toLowerCase().trim();
-
-    // فلترة: التلميذ ينتمي للمسار الحالي
-    let pool = localStudentsArray.filter(s => {
-        const sPaths = s.paths || (s.group && s.group!=="غير محدد" ? [s.group] : []);
-        return sPaths.includes(selectedPath);
-    });
-
-    if (term) pool = pool.filter(s => s.name && s.name.toLowerCase().includes(term));
-
-    const container = document.getElementById('available-students');
-    if (!pool.length) {
-        container.innerHTML = '<p class="no-results">لا يوجد تلاميذ مسجلون لهذا المسار.</p>';
-        return;
-    }
-    container.innerHTML = pool.map(s => {
-        const inGroup = s.groups && s.groups.includes(gId);
-        return `<div class="student-row">
-            <div><b>${s.name}</b></div>
-            <button class="badge ${inGroup?'bg-red':'bg-blue'}" onclick="window.toggleStudentGroup('${s.id}','${gId}',${inGroup})">
-                ${inGroup ? 'إلغاء' : 'إضافة'}
-            </button>
-        </div>`;
-    }).join('');
-};
-
-// أساتذة لديهم هذا المسار ضمن مساراتهم
-window.renderPathTeachers = function() {
-    const pool = localTeachersArray.filter(t =>
-        !t.paths || t.paths.length === 0 || t.paths.includes(selectedPath)
-    );
-    const container = document.getElementById('path-teachers-list');
-    if (!pool.length) {
-        container.innerHTML = '<p class="no-results">لا يوجد أساتذة مرتبطون بهذا المسار.</p>';
-        return;
-    }
-    container.innerHTML = pool.map(t => `
-        <div class="student-row">
-            <div>
-                <b>${t.name}</b>
-                <small>${t.subject||'غير محدد'}</small>
-            </div>
-            <span style="font-size:.8rem;color:var(--muted);font-weight:700;">${t.teacherType==='prep'?'تحضيري':'عادي'}</span>
-        </div>`).join('');
-};
-
-window.toggleStudentGroup = function(sId, gId, isAdded) {
-    const s = localStudentsArray.find(x => x.id===sId);
-    if (!s) return;
-    if (!s.groups) s.groups=[];
-    s.groups = isAdded ? s.groups.filter(x=>x!==gId) : [...s.groups, gId];
-    updateDoc(doc(db,"students",sId), {groups: s.groups}).then(() => {
-        window.renderAvailableStudents();
+    window.navigateToPath = function(pathName) {
+        selectedPath = pathName;
+        document.getElementById('navigation-view').style.display = 'none';
+        document.getElementById('groups-view').style.display = 'block';
+        document.getElementById('main-fab').style.display = 'flex';
+        document.getElementById('dash-path-name').innerText = pathName;
         window.renderMainGroups();
-    });
-};
+    };
 
-// ══ عرض أعضاء الفوج ══
-window.renderMembers = function(gId, gName) {
-    const members = localStudentsArray.filter(s => s.groups && s.groups.includes(gId));
-    document.getElementById('view-group-title').innerText = gName;
-    document.getElementById('members-area').innerHTML = members.length
-        ? members.map(s => `
-            <div class="student-row">
-                <b>${s.name}</b>
-                <button class="btn-icon btn-del" onclick="window.removeFromGroup('${s.id}','${gId}','${gName}')" style="padding:8px 12px;" title="إزالة">
-                    <i class="fas fa-user-minus"></i>
-                </button>
-            </div>`).join('')
-        : "<p style='text-align:center;padding:20px;color:var(--muted);font-size:.9rem;font-weight:700;'>لا يوجد تلاميذ في هذا الفوج.</p>";
-    document.getElementById('view-members-modal').style.display = 'flex';
-};
+    window.backToNavigation = function() {
+        selectedPath = "";
+        document.getElementById('navigation-view').style.display = 'block';
+        document.getElementById('groups-view').style.display = 'none';
+        document.getElementById('main-fab').style.display = 'none';
+    };
 
-window.removeFromGroup = function(sId, gId, gName) {
-    if (!confirm("تأكيد إزالة التلميذ من الفوج؟")) return;
-    const s = localStudentsArray.find(x => x.id===sId);
-    if (s && s.groups) {
-        s.groups = s.groups.filter(x => x!==gId);
-        updateDoc(doc(db,"students",sId), {groups: s.groups}).then(() => {
-            window.renderMembers(gId, gName);
-            window.renderMainGroups();
+    window.toggleEndTimeColumns = function() {
+        showEndTime = document.getElementById('toggle-endtime').checked;
+        document.getElementById('endtime-header-col').style.display = showEndTime ? '' : 'none';
+        document.getElementById('time-header').className = 'schedule-time-header' + (showEndTime ? ' has-endtime' : '');
+        document.querySelectorAll('#schedule-rows .schedule-row').forEach(row => {
+            const e = row.querySelector('.end-time');
+            if (e) e.style.display = showEndTime ? '' : 'none';
+            row.className = 'schedule-row' + (showEndTime ? ' has-endtime' : '');
         });
-    }
-};
+    };
 
-loadAllData();
+    window.addScheduleRow = function(day = "", time = "", endTime = "") {
+        const container = document.getElementById('schedule-rows');
+        const div = document.createElement('div');
+        div.className = 'schedule-row' + (showEndTime ? ' has-endtime' : '');
+        const dayOpts = `<option value="">اليوم</option>` + DAYS.map(d => `<option ${d===day?'selected':''}>${d}</option>`).join('');
+        div.innerHTML = `<select>${dayOpts}</select><input type="time" value="${time}"><input type="time" class="end-time" value="${endTime}" style="display:${showEndTime?'':'none'}"><button class="btn-remove-row" onclick="window.removeScheduleRow(this)"><i class="fas fa-times"></i></button>`;
+        container.appendChild(div);
+    };
+
+    window.removeScheduleRow = function(btn) {
+        const c = document.getElementById('schedule-rows');
+        if (c.children.length <= 1) { alert("يجب الإبقاء على يوم واحد على الأقل!"); return; }
+        btn.closest('.schedule-row').remove();
+    };
+
+    async function loadAllData() {
+        try {
+            const [gs, ss, ts] = await Promise.all([getDocs(collection(db,"groups")), getDocs(collection(db,"students")), getDocs(collection(db,"teachers"))]);
+            localGroupsArray = []; gs.forEach(d => localGroupsArray.push({id:d.id,...d.data()}));
+            localStudentsArray = []; ss.forEach(d => { const data=d.data(); const groups=Array.isArray(data.groups)?data.groups:(data.group&&data.group!=="غير محدد"?[data.group]:[]); localStudentsArray.push({id:d.id,...data,groups}); });
+            localTeachersArray = []; ts.forEach(d => localTeachersArray.push({id:d.id,...d.data()}));
+            document.getElementById('g-teacher').innerHTML = `<option value="">-- اختر أستاذ الفوج --</option>` + localTeachersArray.map(t=>`<option value="${t.name}">${t.name}</option>`).join('');
+            if (selectedPath) window.renderMainGroups();
+        } catch(e) {
+            console.error(e);
+            document.getElementById("groups-list").innerHTML = `<div class="loading"><i class="fas fa-exclamation-circle" style="color:var(--red);font-size:2rem;display:block;margin-bottom:10px;"></i>حدث خطأ أثناء جلب البيانات.</div>`;
+        }
+    }
+
+    window.renderMainGroups = function() {
+        const container = document.getElementById('groups-list');
+        const filtered = localGroupsArray.filter(g => g.path === selectedPath);
+        document.getElementById('dash-groups-count').innerText = filtered.length;
+        if (!filtered.length) { container.innerHTML = `<div class="empty-state"><i class="fas fa-folder-open icon"></i><p>لا توجد أفواج مسجلة هنا.<br>اضغط الزر العائم (+) للإضافة.</p></div>`; return; }
+        container.innerHTML = filtered.map(g => {
+            const members = localStudentsArray.filter(s => s.groups && s.groups.includes(g.id));
+            const schedHTML = `<div class="schedule-tags">` + (g.schedule||[]).map(s=>`<span class="schedule-tag"><i class="far fa-clock"></i> ${s.day} ${s.time}${s.endTime?`<span class="end-sep">→</span><span class="end-t">${s.endTime}</span>`:''}</span>`).join('') + `</div>`;
+            return `<div class="group-card"><h3 class="group-title">${g.name} <span class="sessions-badge">${g.sessionsCount||4} حصص</span></h3><div class="group-teacher"><i class="fas fa-chalkboard-teacher" style="color:var(--blue);"></i> الأستاذ: <span>${g.teacherName||'غير محدد'}</span></div>${schedHTML}<div class="group-info-grid"><div class="info-item"><i class="fas fa-wallet"></i> <span>${Number(g.price||0).toLocaleString()} دج</span></div><div class="info-item"><i class="fas fa-user-graduate"></i> <span>${members.length} تلاميذ</span></div></div><div class="action-grid"><button class="btn-icon btn-view" onclick="window.renderMembers('${g.id}','${g.name}')" title="عرض"><i class="fas fa-list"></i></button><button class="btn-icon btn-link" onclick="window.openLinkModal('${g.id}')" title="إضافة"><i class="fas fa-plus"></i></button><button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-pen"></i></button><button class="btn-icon btn-del" onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash"></i></button></div></div>`;
+        }).join("");
+    };
+
+    window.openGroupModal = function(id=null) {
+        showEndTime=false; document.getElementById('toggle-endtime').checked=false;
+        document.getElementById('endtime-header-col').style.display='none';
+        document.getElementById('time-header').className='schedule-time-header';
+        document.getElementById('group-modal').style.display='flex';
+        document.getElementById('schedule-rows').innerHTML='';
+        document.getElementById('g-target-path').value=selectedPath;
+        if (id) {
+            const g=localGroupsArray.find(x=>x.id===id);
+            document.getElementById('modal-title').innerText="تعديل الفوج";
+            document.getElementById('edit-id').value=g.id;
+            document.getElementById('g-name').value=g.name;
+            document.getElementById('g-teacher').value=g.teacherName||"";
+            document.getElementById('g-price').value=g.price;
+            document.getElementById('g-sessions').value=g.sessionsCount||4;
+            const sched=g.schedule||[];
+            if(sched.some(s=>s.endTime)){showEndTime=true;document.getElementById('toggle-endtime').checked=true;document.getElementById('endtime-header-col').style.display='';document.getElementById('time-header').className='schedule-time-header has-endtime';}
+            sched.forEach(s=>window.addScheduleRow(s.day,s.time,s.endTime||""));
+        } else {
+            document.getElementById('modal-title').innerText="إضافة فوج جديد";
+            ['edit-id','g-name','g-teacher','g-price'].forEach(id=>document.getElementById(id).value="");
+            document.getElementById('g-sessions').value="4";
+            window.addScheduleRow();
+        }
+    };
+
+    window.saveGroup = function() {
+        const name=document.getElementById('g-name').value.trim();
+        const teacherName=document.getElementById('g-teacher').value;
+        const price=document.getElementById('g-price').value;
+        const sessionsCount=Number(document.getElementById('g-sessions').value);
+        const editId=document.getElementById('edit-id').value;
+        const btn=document.getElementById('saveGroupBtn');
+        const schedule=[];
+        document.querySelectorAll('#schedule-rows .schedule-row').forEach(row=>{
+            const day=row.querySelector('select').value;
+            const time=row.querySelector('input[type="time"]:not(.end-time)').value;
+            const endVal=row.querySelector('.end-time').value;
+            if(day&&time) schedule.push({day,time,endTime:showEndTime?endVal:""});
+        });
+        if(!name||!price){alert("الرجاء إدخال اسم الفوج والسعر!");return;}
+        if(!teacherName){alert("الرجاء اختيار الأستاذ!");return;}
+        if(!schedule.length){alert("أضف توقيتاً واحداً على الأقل!");return;}
+        btn.disabled=true;
+        const payload={name,path:selectedPath,teacherName,price,sessionsCount,schedule};
+        (editId?updateDoc(doc(db,"groups",editId),payload):addDoc(collection(db,"groups"),payload))
+            .then(()=>{window.closeAllModals();loadAllData();}).finally(()=>btn.disabled=false);
+    };
+
+    window.deleteGroup = function(id) {
+        const t=localGroupsArray.find(g=>g.id===id);
+        if(!confirm(`تأكيد حذف الفوج "${t.name}" بشكل نهائي؟`))return;
+        deleteDoc(doc(db,"groups",id)).then(async()=>{
+            for(let s of localStudentsArray) if(s.groups&&s.groups.includes(id)) await updateDoc(doc(db,"students",s.id),{groups:s.groups.filter(gId=>gId!==id)});
+            loadAllData();
+        });
+    };
+
+    window.openLinkModal = function(groupId) {
+        document.getElementById('target-group-id').value=groupId;
+        document.getElementById('search-student').value="";
+        document.getElementById('link-student-modal').style.display='flex';
+        window.renderAvailableStudents();
+    };
+
+    window.renderAvailableStudents = function() {
+        const gId=document.getElementById('target-group-id').value;
+        const term=document.getElementById('search-student').value.toLowerCase().trim();
+        const container=document.getElementById('available-students');
+        const filtered=term?localStudentsArray.filter(s=>s.name&&s.name.toLowerCase().includes(term)):localStudentsArray;
+        container.innerHTML=filtered.length?filtered.map(s=>{const inGroup=s.groups&&s.groups.includes(gId);return`<div class="student-row"><b>${s.name}</b><button class="badge ${inGroup?'bg-red':'bg-blue'}" onclick="window.toggleStudentGroupAttendance('${s.id}','${gId}',${inGroup})">${inGroup?'إلغاء':'إضافة'}</button></div>`;}).join(""):"<p style='text-align:center;color:var(--muted);padding:15px;font-size:0.9rem;font-weight:700;'>لا يوجد تلاميذ متطابقين.</p>";
+    };
+
+    window.toggleStudentGroupAttendance = function(sId,gId,isAdded) {
+        const s=localStudentsArray.find(x=>x.id===sId);
+        if(!s)return;
+        if(!s.groups)s.groups=[];
+        s.groups=isAdded?s.groups.filter(x=>x!==gId):[...s.groups,gId];
+        updateDoc(doc(db,"students",sId),{groups:s.groups}).then(()=>{window.renderAvailableStudents();window.renderMainGroups();});
+    };
+
+    window.renderMembers = function(gId,gName) {
+        const members=localStudentsArray.filter(s=>s.groups&&s.groups.includes(gId));
+        document.getElementById('view-group-title').innerText=gName;
+        document.getElementById('members-area').innerHTML=members.length?members.map(s=>`<div class="student-row"><b>${s.name}</b><button class="btn-icon btn-del" onclick="window.removeFromGroupDirectly('${s.id}','${gId}','${gName}')" style="padding:8px 12px;" title="إزالة"><i class="fas fa-user-minus"></i></button></div>`).join(""):"<p style='text-align:center;padding:20px;color:var(--muted);font-size:0.9rem;font-weight:700;'>لا يوجد تلاميذ في هذا الفوج.</p>";
+        document.getElementById('view-members-modal').style.display='flex';
+    };
+
+    window.removeFromGroupDirectly = function(sId,gId,gName) {
+        if(!confirm("تأكيد إزالة التلميذ من الفوج؟"))return;
+        const s=localStudentsArray.find(x=>x.id===sId);
+        if(s&&s.groups){s.groups=s.groups.filter(x=>x!==gId);updateDoc(doc(db,"students",sId),{groups:s.groups}).then(()=>{window.renderMembers(gId,gName);window.renderMainGroups();});}
+    };
+
+    loadAllData();
 </script>
 </body>
 </html>
