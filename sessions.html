@@ -107,11 +107,16 @@
         /* ====== MAIN CONTENT ====== */
         .main { padding: 20px 15px; }
 
+        .path-container {
+            margin-bottom: 25px;
+        }
+
         .section-title {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 800;
-            color: var(--slate);
+            color: var(--blue);
             margin-bottom: 14px;
+            margin-top: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -122,8 +127,9 @@
             content: '';
             flex: 1;
             height: 2px;
-            background: linear-gradient(to left, transparent, #e2e8f0);
+            background: linear-gradient(to left, transparent, #2563eb);
             border-radius: 2px;
+            opacity: 0.3;
         }
 
         /* ====== SESSION CARD ====== */
@@ -166,7 +172,7 @@
         }
         .session-info .session-meta {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             margin-top: 6px;
             flex-wrap: wrap;
         }
@@ -180,6 +186,8 @@
         }
         .meta-badge.time { background: #fef9c3; color: #854d0e; }
         .meta-badge.students { background: #f3e8ff; color: #7e22ce; }
+        .meta-badge.path-badge { background: #e0f2fe; color: #0369a1; }
+        .meta-badge.prep-teacher { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
 
         .session-status-badge {
             font-size: 0.78rem;
@@ -243,6 +251,9 @@
         }
         .salary-preview span { font-size: 0.8rem; color: var(--green); font-weight: 700; }
         .salary-preview strong { font-size: 1rem; color: var(--green); }
+        .salary-preview.prep-preview { background: #fafafa; border-color: #d1d5db; }
+        .salary-preview.prep-preview span { color: #4b5563; }
+        .salary-preview.prep-preview strong { color: #4b5563; }
 
         /* Empty state */
         .empty-state {
@@ -359,8 +370,6 @@
         </div>
     </div>
 
-    <div class="section-title"><i class="fas fa-clipboard-list"></i> الحصص المجدولة</div>
-
     <div id="sessions-container">
         <div class="loading"><span class="spinner">⏳</span> جاري تحميل الأفواج...</div>
     </div>
@@ -388,14 +397,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- Day mapping ---
-    const DAY_NAMES_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    // ترتيب المسارات المعتمد لفرز العناصر
+    const PATHS_ORDER = [
+        "السنة 1 ابتدائي", "السنة 2 ابتدائي", "السنة 3 ابتدائي", "السنة 4 ابتدائي", "السنة 5 ابتدائي",
+        "السنة 1 متوسط", "السنة 2 متوسط", "السنة 3 متوسط", "السنة 4 متوسط",
+        "السنة 1 ثانوي", "السنة 2 ثانوي", "السنة 3 ثانوي",
+        "حفظ القرآن", "مع القرآن", "السوروبان", "الذكاء الاصطناعي", "تحدي القراءة", "الورشات", "الدورات", "متفرقات"
+    ];
 
     let allGroups = [];
     let allStudents = [];
+    let allTeachers = [];
     let todaySessionDocs = {}; // groupName -> { id, status }
 
-    // Set today's date by default
+    // ضبط تاريخ اليوم تلقائياً
     const dateInput = document.getElementById('session-date');
     const now = new Date();
     dateInput.value = now.toISOString().split('T')[0];
@@ -405,14 +420,15 @@
         if (!selectedDate) return;
 
         document.getElementById('sessions-container').innerHTML =
-            `<div class="loading"><span class="spinner">⏳</span> جاري تحميل الأفواج...</div>`;
+            `<div class="loading"><span class="spinner">⏳</span> جاري تحميل البيانات...</div>`;
         document.getElementById('stats-bar').style.display = 'none';
 
         try {
-            // Load groups & students (only once ideally)
-            const [groupsSnap, studentsSnap] = await Promise.all([
+            // جلب المجموعات، الطلاب، والأساتذة من قاعدة البيانات بالتوازي لسرعة الأداء
+            const [groupsSnap, studentsSnap, teachersSnap] = await Promise.all([
                 getDocs(collection(db, "groups")),
-                getDocs(collection(db, "students"))
+                getDocs(collection(db, "students")),
+                getDocs(collection(db, "teachers"))
             ]);
 
             allGroups = [];
@@ -421,7 +437,10 @@
             allStudents = [];
             studentsSnap.forEach(d => allStudents.push(d.data()));
 
-            // Load sessions already recorded for this date
+            allTeachers = [];
+            teachersSnap.forEach(d => allTeachers.push({ id: d.id, ...d.data() }));
+
+            // جلب الحصص المسجلة مسبقاً لهذا اليوم
             const sessionsSnap = await getDocs(
                 query(collection(db, "sessions"), where("date", "==", selectedDate))
             );
@@ -431,16 +450,17 @@
                 todaySessionDocs[data.groupName] = { docId: d.id, status: data.status };
             });
 
-            // Filter groups by Arabic day name from schedule array
+            // حساب اليوم باللغة العربية مع تفادي مشاكل فوارق التوقيت الزمنية
             const DAY_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
             const selectedDayAr = DAY_AR[new Date(selectedDate + "T12:00:00").getDay()];
 
+            // فلترة الأفواج المجدولة لهذا اليوم فقط
             const scheduledGroups = allGroups.filter(g => {
                 if (!g.schedule || !Array.isArray(g.schedule) || g.schedule.length === 0) return false;
                 return g.schedule.some(s => s.day === selectedDayAr);
             });
 
-            renderSessions(scheduledGroups, selectedDate, selectedDayAr);
+            renderSessionsByPath(scheduledGroups, selectedDate, selectedDayAr);
 
         } catch (err) {
             console.error(err);
@@ -449,7 +469,7 @@
         }
     };
 
-    function renderSessions(groups, date, selectedDayAr) {
+    function renderSessionsByPath(groups, date, selectedDayAr) {
         const container = document.getElementById('sessions-container');
 
         if (!groups.length) {
@@ -460,79 +480,129 @@
             return;
         }
 
-        let doneCount = 0, absentCount = 0;
-
-        container.innerHTML = groups.map(group => {
-            const studentsCount = allStudents.filter(s => s.group === group.name).length;
-            const sessionsPerMonth = group.sessionsCount || group.sessionsPerMonth || 4;
-            const sessionValue = (studentsCount * Number(group.price || 0)) / sessionsPerMonth;
-            const teacherShare = Math.round(sessionValue * 0.50);
-
-            // Get time for this specific day
-            const todaySchedule = (group.schedule || []).find(s => s.day === selectedDayAr);
-            const sessionTime = todaySchedule ? todaySchedule.time + (todaySchedule.endTime ? ` ← ${todaySchedule.endTime}` : '') : '';
-
-            const recorded = todaySessionDocs[group.name];
-            let statusClass = 'status-pending';
-            let statusLabel = '⏳ بانتظار التسجيل';
-
-            if (recorded) {
-                if (recorded.status === 'done') {
-                    statusClass = 'status-done';
-                    statusLabel = '✅ مكتملة';
-                    doneCount++;
-                } else if (recorded.status === 'absent') {
-                    statusClass = 'status-absent';
-                    statusLabel = '❌ الأستاذ غائب';
-                    absentCount++;
-                }
+        // تجميع الأفواج ديناميكياً حسب الـ path الخاص بها
+        const groupsByPath = {};
+        groups.forEach(group => {
+            const pathName = group.path || "متفرقات";
+            if (!groupsByPath[pathName]) {
+                groupsByPath[pathName] = [];
             }
+            groupsByPath[pathName].push(group);
+        });
 
-            const isDone = recorded?.status === 'done';
-            const isAbsent = recorded?.status === 'absent';
-            const isRecorded = isDone || isAbsent;
+        // فرز المسارات بناءً على الترتيب المعتمد في المصفوفة الاستراتيجية
+        const sortedPaths = Object.keys(groupsByPath).sort((a, b) => {
+            let idxA = PATHS_ORDER.indexOf(a);
+            let idxB = PATHS_ORDER.indexOf(b);
+            if (idxA === -1) idxA = 999;
+            if (idxB === -1) idxB = 999;
+            return idxA - idxB;
+        });
 
-            return `
-            <div class="session-card ${statusClass}" id="card-${group.name.replace(/\s/g,'_')}">
-                <div class="session-card-header">
-                    <div class="group-avatar">📚</div>
-                    <div class="session-info">
-                        <div class="group-name">${group.name}</div>
-                        <div class="teacher-name"><i class="fas fa-chalkboard-teacher"></i> ${group.teacherName || 'غير محدد'}</div>
-                        <div class="session-meta">
-                            <span class="meta-badge students">👥 ${studentsCount} تلميذ</span>
-                            <span class="meta-badge time">🔁 ${sessionsPerMonth} حصة/شهر</span>
-                            ${sessionTime ? `<span class="meta-badge time">🕐 ${sessionTime}</span>` : ''}
+        let doneCount = 0, absentCount = 0;
+        let htmlContent = '';
+
+        sortedPaths.forEach(pathName => {
+            htmlContent += `
+            <div class="path-container">
+                <div class="section-title"><i class="fas fa-graduation-cap"></i> ${pathName}</div>
+            `;
+
+            groupsByPath[pathName].forEach(group => {
+                // إصلاح الفلترة الحرج: البحث داخل مصفوفة المجموعات الحقيقية للطالب
+                const studentsCount = allStudents.filter(s => Array.isArray(s.groups) && s.groups.includes(group.id)).length;
+                
+                const sessionsPerMonth = group.sessionsCount || group.sessionsPerMonth || 4;
+                const sessionValue = (studentsCount * Number(group.price || 0)) / sessionsPerMonth;
+                
+                // ربط الأستاذ وحساب النسبة والمستحقات والتحقق من المعلم التحضيري
+                const teacherObj = allTeachers.find(t => t.name === group.teacherName);
+                const isPrepTeacher = teacherObj && teacherObj.teacherType === 'prep';
+                const currentRatio = teacherObj && teacherObj.ratio ? Number(teacherObj.ratio) / 100 : 0.50;
+                
+                // تصفير مستحقات الأستاذ التحضيري تلقائياً لحماية الميزانية من الازدواجية
+                const teacherShare = isPrepTeacher ? 0 : Math.round(sessionValue * currentRatio);
+
+                // جلب توقيت الحصة المجدول
+                const todaySchedule = (group.schedule || []).find(s => s.day === selectedDayAr);
+                const sessionTime = todaySchedule ? todaySchedule.time + (todaySchedule.endTime ? ` ← ${todaySchedule.endTime}` : '') : '';
+
+                const recorded = todaySessionDocs[group.name];
+                let statusClass = 'status-pending';
+                let statusLabel = '⏳ بانتظار التسجيل';
+
+                if (recorded) {
+                    if (recorded.status === 'done') {
+                        statusClass = 'status-done';
+                        statusLabel = '✅ مكتملة';
+                        doneCount++;
+                    } else if (recorded.status === 'absent') {
+                        statusClass = 'status-absent';
+                        statusLabel = '❌ الأستاذ غائب';
+                        absentCount++;
+                    }
+                }
+
+                const isDone = recorded?.status === 'done';
+                const isAbsent = recorded?.status === 'absent';
+                const isRecorded = isDone || isAbsent;
+
+                htmlContent += `
+                <div class="session-card ${statusClass}" id="card-${group.name.replace(/\s/g,'_')}">
+                    <div class="session-card-header">
+                        <div class="group-avatar" style="color:white;"><i class="fas fa-users"></i></div>
+                        <div class="session-info">
+                            <div class="group-name">${group.name}</div>
+                            <div class="teacher-name"><i class="fas fa-chalkboard-teacher"></i> ${group.teacherName || 'غير محدد'}</div>
+                            <div class="session-meta">
+                                <span class="meta-badge path-badge"><i class="fas fa-bookmark"></i> ${group.path || 'عام'}</span>
+                                <span class="meta-badge students">👥 ${studentsCount} تلميذ</span>
+                                <span class="meta-badge time">🔁 ${sessionsPerMonth} حصة/شهر</span>
+                                ${sessionTime ? `<span class="meta-badge time">🕐 ${sessionTime}</span>` : ''}
+                                ${isPrepTeacher ? `<span class="meta-badge prep-teacher">⭐ أستاذ تحضيري - راتب ثابت</span>` : ''}
+                            </div>
                         </div>
+                        <span class="session-status-badge">${statusLabel}</span>
                     </div>
-                    <span class="session-status-badge">${statusLabel}</span>
-                </div>
 
-                ${isDone ? `
-                <div class="salary-preview">
-                    <span>💰 مستحقات هذه الحصة:</span>
-                    <strong>${teacherShare} دج</strong>
-                </div>` : ''}
+                    ${isDone ? `
+                        ${isPrepTeacher ? `
+                        <div class="salary-preview prep-preview">
+                            <span>ℹ️ نظام مالي ثابت:</span>
+                            <strong>حساب حصة معفى (أستاذ تحضيري)</strong>
+                        </div>
+                        ` : `
+                        <div class="salary-preview">
+                            <span>💰 مستحقات هذه الحصة (${Math.round(currentRatio * 100)}%):</span>
+                            <strong>${teacherShare} دج</strong>
+                        </div>
+                        `}
+                    ` : ''}
 
-                ${!isRecorded ? `
-                <div class="session-actions">
-                    <button class="btn-action btn-present"
-                        onclick="window.recordSession('${group.name}', '${group.teacherName || ''}', 'done', '${date}', ${teacherShare})">
-                        <i class="fas fa-check-circle"></i> الأستاذ حضر وأدّى الحصة
-                    </button>
-                    <button class="btn-action btn-absent"
-                        onclick="window.recordSession('${group.name}', '${group.teacherName || ''}', 'absent', '${date}', 0)">
-                        <i class="fas fa-times-circle"></i> غائب
-                    </button>
-                </div>` : `
-                <button class="btn-undo"
-                    onclick="window.undoSession('${group.name}', '${recorded?.docId || ''}', '${date}')">
-                    <i class="fas fa-rotate-left"></i> تراجع عن هذا التسجيل
-                </button>`}
-            </div>`;
-        }).join('');
+                    ${!isRecorded ? `
+                    <div class="session-actions">
+                        <button class="btn-action btn-present"
+                            onclick="window.recordSession('${group.name}', '${group.teacherName || ''}', 'done', '${date}', ${teacherShare})">
+                            <i class="fas fa-check-circle"></i> الأستاذ حضر وأدّى الحصة
+                        </button>
+                        <button class="btn-action btn-absent"
+                            onclick="window.recordSession('${group.name}', '${group.teacherName || ''}', 'absent', '${date}', 0)">
+                            <i class="fas fa-times-circle"></i> غائب
+                        </button>
+                    </div>` : `
+                    <button class="btn-undo"
+                        onclick="window.undoSession('${group.name}', '${recorded?.docId || ''}', '${date}')">
+                        <i class="fas fa-rotate-left"></i> تراجع عن هذا التسجيل
+                    </button>`}
+                </div>`;
+            });
 
-        // Update stats
+            htmlContent += `</div>`; // إغلاق ملف الـ path-container
+        });
+
+        container.innerHTML = htmlContent;
+
+        // تحديث شريط الإحصائيات الشاملة في الأعلى
         const statsBar = document.getElementById('stats-bar');
         statsBar.style.display = 'grid';
         document.getElementById('stat-total').textContent = groups.length;
@@ -551,7 +621,7 @@
                 teacherName,
                 status,         // 'done' | 'absent'
                 date,
-                teacherShare,   // المبلغ الذي يستحقه الأستاذ عن هذه الحصة
+                teacherShare,   // المبلغ المستحق الفعلي أو 0 إذا كان تحضيري
                 timestamp: new Date().toISOString()
             });
 
@@ -593,7 +663,7 @@
         setTimeout(() => t.className = `toast ${type}`, 2800);
     }
 
-    // Auto-load on page open
+    // التنفيذ التلقائي الفوري عند فتح الواجهة
     loadSessionsForDate();
 </script>
 </body>
