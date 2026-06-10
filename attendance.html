@@ -1,580 +1,1034 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تسجيل دفع التلاميذ - كناشي Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --blue:#1a56db; --blue-deep:#1043b0; --blue-light:#eff6ff;
-            --green:#059669; --green-light:#ecfdf5;
-            --red:#dc2626; --red-light:#fef2f2;
-            --orange:#d97706; --orange-light:#fffbeb;
-            --purple:#7c3aed; --purple-light:#f5f3ff;
-            --text:#0d1b3e; --muted:#64748b;
-            --border:#e2e8f0; --bg:#f0f4fc; --white:#ffffff;
-            --shadow:0 4px 20px rgba(26,86,219,0.07);
-        }
-        * { box-sizing:border-box; margin:0; padding:0; font-variant-numeric:lining-nums; }
-        body { font-family:'Cairo',sans-serif; background:var(--bg); color:var(--text); line-height:1.5; min-height:100vh; overflow-x:hidden; padding-bottom:60px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>تسجيل دفع التلاميذ - كناشي Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+:root {
+  --blue: #1a56db;
+  --blue-deep: #1043b0;
+  --blue-light: #eff6ff;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --orange: #d97706;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --text: #0d1b3e;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --bg: #f0f4fc;
+  --white: #ffffff;
+  --shadow: 0 4px 20px rgba(26,86,219,0.07);
+  --radius: 20px;
+}
 
-        .blob { position:fixed; border-radius:50%; filter:blur(70px); opacity:0.35; pointer-events:none; z-index:0; }
-        .blob-1 { width:400px; height:400px; background:radial-gradient(circle,#bfdbfe,#93c5fd); top:-150px; right:-100px; animation:floatB 9s ease-in-out infinite alternate; }
-        .blob-2 { width:300px; height:300px; background:radial-gradient(circle,#ddd6fe,#c4b5fd); bottom:-100px; left:-80px; animation:floatB 11s ease-in-out infinite alternate-reverse; }
-        @keyframes floatB { from{transform:translate(0,0) scale(1)} to{transform:translate(25px,18px) scale(1.07)} }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+/* إجبار الأرقام اللاتينية في كل مكان */
+* { font-variant-numeric: lining-nums; unicode-bidi: plaintext; }
+input, span, b, div { font-feature-settings: "lnum" 1; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: 60px;
+  overflow-x: hidden;
+}
 
-        .app-wrapper { max-width:480px; margin:0 auto; position:relative; z-index:1; }
+/* ── BLOBS ── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+.blob-1 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, #bfdbfe, #93c5fd);
+  top: -140px; right: -90px;
+  animation: floatB 9s ease-in-out infinite alternate;
+}
+.blob-2 {
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, #ddd6fe, #c4b5fd);
+  bottom: -80px; left: -70px;
+  animation: floatB 11s ease-in-out infinite alternate-reverse;
+}
+@keyframes floatB {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(22px,15px) scale(1.06); }
+}
 
-        /* ── HERO ── */
-        .hero { background:linear-gradient(145deg,var(--blue-deep) 0%,var(--blue) 55%,#3b82f6 100%); padding:36px 24px 72px; position:relative; overflow:hidden; border-bottom-left-radius:30px; border-bottom-right-radius:30px; box-shadow:0 10px 30px rgba(26,86,219,0.2); }
-        .hero::before { content:''; position:absolute; width:280px; height:280px; background:rgba(255,255,255,0.06); border-radius:50%; top:-120px; left:-60px; }
-        .hero::after  { content:''; position:absolute; width:180px; height:180px; background:rgba(255,255,255,0.04); border-radius:50%; bottom:-60px; right:20px; }
-        .hero-top { display:flex; align-items:center; gap:12px; position:relative; z-index:2; }
-        .back-btn { width:44px; height:44px; background:rgba(255,255,255,0.18); border-radius:14px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.25); color:white; font-size:1.1rem; cursor:pointer; transition:0.2s; backdrop-filter:blur(8px); flex-shrink:0; text-decoration:none; }
-        .back-btn:active { transform:scale(0.9); }
-        .hero-title { color:white; }
-        .hero-title h2 { margin:0; font-size:1.2rem; font-weight:900; }
-        .hero-title p  { margin:2px 0 0; font-size:0.75rem; color:rgba(255,255,255,0.75); font-weight:600; }
+/* ── WRAPPER ── */
+.app { max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* ── CARDS WRAP ── */
-        .cards-wrap { padding:0 14px; margin-top:-46px; position:relative; z-index:10; }
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
 
-        /* ── SECTION TITLE ── */
-        .section-title { font-size:0.8rem; font-weight:800; color:white; letter-spacing:0.4px; margin:0 2px 12px; display:flex; align-items:center; gap:7px; position:relative; z-index:10; }
-        .section-title.dark { color:var(--muted); margin-top:4px; }
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(145deg, var(--blue-deep) 0%, var(--blue) 55%, #3b82f6 100%);
+  padding: 36px 20px 68px;
+  position: relative;
+  overflow: hidden;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  box-shadow: 0 10px 30px rgba(26,86,219,0.2);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 260px; height: 260px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+  top: -110px; left: -50px;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 160px; height: 160px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+  bottom: -50px; right: 20px;
+}
+.hero-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+.back-btn {
+  width: 42px; height: 42px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.back-btn:hover  { background: rgba(255,255,255,0.28); }
+.back-btn:active { transform: scale(0.9); }
+.hero-title h2 { color: white; font-size: 1.15rem; font-weight: 900; margin: 0; }
+.hero-title p  { color: rgba(255,255,255,0.75); font-size: 0.75rem; font-weight: 600; margin: 2px 0 0; }
 
-        /* ── LEVEL GRID (3-col) ── */
-        .main-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px; }
-        .two-grid  { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:18px; }
+/* ── CARDS WRAP ── */
+.cards-wrap {
+  padding: 0 14px;
+  margin-top: -44px;
+  position: relative;
+  z-index: 10;
+}
 
-        .grid-card { border:none; border-radius:20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:14px 8px 12px; text-align:center; font-family:'Cairo',inherit; transition:transform 0.18s,box-shadow 0.18s; box-shadow:0 4px 14px rgba(0,0,0,0.12); position:relative; overflow:hidden; min-height:95px; }
-        .grid-card:hover  { transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,0,0,0.18); }
-        .grid-card:active { transform:scale(0.95); }
-        .ct-green  { background:linear-gradient(145deg,#10b981,#059669); }
-        .ct-blue   { background:linear-gradient(145deg,#3b82f6,#1d4ed8); }
-        .ct-orange { background:linear-gradient(145deg,#f59e0b,#d97706); }
-        .ct-red    { background:linear-gradient(145deg,#ef4444,#dc2626); }
-        .ct-purple { background:linear-gradient(145deg,#8b5cf6,#7c3aed); }
-        .ct-teal   { background:linear-gradient(145deg,#14b8a6,#0d9488); }
-        .ct-pink   { background:linear-gradient(145deg,#ec4899,#db2777); }
-        .ct-indigo { background:linear-gradient(145deg,#6366f1,#4f46e5); }
-        .ct-amber  { background:linear-gradient(145deg,#f97316,#ea580c); }
-        .ct-cyan   { background:linear-gradient(145deg,#06b6d4,#0891b2); }
-        .ct-rose   { background:linear-gradient(145deg,#f43f5e,#e11d48); }
-        .ct-lime   { background:linear-gradient(145deg,#84cc16,#65a30d); }
-        .grid-card .card-icon  { font-size:1.7rem; margin-bottom:5px; }
-        .grid-card .card-num   { font-size:1.4rem; font-weight:900; color:rgba(255,255,255,0.95); line-height:1; margin-bottom:2px; }
-        .grid-card .card-label { font-size:0.72rem; font-weight:800; color:white; line-height:1.3; text-shadow:0 1px 3px rgba(0,0,0,0.2); }
-        .grid-card .alert-dot { position:absolute; top:8px; left:8px; width:9px; height:9px; background:#fbbf24; border-radius:50%; border:2px solid white; }
+/* ── SECTION LABEL ── */
+.sec-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  margin: 0 2px 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sec-label.light { color: white; }
+.sec-label.dark  { color: var(--muted); margin-top: 6px; }
 
-        .two-grid .grid-card { min-height:80px; flex-direction:row; gap:12px; padding:14px 18px; justify-content:flex-start; }
-        .two-grid .grid-card .card-icon  { font-size:1.8rem; margin-bottom:0; }
-        .two-grid .grid-card .card-label { font-size:0.85rem; text-align:right; }
+/* ── LEVEL GRID ── */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
 
-        .view { display:none; }
+.lcard {
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 8px 12px;
+  text-align: center;
+  font-family: 'Cairo', sans-serif;
+  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  position: relative;
+  overflow: hidden;
+  min-height: 95px;
+}
+.lcard:hover  { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.18); }
+.lcard:active { transform: scale(0.95); }
 
-        /* ── GROUP CARDS ── */
-        .groups-list { display:flex; flex-direction:column; gap:12px; }
-        .g-card { background:var(--white); border-radius:20px; overflow:hidden; box-shadow:var(--shadow); border:1.5px solid var(--border); cursor:pointer; transition:transform 0.2s; }
-        .g-card.has-exp { border-color:#fecaca; }
-        .g-card-top { padding:16px 18px; display:flex; gap:12px; align-items:center; }
-        .g-icon { width:48px; height:48px; border-radius:14px; background:var(--blue-light); color:var(--blue); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
-        .g-card.has-exp .g-icon { background:#fee2e2; color:var(--red); }
-        .g-meta { flex:1; min-width:0; }
-        .g-meta h3 { margin:0; font-size:1rem; font-weight:900; }
-        .g-teacher { font-size:0.78rem; color:var(--muted); margin-top:3px; display:flex; align-items:center; gap:5px; }
-        .g-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
-        .chip { font-size:0.71rem; font-weight:700; padding:2px 9px; border-radius:20px; display:inline-flex; align-items:center; gap:4px; }
-        .chip-slate  { background:#f1f5f9; color:var(--muted); }
-        .chip-green  { background:var(--green-light); color:var(--green); }
-        .chip-red    { background:var(--red-light);   color:var(--red);   border:1px solid #fecaca; }
-        .chip-blue   { background:var(--blue-light);  color:var(--blue); }
-        .g-chevron { color:var(--muted); transition:transform 0.3s; flex-shrink:0; font-size:0.85rem; }
-        .g-card.open .g-chevron { transform:rotate(180deg); }
+/* grid-2 lcard row style */
+.grid-2 .lcard {
+  flex-direction: row;
+  gap: 12px;
+  padding: 14px 18px;
+  min-height: 76px;
+  justify-content: flex-start;
+}
+.grid-2 .lcard .ci { margin-bottom: 0; }
+.grid-2 .lcard .cl { text-align: right; font-size: 0.85rem; }
 
-        /* ── STUDENTS PANEL ── */
-        .students-panel { display:none; border-top:1.5px solid #f1f5f9; background:#fafbfd; padding:12px 14px 14px; }
-        .g-card.open .students-panel { display:block; }
+.ci { font-size: 1.65rem; margin-bottom: 4px; }
+.cn { font-size: 1.4rem; font-weight: 900; color: rgba(255,255,255,0.95); line-height: 1; margin-bottom: 2px; }
+.cl { font-size: 0.72rem; font-weight: 800; color: white; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* ── STUDENT ROW ── */
-        .s-row { background:var(--white); border-radius:14px; padding:12px 14px; margin-bottom:10px; border:1.5px solid var(--border); border-right:5px solid var(--green); }
-        .s-row.expired { border-right-color:var(--red); background:#fff8f8; border-color:#fecaca; }
-        .s-row-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
-        .s-name  { font-weight:800; font-size:0.95rem; }
-        .s-dates { font-size:0.75rem; color:var(--muted); margin-top:4px; display:flex; flex-direction:column; gap:2px; }
-        .s-dates span { display:flex; align-items:center; gap:5px; }
-        .s-extra-info { display:flex; flex-direction:column; gap:5px; margin-top:8px; background:#f8fafc; padding:8px 12px; border-radius:10px; border:1px solid #edf2f7; }
-        .debt-line { display:flex; justify-content:space-between; font-size:0.78rem; font-weight:800; }
-        .badge-debt { color:var(--red); }
-        .badge-lastpay { color:var(--blue); }
-        .badge-discount { color:var(--purple); }
-        .s-pill { font-size:0.71rem; font-weight:800; padding:3px 10px; border-radius:20px; flex-shrink:0; white-space:nowrap; display:flex; align-items:center; gap:4px; }
-        .pill-ok  { background:var(--green-light); color:var(--green); }
-        .pill-bad { background:var(--red-light);   color:var(--red); }
-        .s-actions { display:flex; gap:7px; margin-top:10px; }
-        .btn-a { flex:1; height:36px; border:none; border-radius:10px; font-family:'Cairo',inherit; font-size:0.82rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:0.15s; }
-        .btn-a:active { transform:scale(0.97); }
-        .btn-pay  { background:#dcfce7; color:#15803d; }
-        .btn-pay:hover { background:#bbf7d0; }
-        .btn-date { background:#f1f5f9; color:var(--text); flex:0 0 auto; padding:0 14px; }
-        .btn-date:hover { background:#e2e8f0; }
+/* color themes */
+.c-green  { background: linear-gradient(145deg,#10b981,#059669); }
+.c-blue   { background: linear-gradient(145deg,#3b82f6,#1d4ed8); }
+.c-orange { background: linear-gradient(145deg,#f59e0b,#d97706); }
+.c-red    { background: linear-gradient(145deg,#ef4444,#dc2626); }
+.c-purple { background: linear-gradient(145deg,#8b5cf6,#7c3aed); }
+.c-teal   { background: linear-gradient(145deg,#14b8a6,#0d9488); }
+.c-pink   { background: linear-gradient(145deg,#ec4899,#db2777); }
+.c-indigo { background: linear-gradient(145deg,#6366f1,#4f46e5); }
+.c-amber  { background: linear-gradient(145deg,#f97316,#ea580c); }
+.c-cyan   { background: linear-gradient(145deg,#06b6d4,#0891b2); }
+.c-rose   { background: linear-gradient(145deg,#f43f5e,#e11d48); }
+.c-lime   { background: linear-gradient(145deg,#84cc16,#65a30d); }
 
-        /* ── MODALS ── */
-        .modal { display:none; position:fixed; inset:0; background:rgba(13,27,62,0.65); z-index:3000; justify-content:center; align-items:center; backdrop-filter:blur(7px); padding:10px; }
-        .modal-box { background:var(--white); padding:24px; width:100%; max-width:380px; border-radius:24px; box-shadow:0 24px 48px rgba(0,0,0,0.22); animation:popIn 0.2s ease; overflow-y:auto; max-height:90vh; }
-        @keyframes popIn { from{opacity:0;transform:scale(0.94) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)} }
-        .modal-box h3 { margin:0 0 14px; font-size:1.1rem; font-weight:900; text-align:center; color:var(--blue); }
-        
-        .m-calc-box { background:#f8fafc; border:1px solid var(--border); border-radius:14px; padding:12px; margin-bottom:14px; font-size:0.85rem; }
-        .m-calc-row { display:flex; justify-content:space-between; margin-bottom:5px; font-weight:700; }
-        .m-calc-row.final { border-top:1px dashed #cbd5e1; margin-top:8px; padding-top:8px; font-size:0.95rem; }
-        
-        .modal-label { font-size:0.82rem; font-weight:700; color:var(--text); margin-bottom:5px; display:block; }
-        .inp { width:100%; padding:10px 14px; border:2px solid var(--border); border-radius:12px; font-family:'Cairo',inherit; font-size:0.95rem; outline:none; margin-bottom:12px; transition:border-color 0.15s; }
-        .inp:focus { border-color:var(--blue); }
-        
-        .live-feedback { font-weight:900; text-align:center; padding:8px; border-radius:10px; font-size:0.9rem; margin-bottom:14px; }
-        .feedback-ok { background:var(--green-light); color:var(--green); }
-        .feedback-debt { background:var(--red-light); color:var(--red); border:1px solid #fecaca; }
+/* alert dot */
+.alert-dot {
+  position: absolute;
+  top: 7px; left: 7px;
+  width: 9px; height: 9px;
+  background: #fbbf24;
+  border-radius: 50%;
+  border: 2px solid white;
+}
 
-        .btn-save   { width:100%; padding:12px; background:var(--blue); color:white; border:none; border-radius:12px; font-family:'Cairo',inherit; font-weight:800; font-size:0.97rem; cursor:pointer; }
-        .btn-cancel { width:100%; background:none; border:none; padding:8px; margin-top:4px; color:var(--muted); font-family:'Cairo',inherit; cursor:pointer; font-size:0.9rem; }
+/* ── SUMMARY BAR ── */
+.sum-bar {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 11px 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.sum-bar .exp-badge {
+  background: var(--red-light);
+  color: var(--red);
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+}
 
-        .toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(70px); background:#0f172a; color:white; padding:11px 20px; border-radius:30px; font-weight:700; font-size:0.88rem; z-index:9999; transition:transform 0.3s ease; display:flex; align-items:center; gap:8px; box-shadow:0 8px 24px rgba(0,0,0,0.2); white-space:nowrap; }
-        .toast.show { transform:translateX(-50%) translateY(0); }
-        .toast.ok   { background:#15803d; }
-        .toast.fail { background:var(--red); }
+/* ── GROUP CARD ── */
+.g-list { display: flex; flex-direction: column; gap: 12px; }
 
-        .state-msg { text-align:center; padding:40px 20px; color:var(--muted); font-weight:600; font-size:0.9rem; }
-        .state-msg i { font-size:2.2rem; color:#cbd5e1; display:block; margin-bottom:10px; }
+.gcard {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.gcard.has-exp { border-color: #fecaca; }
 
-        .summary-bar { background:var(--white); border-radius:14px; padding:12px 16px; margin-bottom:14px; box-shadow:var(--shadow); border:1.5px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:0.9rem; color:var(--muted); }
-        .summary-bar .s-exp { background:var(--red-light); color:var(--red); padding:3px 12px; border-radius:20px; font-size:0.8rem; }
-    </style>
+.gcard-head {
+  padding: 15px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.g-icon {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  background: var(--blue-light);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+.gcard.has-exp .g-icon { background: #fee2e2; color: var(--red); }
+
+.g-meta { flex: 1; min-width: 0; }
+.g-meta h3 { font-size: 0.97rem; font-weight: 900; margin: 0; }
+.g-teacher { font-size: 0.76rem; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+.g-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+
+.chip {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.chip-slate { background: #f1f5f9; color: var(--muted); }
+.chip-green { background: var(--green-light); color: var(--green); }
+.chip-red   { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+.chip-blue  { background: var(--blue-light); color: var(--blue); }
+
+.chevron { color: var(--muted); transition: transform 0.3s; font-size: 0.85rem; flex-shrink: 0; }
+.gcard.open .chevron { transform: rotate(180deg); }
+
+/* ── STUDENTS PANEL ── */
+.s-panel {
+  display: none;
+  border-top: 1.5px solid #f1f5f9;
+  background: #fafbfd;
+  padding: 12px 13px 13px;
+}
+.gcard.open .s-panel { display: block; }
+
+/* ── STUDENT ROW ── */
+.srow {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 12px 13px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--border);
+  border-right: 5px solid var(--green);
+}
+.srow.expired {
+  border-right-color: var(--red);
+  background: #fff8f8;
+  border-color: #fecaca;
+}
+.srow:last-child { margin-bottom: 0; }
+
+.srow-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.s-name  { font-weight: 800; font-size: 0.93rem; }
+.s-dates { font-size: 0.74rem; color: var(--muted); margin-top: 3px; display: flex; flex-direction: column; gap: 2px; }
+.s-dates span { display: flex; align-items: center; gap: 5px; }
+
+.s-extra {
+  margin-top: 8px;
+  background: #f8fafc;
+  padding: 8px 11px;
+  border-radius: 10px;
+  border: 1px solid #edf2f7;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.dline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.77rem;
+  font-weight: 800;
+}
+.dline.debt { color: var(--red); }
+.dline.disc { color: var(--purple); }
+.dline.last { color: var(--blue); }
+
+.s-pill {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pill-ok  { background: var(--green-light); color: var(--green); }
+.pill-bad { background: var(--red-light);   color: var(--red); }
+
+.s-actions { display: flex; gap: 7px; margin-top: 10px; }
+.btn-act {
+  flex: 1;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.81rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-act:active { transform: scale(0.97); }
+.btn-pay { background: #dcfce7; color: #15803d; }
+.btn-pay:hover { background: #bbf7d0; }
+
+/* ── MODAL ── */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13,27,62,0.65);
+  z-index: 3000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(7px);
+  padding: 12px;
+}
+.modal.open { display: flex; }
+
+.modal-box {
+  background: var(--white);
+  padding: 22px;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.22);
+  animation: popIn 0.2s ease;
+  overflow-y: auto;
+  max-height: 92vh;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.93) translateY(18px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-box h3 {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+  font-weight: 900;
+  text-align: center;
+  color: var(--blue);
+}
+
+.calc-box {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.calc-row:last-child { margin-bottom: 0; }
+.calc-row.final {
+  border-top: 1px dashed #cbd5e1;
+  margin-top: 8px;
+  padding-top: 8px;
+  font-size: 0.94rem;
+  color: var(--blue);
+}
+
+.mlabel {
+  font-size: 0.81rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+  display: block;
+}
+.inp {
+  width: 100%;
+  padding: 10px 13px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.94rem;
+  outline: none;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+  color: var(--text);
+}
+.inp:focus { border-color: var(--blue); }
+
+.feedback {
+  font-weight: 900;
+  text-align: center;
+  padding: 9px 10px;
+  border-radius: 10px;
+  font-size: 0.87rem;
+  margin-bottom: 13px;
+  line-height: 1.5;
+}
+.fb-ok   { background: var(--green-light); color: var(--green); }
+.fb-warn { background: #fffbeb; color: var(--orange); border: 1px solid #fde68a; }
+.fb-bad  { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; }
+
+.btn-save {
+  width: 100%;
+  padding: 12px;
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  font-size: 0.96rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-save:hover  { background: var(--blue-deep); }
+.btn-save:active { transform: scale(0.98); }
+.btn-cancel {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 9px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+.btn-cancel:hover { color: var(--text); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%) translateY(70px);
+  background: #0f172a;
+  color: white;
+  padding: 11px 20px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.87rem;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  white-space: nowrap;
+  max-width: calc(100% - 40px);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.ok   { background: #15803d; }
+.toast.fail { background: var(--red); }
+
+/* ── STATES ── */
+.state-msg {
+  text-align: center;
+  padding: 38px 20px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.state-msg i { font-size: 2rem; color: #cbd5e1; display: block; margin-bottom: 10px; }
+</style>
 </head>
 <body>
 
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
-<div class="app-wrapper">
+<div class="app">
 
-<div id="view-levels">
+  <!-- ══ VIEW 1 : LEVELS ══ -->
+  <div id="v-levels" class="view active">
     <div class="hero">
-        <div class="hero-top">
-            <a href="home.html" class="back-btn"><i class="fas fa-chevron-right"></i></a>
-            <div class="hero-title">
-                <h2>تسجيل دفع التلاميذ</h2>
-                <p id="hero-sub-1">اختر المستوى أو المسار</p>
-            </div>
+      <div class="hero-top">
+        <a href="home.html" class="back-btn"><i class="fas fa-chevron-right"></i></a>
+        <div class="hero-title">
+          <h2>تسجيل دفع التلاميذ</h2>
+          <p>اختر المستوى أو المسار</p>
         </div>
+      </div>
     </div>
-    <div class="cards-wrap">
-        <div class="section-title"><i class="fas fa-school"></i> التعليم الابتدائي والثانوي</div>
-        <div class="main-grid" id="academic-grid">
-            <button class="grid-card ct-green"  data-path="السنة 1 ابتدائي"  onclick="window.goToGroups(this)"><div class="card-icon">📚</div><div class="card-num">1</div><div class="card-label">الأولى ابتدائي</div></button>
-            <button class="grid-card ct-blue"   data-path="السنة 2 ابتدائي"  onclick="window.goToGroups(this)"><div class="card-icon">✏️</div><div class="card-num">2</div><div class="card-label">الثانية ابتدائي</div></button>
-            <button class="grid-card ct-orange" data-path="السنة 3 ابتدائي"  onclick="window.goToGroups(this)"><div class="card-icon">🔢</div><div class="card-num">3</div><div class="card-label">الثالثة ابتدائي</div></button>
-            <button class="grid-card ct-red"    data-path="السنة 4 ابتدائي"  onclick="window.goToGroups(this)"><div class="card-icon">🎨</div><div class="card-num">4</div><div class="card-label">الرابعة ابتدائي</div></button>
-            <button class="grid-card ct-purple" data-path="السنة 5 ابتدائي"  onclick="window.goToGroups(this)"><div class="card-icon">🌟</div><div class="card-num">5</div><div class="card-label">الخامسة ابتدائي</div></button>
-            <button class="grid-card ct-teal"   data-path="السنة 1 متوسط"    onclick="window.goToGroups(this)"><div class="card-icon">🎓</div><div class="card-num">1</div><div class="card-label">الأولى متوسط</div></button>
-            <button class="grid-card ct-pink"   data-path="السنة 2 متوسط"    onclick="window.goToGroups(this)"><div class="card-icon">💻</div><div class="card-num">2</div><div class="card-label">الثانية متوسط</div></button>
-            <button class="grid-card ct-indigo" data-path="السنة 3 متوسط"    onclick="window.goToGroups(this)"><div class="card-icon">🔬</div><div class="card-num">3</div><div class="card-label">الثالثة متوسط</div></button>
-            <button class="grid-card ct-amber"  data-path="السنة 4 متوسط"    onclick="window.goToGroups(this)"><div class="card-icon">⚛️</div><div class="card-num">4</div><div class="card-label">الرابعة متوسط</div></button>
-            <button class="grid-card ct-rose"   data-path="السنة 1 ثانوي"    onclick="window.goToGroups(this)"><div class="card-icon">🧬</div><div class="card-num">1</div><div class="card-label">الأولى ثانوي</div></button>
-            <button class="grid-card ct-cyan"   data-path="السنة 2 ثانوي"    onclick="window.goToGroups(this)"><div class="card-icon">📐</div><div class="card-num">2</div><div class="card-label">الثانية ثانوي</div></button>
-            <button class="grid-card ct-lime"   data-path="السنة 3 ثانوي"    onclick="window.goToGroups(this)"><div class="card-icon">🏆</div><div class="card-num">3</div><div class="card-label">الثالثة ثانوي</div></button>
-        </div>
-        <div class="section-title dark"><i class="fas fa-star" style="color:#f59e0b"></i> مسارات أخرى</div>
-        <div class="two-grid" id="other-grid">
-            <button class="grid-card ct-green"  data-path="حفظ القرآن"        onclick="window.goToGroups(this)"><div class="card-icon">🕌</div><div class="card-label">حفظ القرآن</div></button>
-            <button class="grid-card ct-blue"   data-path="السوروبان"          onclick="window.goToGroups(this)"><div class="card-icon">🧮</div><div class="card-label">السوروبان</div></button>
-            <button class="grid-card ct-red"    data-path="الذكاء الاصطناعي"  onclick="window.goToGroups(this)"><div class="card-icon">🤖</div><div class="card-label">الذكاء الاصطناعي</div></button>
-            <button class="grid-card ct-purple" data-path="تحدي القراءة"       onclick="window.goToGroups(this)"><div class="card-icon">📖</div><div class="card-label">تحدي القراءة</div></button>
-            <button class="grid-card ct-orange" data-path="الورشات"            onclick="window.goToGroups(this)"><div class="card-icon">🛠️</div><div class="card-label">الورشات</div></button>
-            <button class="grid-card ct-teal"   data-path="الدورات"            onclick="window.goToGroups(this)"><div class="card-icon">🎯</div><div class="card-label">الدورات</div></button>
-            <button class="grid-card ct-pink"   data-path="متفرقات"            onclick="window.goToGroups(this)"><div class="card-icon">✨</div><div class="card-label">متفرقات</div></button>
-            <button class="grid-card ct-indigo" data-path="مع القرآن"          onclick="window.goToGroups(this)"><div class="card-icon">📿</div><div class="card-label">مع القرآن</div></button>
-        </div>
-    </div>
-</div>
 
-<div id="view-groups" class="view">
+    <div class="cards-wrap">
+      <div class="sec-label light"><i class="fas fa-school"></i> التعليم الابتدائي والثانوي</div>
+      <div class="grid-3" id="grid-academic">
+        <button class="lcard c-green"  data-path="السنة 1 ابتدائي"><div class="ci">📚</div><div class="cn">1</div><div class="cl">الأولى ابتدائي</div></button>
+        <button class="lcard c-blue"   data-path="السنة 2 ابتدائي"><div class="ci">✏️</div><div class="cn">2</div><div class="cl">الثانية ابتدائي</div></button>
+        <button class="lcard c-orange" data-path="السنة 3 ابتدائي"><div class="ci">🔢</div><div class="cn">3</div><div class="cl">الثالثة ابتدائي</div></button>
+        <button class="lcard c-red"    data-path="السنة 4 ابتدائي"><div class="ci">🎨</div><div class="cn">4</div><div class="cl">الرابعة ابتدائي</div></button>
+        <button class="lcard c-purple" data-path="السنة 5 ابتدائي"><div class="ci">🌟</div><div class="cn">5</div><div class="cl">الخامسة ابتدائي</div></button>
+        <button class="lcard c-teal"   data-path="السنة 1 متوسط"><div class="ci">🎓</div><div class="cn">1</div><div class="cl">الأولى متوسط</div></button>
+        <button class="lcard c-pink"   data-path="السنة 2 متوسط"><div class="ci">💻</div><div class="cn">2</div><div class="cl">الثانية متوسط</div></button>
+        <button class="lcard c-indigo" data-path="السنة 3 متوسط"><div class="ci">🔬</div><div class="cn">3</div><div class="cl">الثالثة متوسط</div></button>
+        <button class="lcard c-amber"  data-path="السنة 4 متوسط"><div class="ci">⚛️</div><div class="cn">4</div><div class="cl">الرابعة متوسط</div></button>
+        <button class="lcard c-rose"   data-path="السنة 1 ثانوي"><div class="ci">🧬</div><div class="cn">1</div><div class="cl">الأولى ثانوي</div></button>
+        <button class="lcard c-cyan"   data-path="السنة 2 ثانوي"><div class="ci">📐</div><div class="cn">2</div><div class="cl">الثانية ثانوي</div></button>
+        <button class="lcard c-lime"   data-path="السنة 3 ثانوي"><div class="ci">🏆</div><div class="cn">3</div><div class="cl">الثالثة ثانوي</div></button>
+      </div>
+
+      <div class="sec-label dark"><i class="fas fa-star" style="color:#f59e0b"></i> مسارات أخرى</div>
+      <div class="grid-2" id="grid-other">
+        <button class="lcard c-green"  data-path="حفظ القرآن"><div class="ci">🕌</div><div class="cl">حفظ القرآن</div></button>
+        <button class="lcard c-blue"   data-path="السوروبان"><div class="ci">🧮</div><div class="cl">السوروبان</div></button>
+        <button class="lcard c-red"    data-path="الذكاء الاصطناعي"><div class="ci">🤖</div><div class="cl">الذكاء الاصطناعي</div></button>
+        <button class="lcard c-purple" data-path="تحدي القراءة"><div class="ci">📖</div><div class="cl">تحدي القراءة</div></button>
+        <button class="lcard c-orange" data-path="الورشات"><div class="ci">🛠️</div><div class="cl">الورشات</div></button>
+        <button class="lcard c-teal"   data-path="الدورات"><div class="ci">🎯</div><div class="cl">الدورات</div></button>
+        <button class="lcard c-pink"   data-path="متفرقات"><div class="ci">✨</div><div class="cl">متفرقات</div></button>
+        <button class="lcard c-indigo" data-path="مع القرآن"><div class="ci">📿</div><div class="cl">مع القرآن</div></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VIEW 2 : GROUPS ══ -->
+  <div id="v-groups" class="view">
     <div class="hero" style="padding-bottom:62px">
-        <div class="hero-top">
-            <button class="back-btn" onclick="window.backToLevels()"><i class="fas fa-arrow-right"></i></button>
-            <div class="hero-title">
-                <h2 id="view2-title">الأفواج</h2>
-                <p id="view2-sub">اختر فوجاً لعرض التلاميذ</p>
-            </div>
+      <div class="hero-top">
+        <button class="back-btn" id="btn-back-levels"><i class="fas fa-arrow-right"></i></button>
+        <div class="hero-title">
+          <h2 id="g-title">الأفواج</h2>
+          <p>اختر فوجاً لعرض التلاميذ</p>
         </div>
+      </div>
     </div>
     <div class="cards-wrap">
-        <div class="summary-bar" id="summary-bar">
-            <span>إجمالي الأفواج: <b id="total-groups">0</b></span>
-            <span class="s-exp" id="total-exp">0 متأخر</span>
-        </div>
-        <div id="groups-list">
-            <div class="state-msg"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>
-        </div>
+      <div class="sum-bar" id="sum-bar">
+        <span>إجمالي الأفواج: <b id="total-groups">0</b></span>
+        <span class="exp-badge" id="total-exp">0 مديون</span>
+      </div>
+      <div id="groups-list">
+        <div class="state-msg"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>
+      </div>
     </div>
-</div>
+  </div>
 
-</div><div class="toast" id="toast"></div>
+</div><!-- .app -->
 
-<div class="modal" id="flexible-pay-modal">
-    <div class="modal-box">
-        <h3 id="p-modal-title">💵 تسجيل دفعة ماليّة</h3>
-        
-        <input type="hidden" id="p-sid">
-        <input type="hidden" id="p-sname">
-        <input type="hidden" id="p-gid">
-        <input type="hidden" id="p-gname">
-        <input type="hidden" id="p-gprice">
-        <input type="hidden" id="p-tratio">
-        <input type="hidden" id="p-sdebt">
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
 
-        <div class="m-calc-box">
-            <div class="m-calc-row"><span>سعر الاشتراك الفوج:</span><span id="lbl-full-price">0 دج</span></div>
-            <div class="m-calc-row" style="color:var(--purple)"><span>تخفيضات التلميذ الدائمة:</span><span id="lbl-discount">0 دج</span></div>
-            <div class="m-calc-row" style="color:var(--orange)"><span>دين سابق متراكم:</span><span id="lbl-old-debt">0 دج</span></div>
-            <div class="m-calc-row final" style="color:var(--blue)"><span>المستحق الأساسي للجلسة:</span><span id="lbl-net-required">0 دج</span></div>
-        </div>
+<!-- ══ PAY MODAL ══ -->
+<div class="modal" id="pay-modal">
+  <div class="modal-box">
+    <h3 id="m-title">💵 تسجيل دفعة</h3>
 
-        <label class="modal-label" style="color:var(--purple)"><i class="fas fa-percentage"></i> إضافة تخفيض استثنائي حالي (يخصم من الأكاديمية فقط):</label>
-        <input type="number" id="p-current-discount" class="inp" placeholder="0" value="0" oninput="window.calculateLiveDebt()">
+    <input type="hidden" id="m-sid">
+    <input type="hidden" id="m-sname">
+    <input type="hidden" id="m-gname">
+    <input type="hidden" id="m-debt">
 
-        <label class="modal-label">💰 المبلغ المدفوع حـالياً (دج):</label>
-        <input type="number" id="p-paid-amount" class="inp" placeholder="أدخل المبلغ القبوض" oninput="window.calculateLiveDebt()">
+    <!-- ملخص -->
+    <div class="calc-box">
+      <div class="calc-row">
+        <span>💳 الدين الحالي:</span>
+        <span id="lbl-debt" style="color:var(--red)">0 دج</span>
+      </div>
+      </div>
 
-        <div id="live-feedback-box" class="live-feedback"></div>
+    <label class="mlabel" style="color:var(--purple)">🎁 تخفيض شهري دائم (دج):</label>
+    <input type="number" id="m-disc-input" class="inp" placeholder="0" value="0" min="0" inputmode="numeric">
 
-        <label class="modal-label">📅 تمديد تاريخ الانتهاء إلى:</label>
-        <input type="date" id="p-date" class="inp">
+    <label class="mlabel">💰 المبلغ المدفوع نقداً (دج):</label>
+    <input type="number" id="m-paid" class="inp" placeholder="أدخل المبلغ" min="0" inputmode="numeric" autofocus>
 
-        <button class="btn-save" onclick="window.saveFlexiblePayment()">⚡ تأكيد وحفظ الدفعة</button>
-        <button class="btn-cancel" onclick="window.closePayModal()">إلغاء</button>
-    </div>
+    <div id="m-feedback" class="feedback fb-ok" style="display:none"></div>
+
+    <label class="mlabel">📅 تاريخ انتهاء الاشتراك الجديد:</label>
+    <input type="date" id="m-expiry" class="inp">
+
+    <button class="btn-save" id="btn-save-pay">⚡ تأكيد وحفظ</button>
+    <button class="btn-cancel" id="btn-cancel-pay">إلغاء</button>
+  </div>
 </div>
 
 <script type="module">
-// 🛠️ تم إصلاح الاستيراد هنا بفصل الحزم بشكل دقيق ومنطقي لمنع الـ SyntaxError
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { 
-    getFirestore, collection, getDocs, doc, updateDoc, addDoc, 
-    Timestamp, serverTimestamp, increment 
+import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs,
+  doc, updateDoc, addDoc,
+  Timestamp, serverTimestamp, increment
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const cfg = {
-    apiKey:"AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
-    authDomain:"molakasati.firebaseapp.com",
-    projectId:"molakasati",
-    storageBucket:"molakasati.firebasestorage.app",
-    messagingSenderId:"981780224226",
-    appId:"1:981780224226:web:6565de586fffa9f33326bb"
-};
-const db = getFirestore(initializeApp(cfg));
+/* ── FIREBASE ── */
+const app = initializeApp({
+  apiKey:            "AIzaSyCIEXF3UK4IO5L8RIbmosLsc65ayNupkX4",
+  authDomain:        "molakasati.firebaseapp.com",
+  projectId:         "molakasati",
+  storageBucket:     "molakasati.firebasestorage.app",
+  messagingSenderId: "981780224226",
+  appId:             "1:981780224226:web:6565de586fffa9f33326bb"
+});
+const db = getFirestore(app);
 
-let allGroups=[], allStudents=[], allTeachers=[], currentPath='';
+/* ── STATE ── */
+let groups   = [];
+let students = [];
+let teachers = [];
+let curPath  = '';
 
-function toDate(v){ if(!v)return null; if(v.seconds)return new Date(v.seconds*1000); const d=new Date(v); return isNaN(d)?null:d; }
-function fmt(d){ return d?d.toLocaleDateString('ar-DZ',{year:'numeric',month:'2-digit',day:'2-digit'}):null; }
-function esc(s){ return String(s).replace(/'/g,"\\'"); }
-
-function toast(msg,type='ok'){
-    const el=document.getElementById('toast');
-    el.className=`toast ${type}`;
-    el.innerHTML=type==='ok'?`<i class="fas fa-check-circle"></i> ${msg}`:`<i class="fas fa-times-circle"></i> ${msg}`;
-    el.classList.add('show');
-    setTimeout(()=>el.classList.remove('show'),2800);
+/* ── HELPERS ── */
+function toDate(v) {
+  if (!v) return null;
+  if (v && v.seconds) return new Date(v.seconds * 1000);
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
 }
 
-async function load(){
-    const [gs, ss, ts] = await Promise.all([
-        getDocs(collection(db, "groups")),
-        getDocs(collection(db, "students")),
-        getDocs(collection(db, "teachers"))
-    ]);
-    allGroups = gs.docs.map(d=>({id:d.id, ...d.data()}));
-    allStudents = ss.docs.map(d=>({id:d.id, ...d.data()}));
-    allTeachers = ts.docs.map(d=>({id:d.id, ...d.data()}));
-    markLevelAlerts();
+// أرقام لاتينية دائماً 123 — String() يضمن عدم تحويل المتصفح
+function n(val) {
+  return String(Number(val));
 }
 
-function markLevelAlerts(){
-    const now=new Date();
-    document.querySelectorAll('[data-path]').forEach(btn=>{
-        const path=btn.dataset.path;
-        const groups=allGroups.filter(g=>g.path===path);
-        const ids=groups.map(g=>g.id);
-        const hasExp=allStudents.some(s=>{
-            const inGroup=ids.some(id=>Array.isArray(s.groups) && s.groups.includes(id));
-            if(!inGroup)return false;
-            const d=toDate(s.nextPaymentDate);
-            return !d||now>=d;
-        });
-        let dot=btn.querySelector('.alert-dot');
-        if(hasExp&&!dot){ dot=document.createElement('div'); dot.className='alert-dot'; btn.appendChild(dot); }
-        else if(!hasExp&&dot){ dot.remove(); }
-    });
+function fmt(d) {
+  if (!d) return null;
+  // التاريخ بأرقام لاتينية
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yy = d.getFullYear();
+  return `${dd}/${mm}/${yy}`;
 }
 
-window.goToGroups=function(btn){
-    currentPath=btn.dataset.path;
-    document.getElementById('view-levels').style.display='none';
-    document.getElementById('view-groups').style.display='block';
-    document.getElementById('view2-title').textContent=currentPath;
+function permDisc(student) {
+  const list = Array.isArray(student.discounts) ? student.discounts : [];
+  return list.reduce((s, x) => s + Number(x.amount || 0), 0);
+}
+
+function isExpired(student) {
+  const d = toDate(student.nextPaymentDate);
+  return !d || new Date() >= d;
+}
+
+/* ── TOAST ── */
+function toast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.className = `toast ${type}`;
+  el.innerHTML = (type === 'ok')
+    ? `<i class="fas fa-check-circle"></i> ${msg}`
+    : `<i class="fas fa-times-circle"></i> ${msg}`;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ── LOAD ── */
+async function loadAll() {
+  const [gs, ss, ts] = await Promise.all([
+    getDocs(collection(db, 'groups')),
+    getDocs(collection(db, 'students')),
+    getDocs(collection(db, 'teachers'))
+  ]);
+  groups   = gs.docs.map(d => ({ id: d.id, ...d.data() }));
+  students = ss.docs.map(d => ({ id: d.id, ...d.data() }));
+  teachers = ts.docs.map(d => ({ id: d.id, ...d.data() }));
+  markAlerts();
+}
+
+function hasDebt(student) {
+  return Number(student.debt || 0) > 0;
+}
+
+function markAlerts() {
+  document.querySelectorAll('[data-path]').forEach(btn => {
+    const path = btn.dataset.path;
+    const gids = groups.filter(g => g.path === path).map(g => g.id);
+    // نقطة حمراء على أي مستوى فيه تلميذ عنده دين > 0
+    const anyDebt = students.some(s =>
+      Array.isArray(s.groups) &&
+      s.groups.some(id => gids.includes(id)) &&
+      hasDebt(s)
+    );
+
+    let dot = btn.querySelector('.alert-dot');
+    if (anyDebt && !dot) {
+      dot = document.createElement('div');
+      dot.className = 'alert-dot';
+      btn.appendChild(dot);
+    } else if (!anyDebt && dot) {
+      dot.remove();
+    }
+  });
+}
+
+/* ── VIEW NAVIGATION ── */
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* Level card clicks */
+document.querySelectorAll('[data-path]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    curPath = btn.dataset.path;
+    document.getElementById('g-title').textContent = curPath;
+    showView('v-groups');
     renderGroups();
-};
+  });
+});
 
-window.backToLevels=function(){
-    document.getElementById('view-levels').style.display='block';
-    document.getElementById('view-groups').style.display='none';
-};
+/* Back button */
+document.getElementById('btn-back-levels').addEventListener('click', () => {
+  showView('v-levels');
+});
 
-function renderGroups(){
-    const container=document.getElementById('groups-list');
-    const now=new Date();
-    const groups=allGroups.filter(g=>g.path===currentPath);
+/* ── RENDER GROUPS ── */
+function renderGroups() {
+  const container = document.getElementById('groups-list');
+  const now       = new Date();
+  const filtered  = groups.filter(g => g.path === curPath);
 
-    document.getElementById('total-groups').textContent=groups.length;
+  document.getElementById('total-groups').textContent = filtered.length;
 
-    if(!groups.length){
-        container.innerHTML='<div class="state-msg"><i class="fas fa-folder-open"></i> لا توجد أفواج في هذا المسار</div>';
-        document.getElementById('total-exp').textContent='0 متأخر';
-        return;
+  if (!filtered.length) {
+    container.innerHTML = '<div class="state-msg"><i class="fas fa-folder-open"></i> لا توجد أفواج في هذا المسار</div>';
+    document.getElementById('total-exp').textContent = '0 مديون';
+    return;
+  }
+
+  let totalExp = 0;
+  const cards  = [];
+
+  filtered.forEach(group => {
+    const gPrice   = Number(group.price || group.monthlyPrice || 0);
+    const teacher  = group.teacherName || group.teacher || null;
+    const gStudents = students.filter(s =>
+      Array.isArray(s.groups) && s.groups.includes(group.id)
+    );
+
+    const debtCount = gStudents.filter(s => hasDebt(s)).length;
+    totalExp += debtCount;
+    const hasExp = debtCount > 0;
+
+    /* chips */
+    let chips = `<span class="chip chip-slate"><i class="fas fa-users"></i> ${gStudents.length} تلميذ</span>`;
+    if (gPrice > 0) chips += `<span class="chip chip-blue"><i class="fas fa-tag"></i> ${n(gPrice)} دج</span>`;
+    if (hasExp)     chips += `<span class="chip chip-red"><i class="fas fa-exclamation-triangle"></i> ${debtCount} مديون</span>`;
+    else if (gStudents.length) chips += `<span class="chip chip-green"><i class="fas fa-check-circle"></i> الكل مسدَّد</span>`;
+
+    /* student rows */
+    let sHtml = '';
+    if (gStudents.length) {
+      gStudents.forEach(s => {
+        const expDate  = toDate(s.nextPaymentDate);
+        const expired  = isExpired(s);
+        const pDisc    = permDisc(s);
+        const debt     = Number(s.debt || 0);
+        // التلميذ "مديون" إذا عنده debt > 0 — هذا يحدد اللون والنقطة
+        const isInDebt = debt > 0;
+
+        sHtml += `
+        <div class="srow${isInDebt ? ' expired' : ''}">
+          <div class="srow-top">
+            <div style="flex:1;min-width:0">
+              <div class="s-name" style="display:flex;align-items:center;gap:6px">
+                ${isInDebt ? '<span style="width:9px;height:9px;background:var(--red);border-radius:50%;display:inline-block;flex-shrink:0"></span>' : ''}
+                ${s.name}
+              </div>
+              <div class="s-dates">
+                <span>
+                  <i class="far fa-calendar-alt" style="color:${expired ? 'var(--red)' : 'var(--green)'}"></i>
+                  الانتهاء: <b>${expDate ? fmt(expDate) : 'لم يُسجَّل بعد'}</b>
+                </span>
+              </div>
+              <div class="s-extra">
+                <div class="dline debt">
+                  <span><i class="fas fa-receipt"></i> الدين المتراكم:</span>
+                  <span>${n(debt)} دج</span>
+                </div>
+                ${pDisc > 0 ? `
+                <div class="dline disc">
+                  <span><i class="fas fa-percentage"></i> تخفيض دائم:</span>
+                  <span>${n(pDisc)} دج</span>
+                </div>` : ''}
+                ${s.lastPaidAmount ? `
+                <div class="dline last">
+                  <span><i class="fas fa-coins"></i> آخر مبلغ مقبوض:</span>
+                  <span>${n(s.lastPaidAmount)} دج</span>
+                </div>` : ''}
+              </div>
+            </div>
+            <span class="s-pill ${isInDebt ? 'pill-bad' : 'pill-ok'}">
+              ${isInDebt
+                ? '<i class="fas fa-exclamation-circle"></i> مديون'
+                : '<i class="fas fa-check-circle"></i> مسدَّد'}
+            </span>
+          </div>
+          <div class="s-actions">
+            <button class="btn-act btn-pay"
+              data-sid="${s.id}"
+              data-sname="${s.name.replace(/"/g,'&quot;')}"
+              data-gid="${group.id}"
+              data-gname="${(group.name||'').replace(/"/g,'&quot;')}"
+              data-gprice="${gPrice}">
+              <i class="fas fa-money-bill-wave"></i> تسجيل الدفع
+            </button>
+          </div>
+        </div>`;
+      });
+    } else {
+      sHtml = '<div class="state-msg" style="padding:14px"><i class="fas fa-user-slash" style="font-size:1.3rem;margin-bottom:6px"></i> لا يوجد تلاميذ في هذا الفوج</div>';
     }
 
-    let totalExp=0;
-    let html='';
+    cards.push(`
+    <div class="gcard${hasExp ? ' has-exp' : ''}" id="gc-${group.id}">
+      <div class="gcard-head js-toggle" data-gid="${group.id}">
+        <div class="g-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="g-meta">
+          <h3>${group.name}</h3>
+          <div class="g-teacher">
+            ${teacher
+              ? `<i class="fas fa-user-tie" style="color:var(--blue)"></i> ${teacher}`
+              : `<i class="fas fa-user-slash"></i> لا يوجد أستاذ`}
+          </div>
+          <div class="g-chips">${chips}</div>
+        </div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="s-panel">${sHtml}</div>
+    </div>`);
+  });
 
-    groups.forEach(group=>{
-        const groupPrice=Number(group.price||group.monthlyPrice||0);
-        const teacher=group.teacherName||group.teacher||null;
+  container.innerHTML = cards.join('');
+  document.getElementById('total-exp').textContent = `${totalExp} مديون`;
 
-        const students = allStudents.filter(s => Array.isArray(s.groups) && s.groups.includes(group.id));
-
-        let expCount=0;
-        students.forEach(s=>{ const d=toDate(s.nextPaymentDate); if(!d||now>=d) expCount++; });
-        totalExp+=expCount;
-        const hasExp=expCount>0;
-
-        let chips=`<span class="chip chip-slate"><i class="fas fa-users"></i> ${students.length} تلميذ</span>`;
-        if(groupPrice>0) chips+=`<span class="chip chip-blue"><i class="fas fa-tag"></i> ${groupPrice.toLocaleString('ar-DZ')} دج</span>`;
-        if(hasExp) chips+=`<span class="chip chip-red"><i class="fas fa-exclamation-triangle"></i> ${expCount} متأخر</span>`;
-        else if(students.length) chips+=`<span class="chip chip-green"><i class="fas fa-check-circle"></i> الكل مدفوع</span>`;
-
-        const sHtml=students.length ? students.map(s=>{
-            const expDate=toDate(s.nextPaymentDate);
-            const exp=!expDate||now>=expDate;
-            
-            const discountsList = s.discounts || [];
-            const totalDiscounts = discountsList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-            const currentDebt = Number(s.debt || 0);
-
-            return `
-            <div class="s-row ${exp?'expired':''}">
-                <div class="s-row-top">
-                    <div>
-                        <div class="s-name">${s.name}</div>
-                        <div class="s-dates">
-                            <span><i class="far fa-calendar-alt" style="color:${exp?'var(--red)':'var(--green)'}"></i> الانتهاء: <b>${expDate?fmt(expDate):'لم يدفع بعد'}</b></span>
-                        </div>
-                        <div class="s-extra-info">
-                            <div class="debt-line badge-debt">
-                                <span><i class="fas fa-receipt"></i> الدين المتراكم الإجمالي:</span>
-                                <span>${currentDebt} دج</span>
-                            </div>
-                            ${totalDiscounts > 0 ? `
-                            <div class="debt-line badge-discount">
-                                <span><i class="fas fa-percentage"></i> تخفيض دائم مسجل:</span>
-                                <span>${totalDiscounts} دج</span>
-                            </div>` : ''}
-                            ${s.lastPaidAmount ? `
-                            <div class="debt-line badge-lastpay">
-                                <span><i class="fas fa-coins"></i> آخر مبلغ تم قبوضه:</span>
-                                <span>${s.lastPaidAmount} دج</span>
-                            </div>` : ''}
-                        </div>
-                    </div>
-                    <span class="s-pill ${exp?'pill-bad':'pill-ok'}">${exp?'<i class="fas fa-exclamation-circle"></i> متأخر':'<i class="fas fa-check-circle"></i> ساري'}</span>
-                </div>
-                <div class="s-actions">
-                    <button class="btn-a btn-pay" onclick="window.openPayModal('${s.id}','${esc(s.name)}','${group.id}','${esc(group.name)}',${groupPrice})">
-                        <i class="fas fa-money-bill-wave"></i> تسجيل الدفع والتخفيض
-                    </button>
-                </div>
-            </div>`;
-        }).join('')
-        : '<div class="state-msg" style="padding:14px"><i class="fas fa-user-slash" style="font-size:1.4rem;margin-bottom:6px"></i> لا يوجد تلاميذ في هذا الفوج</div>';
-
-        html+=`
-        <div class="g-card ${hasExp?'has-exp':''}" id="gc-${group.id}">
-            <div class="g-card-top" onclick="window.toggleGroup('${group.id}')">
-                <div class="g-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                <div class="g-meta">
-                    <h3>${group.name}</h3>
-                    <div class="g-teacher">
-                        ${teacher?`<i class="fas fa-user-tie" style="color:var(--blue)"></i> ${teacher}`:`<i class="fas fa-user-slash"></i> لا يوجد أستاذ`}
-                    </div>
-                    <div class="g-chips">${chips}</div>
-                </div>
-                <i class="fas fa-chevron-down g-chevron"></i>
-            </div>
-            <div class="students-panel">${sHtml}</div>
-        </div>`;
+  /* toggle listeners */
+  container.querySelectorAll('.js-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      document.getElementById(`gc-${el.dataset.gid}`).classList.toggle('open');
     });
+  });
 
-    container.innerHTML=html;
-    document.getElementById('total-exp').textContent=`${totalExp} متأخر`;
+  /* pay button listeners */
+  container.querySelectorAll('.btn-pay').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openModal(
+        btn.dataset.sid,
+        btn.dataset.sname,
+        btn.dataset.gid,
+        btn.dataset.gname
+      );
+    });
+  });
 }
 
-window.toggleGroup=id=>document.getElementById(`gc-${id}`).classList.toggle('open');
+/* ── MODAL ── */
+function openModal(sId, sName, gId, gName) {
+  const student = students.find(s => s.id === sId);
+  const debt    = Number(student?.debt || 0);
+  const disc    = permDisc(student || {});
 
-window.openPayModal = function(sId, sName, gId, gName, gPrice) {
-    const student = allStudents.find(s => s.id === sId);
-    const group = allGroups.find(g => g.id === gId);
-    const teacherObj = allTeachers.find(t => t.name === group?.teacherName);
-    
-    const ratio = teacherObj && teacherObj.ratio ? Number(teacherObj.ratio) : 50;
-    const oldDebt = Number(student?.debt || 0);
-    
-    const discountsList = student?.discounts || [];
-    const totalDiscounts = discountsList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-    const netRequired = Math.max(0, gPrice - totalDiscounts);
+  document.getElementById('m-sid').value   = sId;
+  document.getElementById('m-sname').value = sName;
+  document.getElementById('m-gname').value = gName;
+  document.getElementById('m-debt').value  = debt;
 
-    document.getElementById('p-sid').value = sId;
-    document.getElementById('p-sname').value = sName;
-    document.getElementById('p-gid').value = gId;
-    document.getElementById('p-gname').value = gName;
-    document.getElementById('p-gprice').value = gPrice;
-    document.getElementById('p-tratio').value = ratio;
-    document.getElementById('p-sdebt').value = oldDebt;
+  document.getElementById('m-title').textContent      = `💵 دفعة — ${sName}`;
+  document.getElementById('lbl-debt').textContent     = `${n(debt)} دج`;
+  document.getElementById('m-disc-input').value       = disc > 0 ? disc : 0;
+  document.getElementById('m-paid').value             = '';
+  document.getElementById('m-feedback').style.display = 'none';
 
-    document.getElementById('lbl-full-price').textContent = `${gPrice} دج`;
-    document.getElementById('lbl-discount').textContent = `${totalDiscounts} دج`;
-    document.getElementById('lbl-old-debt').textContent = `${oldDebt} دج`;
-    document.getElementById('lbl-net-required').textContent = `${netRequired} دج`;
-    
-    document.getElementById('p-current-discount').value = 0;
-    document.getElementById('p-paid-amount').value = netRequired;
+  const future = new Date();
+  future.setDate(future.getDate() + 30);
+  document.getElementById('m-expiry').value = future.toISOString().split('T')[0];
 
-    const future = new Date();
-    future.setDate(future.getDate() + 30);
-    document.getElementById('p-date').value = future.toISOString().split('T')[0];
+  document.getElementById('pay-modal').classList.add('open');
+  setTimeout(() => document.getElementById('m-paid').focus(), 100);
+}
 
-    window.calculateLiveDebt();
-    document.getElementById('flexible-pay-modal').style.display = 'flex';
-};
+function closeModal() {
+  document.getElementById('pay-modal').classList.remove('open');
+}
 
-window.closePayModal = () => {
-    document.getElementById('flexible-pay-modal').style.display = 'none';
-};
+document.getElementById('btn-cancel-pay').addEventListener('click', closeModal);
+document.getElementById('pay-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
 
-window.calculateLiveDebt = function() {
-    const gPrice = Number(document.getElementById('p-gprice').value || 0);
-    const sId = document.getElementById('p-sid').value;
-    const oldDebt = Number(document.getElementById('p-sdebt').value || 0);
-    const student = allStudents.find(s => s.id === sId);
-    
-    const discountsList = student?.discounts || [];
-    const totalDiscounts = discountsList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-    
-    const currentDiscountInput = Number(document.getElementById('p-current-discount').value || 0);
-    const netRequired = Math.max(0, gPrice - totalDiscounts - currentDiscountInput);
-    
-    const paidInput = Number(document.getElementById('p-paid-amount').value || 0);
-    const fb = document.getElementById('live-feedback-box');
+/* live feedback */
+document.getElementById('m-disc-input').addEventListener('input', recalcFeedback);
+document.getElementById('m-paid').addEventListener('input', recalcFeedback);
+function recalcFeedback() {
+  const debt  = Number(document.getElementById('m-debt').value || 0);
+  const paid  = Number(document.getElementById('m-paid').value || 0);
+  // فقط المبلغ المدفوع ينقص الدين — التخفيض يُحسب مرة/شهر بشكل منفصل
+  const after = debt - paid;
+  const fb        = document.getElementById('m-feedback');
 
-    const currentDeficit = netRequired - paidInput;
-    const finalTotalDebt = oldDebt + currentDeficit;
+  if (paid <= 0) { fb.style.display = 'none'; return; }
+  fb.style.display = 'block';
 
-    if (currentDeficit > 0) {
-        fb.className = "live-feedback feedback-debt";
-        fb.innerHTML = `🔻 لم تدفع النسبة الكاملة! دين مضاف للجلسة الحالية: ${currentDeficit} دج <br> إجمالي الدين الكلي المتبقي: <b>${finalTotalDebt} دج</b>`;
-    } else if (currentDeficit === 0) {
-        if (finalTotalDebt > 0) {
-            fb.className = "live-feedback feedback-debt";
-            fb.innerHTML = `⚠️ تم دفع النسبة الكاملة لهذه الجلسة، لكن التلميذ ما زال يملك ديناً سابقاً متراكماً قدره: <b>${finalTotalDebt} دج</b>`;
-        } else {
-            fb.className = "live-feedback feedback-ok";
-            fb.innerHTML = `✅ تم تسديد النسبة الكاملة ولا يوجد أي دين متبقي على التلميذ.`;
-        }
-    } else {
-        fb.className = "live-feedback feedback-ok";
-        fb.innerHTML = `⭐ دفع زائد؛ سيتم استخدام الفائض لتصفية ديون التلميذ المتراكمة السابقة.`;
+  if (after > 0) {
+    fb.className = 'feedback fb-bad';
+    fb.textContent = `سيبقى دين: ${n(after)} دج`;
+  } else if (after === 0) {
+    fb.className = 'feedback fb-ok';
+    fb.textContent = `✅ الدين مسدَّد بالكامل`;
+  } else {
+    fb.className = 'feedback fb-ok';
+    fb.textContent = `✅ مسدَّد — رصيد زائد: ${n(Math.abs(after))} دج`;
+  }
+}
+
+/* ── SAVE ── */
+document.getElementById('btn-save-pay').addEventListener('click', async () => {
+  const sId      = document.getElementById('m-sid').value;
+  const sName    = document.getElementById('m-sname').value;
+  const gName    = document.getElementById('m-gname').value;
+  const paid     = Number(document.getElementById('m-paid').value || 0);
+  const expiryVal = document.getElementById('m-expiry').value;
+
+  if (paid <= 0)   { alert('أدخل المبلغ المدفوع!'); return; }
+  if (!expiryVal)  { alert('حدد تاريخ الانتهاء!');  return; }
+
+  const newExpiry = new Date(expiryVal);
+  const now       = new Date();
+
+  const disc = Number(document.getElementById('m-disc-input').value || 0);
+
+  try {
+    const studentNow   = students.find(s => s.id === sId);
+    const existingDisc = permDisc(studentNow || {});
+
+    const updateData = {
+      nextPaymentDate:        Timestamp.fromDate(newExpiry),
+      lastPaymentConfirmedAt: Timestamp.fromDate(now),
+      lastPaidAmount:         paid,
+      debt:                   increment(-paid)   // فقط المبلغ المدفوع ينقص الدين
+    };
+
+    // التخفيض يُحفظ فقط إذا تغيّر — لا يُطرح هنا، يُطرح مرة/شهر من صفحة الديون
+    if (disc !== existingDisc) {
+      updateData.discounts = [{ amount: disc, label: 'تخفيض دائم', addedAt: now.toISOString() }];
     }
-};
 
-window.saveFlexiblePayment = async function() {
-    const sId = document.getElementById('p-sid').value;
-    const sName = document.getElementById('p-sname').value;
-    const gName = document.getElementById('p-gname').value;
-    const gPrice = Number(document.getElementById('p-gprice').value || 0);
-    const ratio = Number(document.getElementById('p-tratio').value || 50);
-    
-    const paidAmount = Number(document.getElementById('p-paid-amount').value || 0);
-    const currentDiscountInput = Number(document.getElementById('p-current-discount').value || 0);
-    const expiryVal = document.getElementById('p-date').value;
+    await updateDoc(doc(db, 'students', sId), updateData);
 
-    if (!expiryVal) { alert("من فضلك حدد تاريخ نهاية الاشتراك الجديد!"); return; }
-    if (paidAmount < 0 || currentDiscountInput < 0) { alert("القيم المالية لا يمكن أن تكون سالبة!"); return; }
+    await addDoc(collection(db, 'student_payments'), {
+      studentId:    sId,
+      studentName:  sName,
+      groupName:    gName,
+      amount:       paid,
+      paidAt:       serverTimestamp(),
+      paidAtISO:    now.toISOString(),
+      expiryDate:   Timestamp.fromDate(newExpiry),
+      month:        now.getMonth() + 1,
+      year:         now.getFullYear()
+    });
 
-    const student = allStudents.find(s => s.id === sId);
-    const discountsList = student?.discounts || [];
-    const totalDiscounts = discountsList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-    
-    const netRequired = Math.max(0, gPrice - totalDiscounts - currentDiscountInput);
-    const transactionDiff = netRequired - paidAmount; 
-    
-    const teacherShare = Math.round(gPrice * (ratio / 100));
-    const schoolOriginalShare = gPrice - teacherShare;
-    const schoolLoss = (schoolOriginalShare - totalDiscounts - currentDiscountInput) - paidAmount;
+    closeModal();
+    toast(`تم حفظ دفعة ${sName} ✅`);
+    await loadAll();
+    renderGroups();
 
-    const newExpiry = new Date(expiryVal);
-    const now = new Date();
+  } catch (err) {
+    console.error(err);
+    toast('فشل الحفظ في Firestore', 'fail');
+  }
+});
 
-    try {
-        await updateDoc(doc(db, "students", sId), {
-            nextPaymentDate: Timestamp.fromDate(newExpiry),
-            lastPaymentConfirmedAt: Timestamp.fromDate(now),
-            lastPaidAmount: paidAmount,
-            debt: increment(transactionDiff) 
-        });
-
-        await addDoc(collection(db, "student_payments"), {
-            studentId: sId,
-            studentName: sName,
-            groupName: gName,
-            amount: paidAmount,
-            fullPrice: gPrice,
-            permanentDiscount: totalDiscounts,
-            exceptionalDiscount: currentDiscountInput,
-            debtAdded: transactionDiff > 0 ? transactionDiff : 0, 
-            teacherShare: teacherShare, 
-            schoolNetProfit: paidAmount - teacherShare,
-            paidAt: serverTimestamp(),
-            paidAtISO: now.toISOString(),
-            expiryDate: Timestamp.fromDate(newExpiry),
-            month: now.getMonth() + 1,
-            year: now.getFullYear()
-        });
-
-        window.closePayModal();
-        toast(`تمت العملية بنجاح! تم حفظ الدين والتخفيض المخصم من الأكاديمية لـ ${sName} ✅`);
-        
-        await load(); 
-        renderGroups();
-
-    } catch (e) {
-        console.error(e);
-        toast("فشل إتمام العملية المالية في Firestore", "fail");
-    }
-};
-
-load();
+/* ── BOOT ── */
+loadAll().catch(() => toast('فشل تحميل البيانات', 'fail'));
 </script>
 </body>
 </html>
