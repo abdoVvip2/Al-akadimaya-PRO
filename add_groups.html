@@ -243,7 +243,7 @@
                     <div class="card-icon">🧮</div>
                     <div class="card-label">السوروبان</div>
                 </button>
-                <button class="grid-card ct-red" onclick="window.navigateToPath('الذكاء الاصطناعي')">
+                <button class="grid-card ct-red" onclick="window.navigateToPath('تحضيري')">
                     <div class="card-icon">👶</div>
                     <div class="card-label">تحضيري</div>
                 </button>
@@ -305,9 +305,17 @@
         <input type="text" id="g-name" class="inp" placeholder="اسم الفوج (مثال: فوج أ عباقرة)">
         <label style="display:block; margin-bottom:8px; font-size:0.85rem; color:var(--text-mid); font-weight:800;">الأستاذ المسؤول:</label>
         <select id="g-teacher" class="inp"><option value="">-- اختر أستاذ الفوج --</option></select>
-        <input type="number" id="g-price" class="inp" placeholder="سعر الاشتراك الإجمالي (دج)">
-        <label style="display:block; margin-bottom:8px; font-size:0.85rem; color:var(--text-mid); font-weight:800;">نظام الاشتراك:</label>
-        <select id="g-sessions" class="inp"><option value="4">4 حصص</option><option value="8">8 حصص</option></select>
+        <span class="section-label">الاشتراك الشهري</span>
+        <input type="number" id="g-price" class="inp" min="0" placeholder="سعر الاشتراك الشهري (دج)">
+        <label style="display:block; margin-bottom:8px; font-size:0.85rem; color:var(--text-mid); font-weight:800;">عدد الحصص في الشهر:</label>
+        <input type="number" id="g-sessions" class="inp" min="1" max="60" value="4" placeholder="عدد الحصص (مثال: 4، 8، 20)">
+        <div id="sessions-presets" style="display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 12px;">
+            <button type="button" class="btn-add-row" style="margin:0;width:auto;padding:6px 14px;" onclick="window.setSessions(4)">4</button>
+            <button type="button" class="btn-add-row" style="margin:0;width:auto;padding:6px 14px;" onclick="window.setSessions(8)">8</button>
+            <button type="button" class="btn-add-row" style="margin:0;width:auto;padding:6px 14px;" onclick="window.setSessions(12)">12</button>
+            <button type="button" class="btn-add-row" style="margin:0;width:auto;padding:6px 14px;" onclick="window.setSessions(20)">20</button>
+        </div>
+        <div id="price-per-session" style="font-size:0.8rem;color:var(--muted);font-weight:800;margin-bottom:12px;"></div>
         <div class="schedule-section">
             <label><i class="far fa-calendar-alt" style="color:var(--blue);"></i> الأيام والأوقات:</label>
             <label class="show-endtime-toggle">
@@ -320,6 +328,7 @@
             </div>
             <div class="schedule-rows" id="schedule-rows"></div>
             <button class="btn-add-row" onclick="window.addScheduleRow()">+ إضافة يوم آخر</button>
+            <button class="btn-add-row" id="btn-sun-thu" type="button" onclick="window.fillSunThu()">📅 الأحد ← الخميس (كل الأيام)</button>
         </div>
         <button class="btn-main" id="saveGroupBtn" onclick="window.saveGroup()">حفظ الفوج</button>
         <button class="btn-cancel" onclick="window.closeAllModals()">إلغاء</button>
@@ -367,6 +376,32 @@
     let localGroupsArray = [], localStudentsArray = [], localTeachersArray = [];
     let showEndTime = false, selectedPath = "";
     const DAYS = ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
+
+
+    // ── التحضيري: الأحد → الخميس + دفع شهري واحد ──
+    const PREP_PATH = "تحضيري";
+    const PREP_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس"];
+
+    window.setSessions = function(n) {
+        document.getElementById('g-sessions').value = n;
+        window.updatePricePerSession();
+    };
+
+    window.updatePricePerSession = function() {
+        const price = Number(document.getElementById('g-price').value || 0);
+        const n = Number(document.getElementById('g-sessions').value || 0);
+        document.getElementById('price-per-session').innerText =
+            (price > 0 && n > 0) ? `≈ ${Math.round(price / n).toLocaleString()} دج للحصة الواحدة` : '';
+    };
+
+    window.fillSunThu = function(time = "") {
+        const rows = document.querySelectorAll('#schedule-rows .schedule-row');
+        // احتفظ بأول وقت مكتوب ليُستعمل لكل الأيام
+        if (!time) { rows.forEach(r => { const t = r.querySelector('input[type="time"]:not(.end-time)').value; if (t && !time) time = t; }); }
+        const endTime = showEndTime ? (document.querySelector('#schedule-rows .end-time')?.value || "") : "";
+        document.getElementById('schedule-rows').innerHTML = '';
+        PREP_DAYS.forEach(d => window.addScheduleRow(d, time, endTime));
+    };
 
     window.closeAllModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
 
@@ -434,7 +469,7 @@
         container.innerHTML = filtered.map(g => {
             const members = localStudentsArray.filter(s => s.groups && s.groups.includes(g.id));
             const schedHTML = `<div class="schedule-tags">` + (g.schedule||[]).map(s=>`<span class="schedule-tag"><i class="far fa-clock"></i> ${s.day} ${s.time}${s.endTime?`<span class="end-sep">→</span><span class="end-t">${s.endTime}</span>`:''}</span>`).join('') + `</div>`;
-            return `<div class="group-card"><h3 class="group-title">${g.name} <span class="sessions-badge">${g.sessionsCount||4} حصص</span></h3><div class="group-teacher"><i class="fas fa-chalkboard-teacher" style="color:var(--blue);"></i> الأستاذ: <span>${g.teacherName||'غير محدد'}</span></div>${schedHTML}<div class="group-info-grid"><div class="info-item"><i class="fas fa-wallet"></i> <span>${Number(g.price||0).toLocaleString()} دج</span></div><div class="info-item"><i class="fas fa-user-graduate"></i> <span>${members.length} تلاميذ</span></div></div><div class="action-grid"><button class="btn-icon btn-view" onclick="window.renderMembers('${g.id}','${g.name}')" title="عرض"><i class="fas fa-list"></i></button><button class="btn-icon btn-link" onclick="window.openLinkModal('${g.id}')" title="إضافة"><i class="fas fa-plus"></i></button><button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-pen"></i></button><button class="btn-icon btn-del" onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash"></i></button></div></div>`;
+            return `<div class="group-card"><h3 class="group-title">${g.name} <span class="sessions-badge">${g.sessionsCount||4} حصص/شهر</span></h3><div class="group-teacher"><i class="fas fa-chalkboard-teacher" style="color:var(--blue);"></i> الأستاذ: <span>${g.teacherName||'غير محدد'}</span></div>${schedHTML}<div class="group-info-grid"><div class="info-item"><i class="fas fa-wallet"></i> <span>${Number(g.price||0).toLocaleString()} دج</span></div><div class="info-item"><i class="fas fa-user-graduate"></i> <span>${members.length} تلاميذ</span></div></div><div class="action-grid"><button class="btn-icon btn-view" onclick="window.renderMembers('${g.id}','${g.name}')" title="عرض"><i class="fas fa-list"></i></button><button class="btn-icon btn-link" onclick="window.openLinkModal('${g.id}')" title="إضافة"><i class="fas fa-plus"></i></button><button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-pen"></i></button><button class="btn-icon btn-del" onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash"></i></button></div></div>`;
         }).join("");
     };
 
@@ -459,9 +494,15 @@
         } else {
             document.getElementById('modal-title').innerText="إضافة فوج جديد";
             ['edit-id','g-name','g-teacher','g-price'].forEach(id=>document.getElementById(id).value="");
-            document.getElementById('g-sessions').value="4";
-            window.addScheduleRow();
+            if (selectedPath === PREP_PATH) {
+                document.getElementById('g-sessions').value="20";
+                PREP_DAYS.forEach(d => window.addScheduleRow(d, ""));
+            } else {
+                document.getElementById('g-sessions').value="4";
+                window.addScheduleRow();
+            }
         }
+        window.updatePricePerSession();
     };
 
     window.saveGroup = function() {
@@ -478,11 +519,12 @@
             const endVal=row.querySelector('.end-time').value;
             if(day&&time) schedule.push({day,time,endTime:showEndTime?endVal:""});
         });
-        if(!name||!price){alert("الرجاء إدخال اسم الفوج والسعر!");return;}
+        if(!name||!price||Number(price)<=0){alert("الرجاء إدخال اسم الفوج والسعر!");return;}
+        if(!sessionsCount||sessionsCount<1){alert("الرجاء إدخال عدد الحصص في الشهر!");return;}
         if(!teacherName){alert("الرجاء اختيار الأستاذ!");return;}
         if(!schedule.length){alert("أضف توقيتاً واحداً على الأقل!");return;}
         btn.disabled=true;
-        const payload={name,path:selectedPath,teacherName,price,sessionsCount,schedule};
+        const payload={name,path:selectedPath,teacherName,price:Number(price),sessionsCount,schedule,paymentCycle:'monthly'};
         (editId?updateDoc(doc(db,"groups",editId),payload):addDoc(collection(db,"groups"),payload))
             .then(()=>{window.closeAllModals();loadAllData();}).finally(()=>btn.disabled=false);
     };
@@ -532,6 +574,8 @@
         if(s&&s.groups){s.groups=s.groups.filter(x=>x!==gId);updateDoc(doc(db,"students",sId),{groups:s.groups}).then(()=>{window.renderMembers(gId,gName);window.renderMainGroups();});}
     };
 
+    document.getElementById('g-price').addEventListener('input', window.updatePricePerSession);
+    document.getElementById('g-sessions').addEventListener('input', window.updatePricePerSession);
     loadAllData();
 </script>
 </body>
