@@ -307,6 +307,7 @@
         <select id="g-teacher" class="inp"><option value="">-- اختر أستاذ الفوج --</option></select>
         <span class="section-label">الاشتراك الشهري</span>
         <input type="number" id="g-price" class="inp" min="0" placeholder="سعر الاشتراك الشهري (دج)">
+        <div id="sessions-block">
         <label style="display:block; margin-bottom:8px; font-size:0.85rem; color:var(--text-mid); font-weight:800;">عدد الحصص في الشهر:</label>
         <input type="number" id="g-sessions" class="inp" min="1" max="60" value="4" placeholder="عدد الحصص (مثال: 4، 8، 20)">
         <div id="sessions-presets" style="display:flex; gap:8px; flex-wrap:wrap; margin:-4px 0 12px;">
@@ -316,6 +317,8 @@
             <button type="button" class="btn-add-row" style="margin:0;width:auto;padding:6px 14px;" onclick="window.setSessions(20)">20</button>
         </div>
         <div id="price-per-session" style="font-size:0.8rem;color:var(--muted);font-weight:800;margin-bottom:12px;"></div>
+        </div>
+        <div id="prep-note" style="display:none;background:#eef6ff;border:1.5px solid #bfdbfe;color:#1e3a8a;border-radius:12px;padding:10px 12px;font-size:0.82rem;font-weight:800;margin-bottom:12px;line-height:1.7;">📅 اشتراك التحضيري شهر كامل بلا عدد حصص: يبدأ من يوم الدفع وينتهي في نفس اليوم من الشهر الموالي (مثلا من 15 إلى 15).</div>
         <div class="schedule-section">
             <label><i class="far fa-calendar-alt" style="color:var(--blue);"></i> الأيام والأوقات:</label>
             <label class="show-endtime-toggle">
@@ -469,7 +472,7 @@
         container.innerHTML = filtered.map(g => {
             const members = localStudentsArray.filter(s => s.groups && s.groups.includes(g.id));
             const schedHTML = `<div class="schedule-tags">` + (g.schedule||[]).map(s=>`<span class="schedule-tag"><i class="far fa-clock"></i> ${s.day} ${s.time}${s.endTime?`<span class="end-sep">→</span><span class="end-t">${s.endTime}</span>`:''}</span>`).join('') + `</div>`;
-            return `<div class="group-card"><h3 class="group-title">${g.name} <span class="sessions-badge">${g.sessionsCount||4} حصص/شهر</span></h3><div class="group-teacher"><i class="fas fa-chalkboard-teacher" style="color:var(--blue);"></i> الأستاذ: <span>${g.teacherName||'غير محدد'}</span></div>${schedHTML}<div class="group-info-grid"><div class="info-item"><i class="fas fa-wallet"></i> <span>${Number(g.price||0).toLocaleString()} دج</span></div><div class="info-item"><i class="fas fa-user-graduate"></i> <span>${members.length} تلاميذ</span></div></div><div class="action-grid"><button class="btn-icon btn-view" onclick="window.renderMembers('${g.id}','${g.name}')" title="عرض"><i class="fas fa-list"></i></button><button class="btn-icon btn-link" onclick="window.openLinkModal('${g.id}')" title="إضافة"><i class="fas fa-plus"></i></button><button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-pen"></i></button><button class="btn-icon btn-del" onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash"></i></button></div></div>`;
+            return `<div class="group-card"><h3 class="group-title">${g.name} <span class="sessions-badge">${g.billingType==='calendar_month' ? 'اشتراك شهري' : (g.sessionsCount||4)+' حصص/شهر'}</span></h3><div class="group-teacher"><i class="fas fa-chalkboard-teacher" style="color:var(--blue);"></i> الأستاذ: <span>${g.teacherName||'غير محدد'}</span></div>${schedHTML}<div class="group-info-grid"><div class="info-item"><i class="fas fa-wallet"></i> <span>${Number(g.price||0).toLocaleString()} دج</span></div><div class="info-item"><i class="fas fa-user-graduate"></i> <span>${members.length} تلاميذ</span></div></div><div class="action-grid"><button class="btn-icon btn-view" onclick="window.renderMembers('${g.id}','${g.name}')" title="عرض"><i class="fas fa-list"></i></button><button class="btn-icon btn-link" onclick="window.openLinkModal('${g.id}')" title="إضافة"><i class="fas fa-plus"></i></button><button class="btn-icon btn-edit" onclick="window.openGroupModal('${g.id}')" title="تعديل"><i class="fas fa-pen"></i></button><button class="btn-icon btn-del" onclick="window.deleteGroup('${g.id}')" title="حذف"><i class="fas fa-trash"></i></button></div></div>`;
         }).join("");
     };
 
@@ -495,13 +498,16 @@
             document.getElementById('modal-title').innerText="إضافة فوج جديد";
             ['edit-id','g-name','g-teacher','g-price'].forEach(id=>document.getElementById(id).value="");
             if (selectedPath === PREP_PATH) {
-                document.getElementById('g-sessions').value="20";
                 PREP_DAYS.forEach(d => window.addScheduleRow(d, ""));
             } else {
                 document.getElementById('g-sessions').value="4";
                 window.addScheduleRow();
             }
         }
+        const isPrep = (selectedPath === PREP_PATH);
+        document.getElementById('sessions-block').style.display = isPrep ? 'none' : '';
+        document.getElementById('prep-note').style.display = isPrep ? 'block' : 'none';
+        document.getElementById('btn-sun-thu').style.display = isPrep ? '' : 'none';
         window.updatePricePerSession();
     };
 
@@ -520,11 +526,14 @@
             if(day&&time) schedule.push({day,time,endTime:showEndTime?endVal:""});
         });
         if(!name||!price||Number(price)<=0){alert("الرجاء إدخال اسم الفوج والسعر!");return;}
-        if(!sessionsCount||sessionsCount<1){alert("الرجاء إدخال عدد الحصص في الشهر!");return;}
+        const isPrep = (selectedPath === PREP_PATH);
+        if(!isPrep && (!sessionsCount||sessionsCount<1)){alert("الرجاء إدخال عدد الحصص في الشهر!");return;}
         if(!teacherName){alert("الرجاء اختيار الأستاذ!");return;}
         if(!schedule.length){alert("أضف توقيتاً واحداً على الأقل!");return;}
         btn.disabled=true;
-        const payload={name,path:selectedPath,teacherName,price:Number(price),sessionsCount,schedule,paymentCycle:'monthly'};
+        const payload = isPrep
+            ? {name,path:selectedPath,teacherName,price:Number(price),schedule,paymentCycle:'monthly',billingType:'calendar_month',sessionsCount:null}
+            : {name,path:selectedPath,teacherName,price:Number(price),sessionsCount,schedule,paymentCycle:'monthly',billingType:'sessions'};
         (editId?updateDoc(doc(db,"groups",editId),payload):addDoc(collection(db,"groups"),payload))
             .then(()=>{window.closeAllModals();loadAllData();}).finally(()=>btn.disabled=false);
     };
