@@ -512,7 +512,9 @@
                 // إصلاح الفلترة الحرج: البحث داخل مصفوفة المجموعات الحقيقية للطالب
                 const studentsCount = allStudents.filter(s => Array.isArray(s.groups) && s.groups.includes(group.id)).length;
                 
-                const sessionsPerMonth = group.sessionsCount || group.sessionsPerMonth || 4;
+                const sessionsPerMonth = group.billingType === 'calendar_month'
+                    ? Math.max((group.schedule || []).length * 4, 1)
+                    : (group.sessionsCount || group.sessionsPerMonth || 4);
                 const sessionValue = (studentsCount * Number(group.price || 0)) / sessionsPerMonth;
                 
                 // ربط الأستاذ وحساب النسبة والمستحقات والتحقق من المعلم التحضيري
