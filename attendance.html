@@ -694,6 +694,15 @@ function permDisc(student) {
   return list.reduce((s, x) => s + Number(x.amount || 0), 0);
 }
 
+// نفس اليوم من الشهر الموالي (15 ← 15). إذا لم يوجد اليوم (مثل 31) نأخذ آخر يوم في الشهر
+function addCalendarMonth(d) {
+  const day = d.getDate();
+  const r = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  const last = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate();
+  r.setDate(Math.min(day, last));
+  return r;
+}
+
 function isExpired(student) {
   const d = toDate(student.nextPaymentDate);
   return !d || new Date() >= d;
@@ -928,9 +937,19 @@ function openModal(sId, sName, gId, gName) {
   document.getElementById('m-paid').value             = '';
   document.getElementById('m-feedback').style.display = 'none';
 
-  const future = new Date();
-  future.setDate(future.getDate() + 30);
-  document.getElementById('m-expiry').value = future.toISOString().split('T')[0];
+  const grp = groups.find(g => g.id === gId);
+  const isCalMonth = grp && (grp.billingType === 'calendar_month' || grp.path === 'تحضيري');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let base = today;
+  if (isCalMonth) {
+    // إذا لم ينتهِ اشتراكه بعد نكمل من تاريخ انتهائه، وإلا نبدأ من يوم الدفع
+    const cur = toDate(student?.nextPaymentDate);
+    if (cur && cur > today) { base = new Date(cur); base.setHours(0, 0, 0, 0); }
+  }
+  const future = isCalMonth ? addCalendarMonth(base) : new Date(today.getTime() + 30 * 86400000);
+  const pad = x => String(x).padStart(2, '0');
+  document.getElementById('m-expiry').value = `${future.getFullYear()}-${pad(future.getMonth() + 1)}-${pad(future.getDate())}`;
 
   document.getElementById('pay-modal').classList.add('open');
   setTimeout(() => document.getElementById('m-paid').focus(), 100);
