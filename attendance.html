@@ -634,6 +634,10 @@ body {
 
     <div id="m-feedback" class="feedback fb-ok" style="display:none"></div>
 
+    <label class="mlabel">🟢 تاريخ بداية الاشتراك (يمكنك تحديده يدوياً):</label>
+    <input type="date" id="m-start" class="inp">
+    <input type="hidden" id="m-calmonth" value="0">
+
     <label class="mlabel">📅 تاريخ انتهاء الاشتراك الجديد:</label>
     <input type="date" id="m-expiry" class="inp">
 
@@ -701,6 +705,23 @@ function addCalendarMonth(d) {
   const last = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate();
   r.setDate(Math.min(day, last));
   return r;
+}
+
+function dateToInput(d) {
+  const pad = x => String(x).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// يحسب الانتهاء من تاريخ البداية: شهر كامل للتحضيري، 30 يوماً لغيره
+function recalcExpiry() {
+  const v = document.getElementById('m-start').value;
+  if (!v) return;
+  const [y, m, d] = v.split('-').map(Number);
+  const start = new Date(y, m - 1, d);
+  const end = document.getElementById('m-calmonth').value === '1'
+    ? addCalendarMonth(start)
+    : new Date(start.getTime() + 30 * 86400000);
+  document.getElementById('m-expiry').value = dateToInput(end);
 }
 
 function isExpired(student) {
@@ -835,7 +856,7 @@ function renderGroups() {
               <div class="s-dates">
                 <span>
                   <i class="far fa-calendar-alt" style="color:${expired ? 'var(--red)' : 'var(--green)'}"></i>
-                  الانتهاء: <b>${expDate ? fmt(expDate) : 'لم يُسجَّل بعد'}</b>
+                  ${toDate(s.subscriptionStartDate) ? 'البداية: <b>' + fmt(toDate(s.subscriptionStartDate)) + '</b> — ' : ''}الانتهاء: <b>${expDate ? fmt(expDate) : 'لم يُسجَّل بعد'}</b>
                 </span>
               </div>
               <div class="s-extra">
@@ -938,18 +959,19 @@ function openModal(sId, sName, gId, gName) {
   document.getElementById('m-feedback').style.display = 'none';
 
   const grp = groups.find(g => g.id === gId);
-  const isCalMonth = grp && (grp.billingType === 'calendar_month' || grp.path === 'تحضيري');
+  const isCalMonth = !!(grp && (grp.billingType === 'calendar_month' || grp.path === 'تحضيري'));
+  document.getElementById('m-calmonth').value = isCalMonth ? '1' : '0';
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  let base = today;
+  let startD = today;
   if (isCalMonth) {
     // إذا لم ينتهِ اشتراكه بعد نكمل من تاريخ انتهائه، وإلا نبدأ من يوم الدفع
     const cur = toDate(student?.nextPaymentDate);
-    if (cur && cur > today) { base = new Date(cur); base.setHours(0, 0, 0, 0); }
+    if (cur && cur > today) { startD = new Date(cur); startD.setHours(0, 0, 0, 0); }
   }
-  const future = isCalMonth ? addCalendarMonth(base) : new Date(today.getTime() + 30 * 86400000);
-  const pad = x => String(x).padStart(2, '0');
-  document.getElementById('m-expiry').value = `${future.getFullYear()}-${pad(future.getMonth() + 1)}-${pad(future.getDate())}`;
+  document.getElementById('m-start').value = dateToInput(startD);
+  recalcExpiry();
 
   document.getElementById('pay-modal').classList.add('open');
   setTimeout(() => document.getElementById('m-paid').focus(), 100);
@@ -965,6 +987,7 @@ document.getElementById('pay-modal').addEventListener('click', e => {
 });
 
 /* live feedback */
+document.getElementById('m-start').addEventListener('change', recalcExpiry);
 document.getElementById('m-disc-input').addEventListener('input', recalcFeedback);
 document.getElementById('m-paid').addEventListener('input', recalcFeedback);
 function recalcFeedback() {
@@ -997,8 +1020,11 @@ document.getElementById('btn-save-pay').addEventListener('click', async () => {
   const paid     = Number(document.getElementById('m-paid').value || 0);
   const expiryVal = document.getElementById('m-expiry').value;
 
-  if (paid <= 0)   { alert('أدخل المبلغ المدفوع!'); return; }
+  const startVal = document.getElementById('m-start').value;
+  if (!startVal)   { alert('حدد تاريخ بداية الاشتراك!'); return; }
   if (!expiryVal)  { alert('حدد تاريخ الانتهاء!');  return; }
+  if (paid < 0)    { alert('المبلغ غير صحيح!'); return; }
+  if (paid === 0 && !confirm('لم تُدخل أي مبلغ. هل تريد تسجيل الاشتراك بالتواريخ فقط؟')) return;
 
   const newExpiry = new Date(expiryVal);
   const now       = new Date();
@@ -1011,10 +1037,13 @@ document.getElementById('btn-save-pay').addEventListener('click', async () => {
 
     const updateData = {
       nextPaymentDate:        Timestamp.fromDate(newExpiry),
-      lastPaymentConfirmedAt: Timestamp.fromDate(now),
-      lastPaidAmount:         paid,
-      debt:                   increment(-paid)   // فقط المبلغ المدفوع ينقص الدين
+      subscriptionStartDate:  Timestamp.fromDate(new Date(startVal)),
+      lastPaymentConfirmedAt: Timestamp.fromDate(now)
     };
+    if (paid > 0) {
+      updateData.lastPaidAmount = paid;
+      updateData.debt = increment(-paid);   // فقط المبلغ المدفوع ينقص الدين
+    }
 
     // التخفيض يُحفظ فقط إذا تغيّر — لا يُطرح هنا، يُطرح مرة/شهر من صفحة الديون
     if (disc !== existingDisc) {
@@ -1023,13 +1052,14 @@ document.getElementById('btn-save-pay').addEventListener('click', async () => {
 
     await updateDoc(doc(db, 'students', sId), updateData);
 
-    await addDoc(collection(db, 'student_payments'), {
+    if (paid > 0) await addDoc(collection(db, 'student_payments'), {
       studentId:    sId,
       studentName:  sName,
       groupName:    gName,
       amount:       paid,
       paidAt:       serverTimestamp(),
       paidAtISO:    now.toISOString(),
+      startDate:    Timestamp.fromDate(new Date(startVal)),
       expiryDate:   Timestamp.fromDate(newExpiry),
       month:        now.getMonth() + 1,
       year:         now.getFullYear()
