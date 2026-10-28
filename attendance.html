@@ -634,7 +634,7 @@ body {
 
     <div id="m-feedback" class="feedback fb-ok" style="display:none"></div>
 
-    <label class="mlabel">🟢 تاريخ بداية الاشتراك (يمكنك تحديده يدوياً):</label>
+    <label class="mlabel" id="m-start-label">🟢 تاريخ بداية الاشتراك (يمكنك تحديده يدوياً):</label>
     <input type="date" id="m-start" class="inp">
     <input type="hidden" id="m-calmonth" value="0">
 
@@ -970,6 +970,8 @@ function openModal(sId, sName, gId, gName) {
     const cur = toDate(student?.nextPaymentDate);
     if (cur && cur > today) { startD = new Date(cur); startD.setHours(0, 0, 0, 0); }
   }
+  document.getElementById('m-start').style.display = isCalMonth ? '' : 'none';
+  document.getElementById('m-start-label').style.display = isCalMonth ? '' : 'none';
   document.getElementById('m-start').value = dateToInput(startD);
   recalcExpiry();
 
